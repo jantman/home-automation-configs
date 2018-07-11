@@ -4,7 +4,7 @@
 
 My home automation and home security configuration, scripts and tooling - mainly for [HomeAssistant](https://www.home-assistant.io/) / [AppDaemon](http://appdaemon.readthedocs.io/en/latest/), [ZoneMinder](https://zoneminder.com/), and related things.
 
-__Note:__ This repository is really only provided as an example, and is not really "supported". See below for further information.
+__Note:__ This repository is really only provided as an example, and is not really "supported". See [Using It and Important Notes](#using-it-and-important-notes), below, for further information.
 
 ## What's Here?
 
