@@ -1,0 +1,6 @@
+alarm_handler:
+  module: alarm_handler
+  class: AlarmHandler
+zwave_checker:
+  module: zwave_checker
+  class: ZwaveChecker
