@@ -52,7 +52,7 @@ my $event_check_interval       = 3; # seconds
 my $monitor_reload_interval    = 300; # seconds
 my $read_alarm_cause           = 0;
 my $tag_alarm_event_id         = 0;
-my $handlerPath                = "/usr/local/bin/zmevent_handler.py";
+my $handlerPath                = "/opt/home-automation-configs/zoneminder/zmevent_handler.py";
 
 my $dummyEventTest = 0; # if on, will generate dummy events. Not in config for a reason. Only dev testing
 my $dummyEventInterval = 30; # timespan to generate events in seconds

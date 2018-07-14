@@ -17,7 +17,7 @@ from email.mime.image import MIMEImage
 
 from PIL import Image
 
-sys.path.append('/usr/local/bin')
+sys.path.append('/opt/home-automation-configs/zoneminder')
 
 from zmevent_image_analysis import YoloAnalyzer
 ANALYZERS = [YoloAnalyzer]
