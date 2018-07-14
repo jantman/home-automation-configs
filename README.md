@@ -10,6 +10,7 @@ __Note:__ This repository is really only provided as an example, and is not real
 
 * [appdaemon apps and configs](appdaemon/) - also includes my appdaemon logging helper
 * [homeassistant/](homeassistant/) - my HomeAssistant configs
+* [zoneminder/](zoneminder/) - some of my scripts and notes related to my ZoneMinder installation, including event image analysis and notifications
 
 ## Using It and Important Notes
 

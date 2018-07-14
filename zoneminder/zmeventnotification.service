@@ -1,0 +1,14 @@
+[Unit]
+Description=zmeventnotification - ZoneMinder event notification handler
+Requires=zoneminder.service
+After=zoneminder.service
+
+[Service]
+# This EnvironmentFile sets the variables defined in zmevent_handler.py CONFIG
+EnvironmentFile=/etc/zmeventnotification.env
+ExecStart=/usr/local/bin/zmeventnotification.pl
+Type=simple
+User=www-data
+
+[Install]
+WantedBy=multi-user.target
