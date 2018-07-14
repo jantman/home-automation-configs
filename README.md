@@ -9,6 +9,7 @@ __Note:__ This repository is really only provided as an example, and is not real
 ## What's Here?
 
 * [appdaemon apps and configs](appdaemon/) - also includes my appdaemon logging helper
+* [homeassistant/](homeassistant/) - my HomeAssistant configs
 
 ## Using It and Important Notes
 

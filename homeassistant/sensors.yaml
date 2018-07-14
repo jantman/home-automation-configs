@@ -1,0 +1,24 @@
+- platform: zoneminder
+  include_archived: false
+- platform: template
+  sensors:
+    thermostat_fan_state:
+      friendly_name: "Thermostat Fan"
+      value_template: >-
+        {%- if states.climate['2gig_technologies_ct101_thermostat_iris_cooling_1'].attributes.fan_state != "Idle" %}
+            {{ states.climate['2gig_technologies_ct101_thermostat_iris_cooling_1'].attributes.fan_state }}
+        {%- elif states.climate['2gig_technologies_ct101_thermostat_iris_heating_1'].attributes.fan_state != "Idle" %}
+            {{ states.climate['2gig_technologies_ct101_thermostat_iris_heating_1'].attributes.fan_state }}
+        {%- else %}
+            Idle
+        {%- endif %}
+    thermostat_operation_mode:
+      friendly_name: "Thermostat Operation"
+      value_template: >-
+        {%- if states.climate['2gig_technologies_ct101_thermostat_iris_cooling_1'].attributes.operating_state != "Idle" %}
+            Cooling {{ states.climate['2gig_technologies_ct101_thermostat_iris_cooling_1'].attributes.operating_state }}
+        {%- elif states.climate['2gig_technologies_ct101_thermostat_iris_heating_1'].attributes.operating_state != "Idle" %}
+            Heating {{ states.climate['2gig_technologies_ct101_thermostat_iris_heating_1'].attributes.operating_state }}
+        {%- else %}
+            Idle
+        {%- endif %}
