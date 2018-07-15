@@ -226,11 +226,11 @@
     service: homeassistant.turn_off
     entity_id: input_boolean.trigger_first_morning
 # "first morning" motion trigger
-- alias: First Morning Motion
+- alias: First Morning Bedroom Light
   trigger:
-    platform: state
-    entity_id: binary_sensor.livingroom_motion
-    to: 'on'
+    platform: numeric_state
+    entity_id: sensor.bedroomsensor_luminance
+    above: 5
   # only complete the automation if we're still waiting for the first motion
   condition:
     - condition: state
