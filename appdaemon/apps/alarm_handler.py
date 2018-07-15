@@ -34,7 +34,9 @@ more general/configurable.
 - 3-state alarm: Disarmed, Home, Away. Home triggers on exterior (i.e. door /
   window) sensors only, Away also triggers on interior (i.e. motion) sensors.
 - ZoneMinder RunState is also updated to match the alarm state.
-- Alarm state set based on manual input_select in UI or device tracker.
+- Alarm state set based on manual input_select in UI or device tracker. If the
+  device_tracker entity_id for my phone (configurable) enters the "Home" zone,
+  disarm the alarm. If it leaves the "Home" zone, arm it as Away.
 - If alarm is triggered, all lights come on for 10-20 minutes and Pushover alert
   is sent.
 - If there is a ZoneMinder camera pointed at the location of the alarm event
