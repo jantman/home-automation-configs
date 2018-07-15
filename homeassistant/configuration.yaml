@@ -13,8 +13,12 @@ homeassistant:
   # Customization file
   customize: !include customize.yaml
 
-# Show links to resources in log and frontend
-# introduction:
+zone:
+  - name: Work
+    longitude: -84.3514511
+    latitude: 33.9282418
+    radius: 300
+    icon: mdi:office-building
 
 # Enables the frontend
 frontend:
