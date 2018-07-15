@@ -397,22 +397,29 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             )
             return
         state = data.get('state', None)
+        prev_state = self.get_state(ALARM_STATE_SELECT_ENTITY)
         if state not in [HOME, AWAY, DISARMED]:
             self._log.error(
                 'Got invalid state for CUSTOM_ALARM_STATE_SET event: %s',
                 state
             )
             return
+        if state == prev_state:
+            self._log.info(
+                'Got CUSTOM_ALARM_STATE_SET event with state=%s but alarm is '
+                'already in that state. Ignoring.', state
+            )
+            return
         if state == HOME:
             self._log.info('Arming HOME from event')
-            self._arm_home(self.get_state(ALARM_STATE_SELECT_ENTITY))
+            self._arm_home(prev_state)
             return
         if state == AWAY:
             self._log.info('Arming AWAY from event')
-            self._arm_away(self.get_state(ALARM_STATE_SELECT_ENTITY))
+            self._arm_away(prev_state)
             return
         self._log.info('Disarming from event')
-        self._disarm(self._get_state(ALARM_STATE_SELECT_ENTITY))
+        self._disarm(prev_state)
 
     def _do_alarm_lights(self):
         """
