@@ -200,7 +200,7 @@ proximity:
       - device_tracker.02157df2c2d6e627
     tolerance: 50
     unit_of_measurement: m
-  homeTenMeters:
+  home_ten_meters:
     ignored_zones:
       - work
     devices:
