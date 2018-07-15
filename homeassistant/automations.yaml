@@ -257,3 +257,42 @@
 ################################################################################
 # END "first morning" routine                                                  #
 ################################################################################
+################################################################################
+# Alarm Automations                                                            #
+################################################################################
+- alias: Arm after motion in bedroom, at night, when home, and house is dark.
+  trigger:
+    # Trigger 2 minutes after bedroom_motion set to off
+    platform: state
+    entity_id: binary_sensor.bedroom_motion
+    to: 'off'
+    for:
+      minutes: 2
+  condition:
+    # device must be home
+    - condition: state
+      entity_id: device_tracker.02157df2c2d6e627
+      state: 'home'
+    # it must be dark out
+    - condition: or  # 'when dark' condition: either after sunset or before sunrise
+      conditions:
+        - condition: sun
+          after: sunset
+        - condition: sun
+          before: sunrise
+    # bedroom luminance must be less than 5 PERCENT (Zooz multi-sensor)
+    - condition: numeric_state
+      entity_id: sensor.bedroomsensor_luminance
+      below: 5
+    # office luminance must be less than 2 PERCENT (Zooz multi-sensor)
+    - condition: numeric_state
+      entity_id: sensor.officesensor_luminance
+      below: 2
+    # living room luminance must be less than 5 PERCENT (Zooz multi-sensor)
+    - condition: numeric_state
+      entity_id: sensor.lrmotion_luminance
+      below: 5
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
