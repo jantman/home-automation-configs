@@ -19,6 +19,13 @@ zone:
     latitude: 33.9282418
     radius: 300
     icon: mdi:office-building
+  # We add a 1m radius zone for home for use in automations where we want <100m resolution
+  - name: HomeTenMeters
+    latitude: 33.753790
+    longitude: -84.245627
+    radius: 10
+    icon: mdi:house
+    passive: true
 
 # Enables the frontend
 frontend:
@@ -192,6 +199,13 @@ proximity:
     devices:
       - device_tracker.02157df2c2d6e627
     tolerance: 50
+    unit_of_measurement: m
+  homeTenMeters:
+    ignored_zones:
+      - work
+    devices:
+      - device_tracker.02157df2c2d6e627
+    tolerance: 10
     unit_of_measurement: m
 
 notify:
