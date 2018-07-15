@@ -1,3 +1,52 @@
+################################################################################
+# General Light-related automations (all lights)                               #
+################################################################################
+- alias: Turn Lights Off When Away During Day
+  trigger:
+      platform: state
+      entity_id: device_tracker.02157df2c2d6e627
+      from: 'home'
+  condition:
+    condition: or  # 'when dark' condition: either after sunset or before sunrise
+    conditions:
+      - condition: sun
+        after: sunrise
+      - condition: sun
+        before: sunset
+  action:
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+    - service: homeassistant.turn_off
+      entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+    - service: homeassistant.turn_off
+      entity_id: light.zipato_bulb_2_level
+- alias: Turn Lights Off During Day When Away
+  trigger:
+      platform: sun
+      event: sunrise
+      offset: '+00:00:00'
+  condition:
+    condition: state
+    entity_id: device_tracker.02157df2c2d6e627
+    state: 'away'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+    - service: homeassistant.turn_off
+      entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+    - service: homeassistant.turn_off
+      entity_id: light.zipato_bulb_2_level
+################################################################################
+# Kitchen Lights                                                               #
+################################################################################
 - id: KitchenLightMotionOn
   alias: Turn Kitchen Light On When Motion Detected
   trigger:
@@ -22,6 +71,9 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+################################################################################
+# Porch Lights                                                                 #
+################################################################################
 - id: PorchLightFrontDoorOn
   alias: Turn Porch Light On When Front Door Opened After Sunset
   trigger:
@@ -119,8 +171,44 @@
         entity_id:
           - light.linear_lb60z1_dimmable_led_light_bulb_level_3
           - white_value: 255
-# BEGIN "first morning" routine"
-# from https://www.home-assistant.io/cookbook/automation_first_light/
+################################################################################
+# Living Room Light                                                            #
+################################################################################
+- id: LivingRoomLightOnWhenDoorOpenedAtNight
+  alias: Turn Living Room Light On When Front Door Opened At Night
+  trigger:
+    platform: state
+    entity_id: binary_sensor.ecolink_doorwindow_sensor_sensor
+    to: 'on'
+  condition:
+    condition: or  # 'when dark' condition: either after sunset or before sunrise
+    conditions:
+      - condition: sun
+        after: sunset
+      - condition: sun
+        before: sunrise
+  action:
+    - service: homeassistant.turn_on
+      entity_id: switch.livingroomlight_switch
+- id: LivingRoomLightOffWhenHomeAndNoMotion
+  alias: Turn Living Room Light Off If Home And No Motion For 15 Minutes
+  trigger:
+    platform: state
+    entity_id: binary_sensor.livingroom_motion
+    to: 'off'
+    for:
+      minutes: 15
+  condition:
+    - condition: state
+      entity_id: device_tracker.02157df2c2d6e627
+      state: 'home'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: switch.livingroomlight_switch
+################################################################################
+# BEGIN "first morning" routine                                                #
+# from https://www.home-assistant.io/cookbook/automation_first_light/          #
+################################################################################
 - alias: Enable First Morning Trigger
   trigger:
     - platform: time
@@ -166,78 +254,6 @@
       data:
         entity_id: input_select.alarmstate
         option: Disarmed
-# END "first morning" routine
-- alias: Turn Lights Off When Away During Day
-  trigger:
-      platform: state
-      entity_id: device_tracker.02157df2c2d6e627
-      from: 'home'
-  condition:
-    condition: or  # 'when dark' condition: either after sunset or before sunrise
-    conditions:
-      - condition: sun
-        after: sunrise
-      - condition: sun
-        before: sunset
-  action:
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
-    - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
-    - service: homeassistant.turn_off
-      entity_id: light.zipato_bulb_2_level
-- alias: Turn Lights Off During Day When Away
-  trigger:
-      platform: sun
-      event: sunrise
-      offset: '+00:00:00'
-  condition:
-    condition: state
-    entity_id: device_tracker.02157df2c2d6e627
-    state: 'away'
-  action:
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
-    - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
-    - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
-    - service: homeassistant.turn_off
-      entity_id: light.zipato_bulb_2_level
-- id: LivingRoomLightOnWhenDoorOpenedAtNight
-  alias: Turn Living Room Light On When Front Door Opened At Night
-  trigger:
-    platform: state
-    entity_id: binary_sensor.ecolink_doorwindow_sensor_sensor
-    to: 'on'
-  condition:
-    condition: or  # 'when dark' condition: either after sunset or before sunrise
-    conditions:
-      - condition: sun
-        after: sunset
-      - condition: sun
-        before: sunrise
-  action:
-    - service: homeassistant.turn_on
-      entity_id: switch.livingroomlight_switch
-- id: LivingRoomLightOffWhenHomeAndNoMotion
-  alias: Turn Living Room Light Off If Home And No Motion For 15 Minutes
-  trigger:
-    platform: state
-    entity_id: binary_sensor.livingroom_motion
-    to: 'off'
-    for:
-      minutes: 15
-  condition:
-    - condition: state
-      entity_id: device_tracker.02157df2c2d6e627
-      state: 'home'
-  action:
-    - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
+################################################################################
+# END "first morning" routine                                                  #
+################################################################################
