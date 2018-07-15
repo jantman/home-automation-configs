@@ -37,6 +37,8 @@ more general/configurable.
 - Alarm state set based on manual input_select in UI or device tracker. If the
   device_tracker entity_id for my phone (configurable) enters the "Home" zone,
   disarm the alarm. If it leaves the "Home" zone, arm it as Away.
+- Listens for an event, ``CUSTOM_ALARM_STATE_SET``, to set the state. Event data
+  is a ``state`` key with possible values the same as the input_select options.
 - If alarm is triggered, all lights come on for 10-20 minutes and Pushover alert
   is sent.
 - If there is a ZoneMinder camera pointed at the location of the alarm event
@@ -207,13 +209,20 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 self._handle_state_exterior, eid, friendly_name=friendly_name,
                 new="on"
             )
+        # setup listener for the input_select change
         self._log.debug('listen_state("%s")', ALARM_STATE_SELECT_ENTITY)
         self.listen_state(
             self._input_alarmstate_change, ALARM_STATE_SELECT_ENTITY
         )
+        # setup listener for device tracker state change
         self._log.debug('listen_state("%s")' % DEVICE_TRACKER_ENTITY)
         self.listen_state(
             self._device_tracker_change, DEVICE_TRACKER_ENTITY
+        )
+        # setup listener for CUSTOM_ALARM_STATE_SET event
+        self._log.debug('listen_event(CUSTOM_ALARM_STATE_SET)')
+        self.listen_event(
+            self._handle_state_set_event, event='CUSTOM_ALARM_STATE_SET'
         )
         self._log.info('Done initializing AlarmHandler')
 
@@ -371,6 +380,39 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             image=image, sound='alien'
         )
         self._do_alarm_lights()
+
+    def _handle_state_set_event(self, event_name, data, _):
+        """
+        Handle the CUSTOM_ALARM_STATE_SET event.
+
+        event type: LOGWRAPPER_SET_DEBUG
+        data: dict with one key, ``state``. String value must match the value
+        of one of :py:const:`~.HOME`, :py:const:`~.AWAY` or
+        :py:const:`~.DISARMED`.
+        """
+        self._log.debug('Got %s event data=%s', event_name, data)
+        if event_name != 'CUSTOM_ALARM_STATE_SET':
+            self._log.error(
+                'Got event of improper type: %s', event_name
+            )
+            return
+        state = data.get('state', None)
+        if state not in [HOME, AWAY, DISARMED]:
+            self._log.error(
+                'Got invalid state for CUSTOM_ALARM_STATE_SET event: %s',
+                state
+            )
+            return
+        if state == HOME:
+            self._log.info('Arming HOME from event')
+            self._arm_home(self.get_state(ALARM_STATE_SELECT_ENTITY))
+            return
+        if state == AWAY:
+            self._log.info('Arming AWAY from event')
+            self._arm_away(self.get_state(ALARM_STATE_SELECT_ENTITY))
+            return
+        self._log.info('Disarming from event')
+        self._disarm(self._get_state(ALARM_STATE_SELECT_ENTITY))
 
     def _do_alarm_lights(self):
         """
