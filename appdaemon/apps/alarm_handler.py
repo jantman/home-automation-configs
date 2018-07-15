@@ -54,6 +54,7 @@ from requests.auth import HTTPDigestAuth
 from PIL import Image
 from io import BytesIO
 from random import randint
+import appdaemon.plugins.hass.hassapi as hass
 
 from yaml import load as load_yaml
 try:
@@ -149,7 +150,7 @@ def fmt_entity(entity, kwargs):
     return entity
 
 
-class AlarmHandler(SaneLoggingApp):
+class AlarmHandler(hass.Hass, SaneLoggingApp):
     """
     AlarmHandler AppDaemon app.
 

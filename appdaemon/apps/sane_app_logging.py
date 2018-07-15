@@ -1,5 +1,5 @@
 """
-AppDaemon app superclass and python logging wrapper to add in sane logging.
+AppDaemon app mixin and python logging wrapper to add in sane logging.
 
 This allows you to use ``self._log.(debug|info|warning|error|critical)`` as
 regular Python logging library methods, including args/kwargs handling like
@@ -10,7 +10,7 @@ messages to be logged at INFO for a specific app via sending a specific event,
 effectively allowing runtime debug log toggling for a single app (but not
 any libraries used by it).
 
-To use this, make your app a subclass of SaneLoggingApp and call
+To use this, include SaneLoggingApp in your class's superclasses and call
 
     self._setup_logging(self.__class__.__name__)
 
@@ -43,7 +43,7 @@ else:
 _srcfile = os.path.normcase(_srcfile)
 
 
-class SaneLoggingApp(hass.Hass):
+class SaneLoggingApp(object):
 
     def _setup_logging(self, app_class_name, debug_default):
         self._app_class_name = app_class_name

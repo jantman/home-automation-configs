@@ -8,6 +8,7 @@ NOTIFY_SERVICE.
 
 import logging
 from datetime import time
+import appdaemon.plugins.hass.hassapi as hass
 
 from sane_app_logging import SaneLoggingApp
 
@@ -25,7 +26,7 @@ NOTIFY_SERVICE = 'notify/gmail'
 LOG_DEBUG = False
 
 
-class ZwaveChecker(SaneLoggingApp):
+class ZwaveChecker(hass.Hass, SaneLoggingApp):
 
     def initialize(self):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
