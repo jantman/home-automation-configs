@@ -1,6 +1,10 @@
+global_modules:
+  - sane_app_logging
 alarm_handler:
   module: alarm_handler
   class: AlarmHandler
+  global_dependencies: sane_app_logging
 zwave_checker:
   module: zwave_checker
   class: ZwaveChecker
+  global_dependencies: sane_app_logging
