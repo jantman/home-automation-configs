@@ -3,11 +3,9 @@
 import sys
 import os
 from datetime import datetime
-import requests
 import time
 import logging
 import argparse
-import pymysql
 import json
 from decimal import Decimal
 import smtplib
@@ -15,22 +13,54 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-from PIL import Image
+try:
+    import requests
+except ImportError:
+    raise SystemExit(
+        'could not import requests - please "pip install requests"'
+    )
+try:
+    import pymysql
+except ImportError:
+    raise SystemExit(
+        'could not import pymysql - please "pip install PyMySQL"'
+    )
+try:
+    from PIL import Image
+except ImportError:
+    raise SystemExit(
+        'could not import PIL - please "pip install Pillow"'
+    )
 
-sys.path.append('/opt/home-automation-configs/zoneminder')
+# This is running from a git clone, not really installed
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
+# Imports from this directory
 from zmevent_image_analysis import YoloAnalyzer
+
+#: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [YoloAnalyzer]
 
+#: logger - this will be set in :py:func:`~.main` to log to either stdout/err
+#: or a file depending on options
 logger = None
+
+#: If logging to a file, the file path to log to.
 LOG_PATH = '/var/cache/zoneminder/temp/zmevent_handler.log'
+
+#: Minimum log level to run with. This can be used to enable debug logging
+#: in the script itself overriding the command-line arguments, i.e. if you're
+#: debugging the script but don't want to edit whatever calls it.
 MIN_LOG_LEVEL = 1
 
+#: Name of the MySQL table in the zoneminder database to store results in.
 ANALYSIS_TABLE_NAME = 'zmevent_handler_ImageAnalysis'
 
+#: Path on disk where ZoneMinder events are stored
 EVENTS_PATH = '/usr/share/zoneminder/www/events'
 
-# These are populated from environment variables; see populate_secrets()
+#: Configuration populated from environment variables; see
+#: :py:func:`~.populate_secrets`
 CONFIG = {
     'MYSQL_DB': None,
     'MYSQL_USER': None,
@@ -44,6 +74,17 @@ CONFIG = {
 
 
 class DateSafeJsonEncoder(json.JSONEncoder):
+    """
+    Subclass of :py:class:`json.JSONEncoder` with special logic for some types.
+
+    - :py:class:`datetime.datetime` objects are serialized as strings in
+      ``%Y-%m-%d %H:%M:%S`` format
+    - :py:class:`decimal.Decimal` objects are serialized as floats
+    - Objects with ``as_dict`` properties are serialized as the dict returned
+      by that property.
+    - Objects with ``as_json`` properties are serialized as a dict of all of
+      their attributes that begin with a capital letter.
+    """
 
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -60,8 +101,19 @@ class DateSafeJsonEncoder(json.JSONEncoder):
 
 
 class PushoverNotifier(object):
+    """Send specially-formatted Pushover notification for an event."""
 
     def __init__(self, zmevent, analyzer, dry_run=False):
+        """
+        Initialize PushoverNotifier
+
+        :param zmevent: the event to notify for
+        :type zmevent: ZMEvent
+        :param analyzer: the image analysis wrapper
+        :type analyzer: ImageAnalysisWrapper
+        :param dry_run: whether or not this is a dry run
+        :type dry_run: bool
+        """
         self._event = zmevent
         self._analyzer = analyzer
         self._dry_run = dry_run
@@ -134,13 +186,33 @@ class PushoverNotifier(object):
 
 
 class EmailNotifier(object):
+    """Send specially-formatted HTML email notification for an event."""
 
     def __init__(self, zmevent, analyzer, dry_run=False):
+        """
+        Initialize EmailNotifier
+
+        :param zmevent: the event to notify for
+        :type zmevent: ZMEvent
+        :param analyzer: the image analysis wrapper
+        :type analyzer: ImageAnalysisWrapper
+        :param dry_run: whether or not this is a dry run
+        :type dry_run: bool
+        """
         self._event = zmevent
         self._analyzer = analyzer
         self._dry_run = dry_run
 
     def build_message(self, suppression_reason=None):
+        """
+        Build the email message; return a string email message.
+
+        :param suppression_reason: if the event is being suppressed, the string
+          reason for it.
+        :type suppression_reason: ``None`` or ``str``
+        :return: email to send
+        :rtype: str
+        """
         e = self._event
         msg = MIMEMultipart()
         supp_text = ''
@@ -324,6 +396,7 @@ class EmailNotifier(object):
         return s
 
     def send_message(self, msg):
+        """send the email message (notification)"""
         logger.debug('Connecting to SMTP on smtp.gmail.com:587')
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.ehlo()
@@ -347,6 +420,7 @@ class EmailNotifier(object):
         s.quit()
 
     def _get_creds(self):
+        """retrieve GMail credentials from ssmtp.conf"""
         with open('/etc/ssmtp/ssmtp.conf', 'r') as fh:
             lines = fh.readlines()
         items = {
@@ -355,23 +429,38 @@ class EmailNotifier(object):
         return items
 
     def build_and_send(self, suppression_reason=None):
+        """build and then send the email notification"""
         self.send_message(
             self.build_message(suppression_reason=suppression_reason)
         )
 
 
 class EventFilter(object):
+    """
+    Responsible for determining whether an Event should be notified on or not.
+
+    Instantiate class and call :py:meth:`~.run`. After that, check the return
+    value of the :py:attr:`~.should_notify` property.
+    """
 
     def __init__(self, event):
+        """
+        Initialize EventFilter.
+
+        :param event: the event to check
+        :type event: ZMEvent
+        """
         self._event = event
         self._should_notify = True
         self._reason = []
         self._suffix = None
 
     def run(self):
+        """Test for all filter conditions, update should_notify."""
         self._filter_ir_switch()
 
     def _filter_ir_switch(self):
+        """Determine if the camera switched from or to IR during this event."""
         f1 = self._event.FirstFrame
         f2 = self._event.LastFrame
         if f1.is_color and not f2.is_color:
@@ -386,10 +475,23 @@ class EventFilter(object):
 
     @property
     def should_notify(self):
+        """
+        Whether we should send (True) or suppress (False) a notification for
+        this event.
+
+        :returns: whether to send a notification or not
+        :rtype: bool
+        """
         return self._should_notify
 
     @property
     def reason(self):
+        """
+        Return the reason why notification should be suppressed or None.
+
+        :return: reason why notification should be suppressed, or None
+        :rtype: ``str`` or ``None``
+        """
         if len(self._reason) == 0:
             return None
         elif len(self._reason) == 1:
@@ -398,10 +500,18 @@ class EventFilter(object):
 
     @property
     def suffix(self):
+        """
+        Return a suffix to append to the event name describing the suppression
+        reason.
+
+        :return: event suffix
+        :rtype: str
+        """
         return self._suffix
 
 
 class Monitor(object):
+    """Class to represent a Monitor from ZoneMinder's database."""
 
     def __init__(self, **kwargs):
         self.AlarmFrameCount = None
@@ -449,6 +559,7 @@ class Monitor(object):
 
 
 class FrameStats(object):
+    """Class to represent frame stats from ZoneMinder's Database."""
 
     def __init__(self, **kwargs):
         self.AlarmPixels = None
@@ -487,6 +598,10 @@ class FrameStats(object):
 
 
 class Frame(object):
+    """
+    Class to represent a frame from ZoneMinder's database, augmented with some
+    additional information.
+    """
 
     def __init__(self, **kwargs):
         self.Id = None
@@ -560,6 +675,7 @@ class Frame(object):
 
 
 class MonitorZone(object):
+    """Class to represent a Zone for a single Monitor from ZM's database."""
 
     def __init__(self, **kwargs):
         self.AlarmRGB = None
@@ -606,6 +722,7 @@ class MonitorZone(object):
 
 
 class ZMEvent(object):
+    """Class to store overall representation of a ZoneMinder Event."""
 
     def __init__(self, event_id, monitor_id=None, cause=None):
         self.EventId = event_id
@@ -821,6 +938,7 @@ class ZMEvent(object):
 
 
 class ImageAnalysisWrapper(object):
+    """Wraps calling the ``ANALYZER`` classes and storing their results."""
 
     def __init__(self, event):
         self._event = event
@@ -900,6 +1018,7 @@ class ImageAnalysisWrapper(object):
 
 
 def parse_args(argv):
+    """Parse command line arguments with ArgumentParser."""
     p = argparse.ArgumentParser(description='handler for Motion events')
     p.add_argument('-v', '--verbose', dest='verbose', action='count', default=0,
                    help='verbose output. specify twice for debug-level output.')
@@ -918,6 +1037,7 @@ def parse_args(argv):
 
 
 def populate_secrets():
+    """Populate the ``CONFIG`` global from environment variables."""
     global CONFIG
     for varname in CONFIG.keys():
         if varname not in os.environ:
@@ -928,6 +1048,7 @@ def populate_secrets():
 
 
 def get_basicconfig_kwargs(args):
+    """Return a dict of kwargs for :py:func:`logging.basicConfig`."""
     log_kwargs = {
         'level': logging.WARNING,
         'format': "[%(asctime)s %(levelname)s][%(process)d] %(message)s"
@@ -950,18 +1071,25 @@ def get_basicconfig_kwargs(args):
 
 
 def main():
+    # setsid so calling process can continue without terminating
     os.setsid()
+    # populate secrets
+    populate_secrets()
+    # setup logging
     global logger
     args = parse_args(sys.argv[1:])
     logging.basicConfig(**get_basicconfig_kwargs(args))
-    populate_secrets()
     logger = logging.getLogger()
+    # initial log
     logger.warning(
         'Triggered; EventId=%s MonitorId=%s Cause=%s',
         args.event_id, args.monitor_id, args.cause
     )
+    # populate the event
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
+    # instantiate the analysis wrapper
     analyzer = ImageAnalysisWrapper(event)
+    # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
     if os.geteuid() != evt_owner:
         raise RuntimeError(
@@ -969,10 +1097,11 @@ def main():
             ' (not UID %s)', event.path, evt_owner, os.geteuid()
         )
     logger.debug('Loaded event: %s', event.as_json)
+    # wait for the event to finish - we wait up to 30s then continue
     event.wait_for_finish()
     if not event.is_finished:
         logger.warning('Event did not finish after 30s')
-        event.wait_for_finish(timeout_sec=240)
+    # run initial filter on the event; see if we should suppress it
     try:
         filter = EventFilter(event)
         filter.run()
@@ -995,6 +1124,7 @@ def main():
             'ERROR filtering event: %s', event.as_json, exc_info=True
         )
         raise
+    # run object detection on the event
     try:
         if not analyzer.analyze_event():
             logger.warning(
@@ -1014,6 +1144,7 @@ def main():
             'ERROR running ImageAnalysisWrapper on event: %s', event.as_json,
             exc_info=True
         )
+    # finally, if everything worked and the event wasn't suppressed, notify
     try:
         PushoverNotifier(event, analyzer, args.dry_run).generate_and_send()
     except Exception as ex:

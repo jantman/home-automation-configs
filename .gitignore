@@ -1,2 +1,7 @@
 homeassistant/secrets.yaml
 appdaemon/secrets.yaml
+.idea
+bin/
+include/
+lib/
+pip-selfcheck.json

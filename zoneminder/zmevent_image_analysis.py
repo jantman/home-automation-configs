@@ -4,17 +4,33 @@ import os
 import requests
 import time
 import logging
-from pydarknet import Detector, Image
-import cv2
 from textwrap import dedent
 
+try:
+    import cv2
+except ImportError:
+    raise SystemExit(
+        'could not import cv2 - please "pip install opencv-python"'
+    )
+try:
+    from pydarknet import Detector, Image
+except ImportError:
+    raise SystemExit(
+        'could not import pydarknet - please "pip install yolo34py" or '
+        '"pip install yolo34py-gpu"'
+    )
+
+
 logger = logging.getLogger(__name__)
-LOG_PATH = '/var/cache/zoneminder/temp/zmevent_image_analysis.log'
+
+#: Path on disk where darknet yolo configs/weights will be stored
 YOLO_CFG_PATH = '/var/cache/zoneminder/yolo'
 
 
 class suppress_stdout_stderr(object):
-    '''
+    """
+    Context manager to do "deep suppression" of stdout and stderr.
+
     from: https://stackoverflow.com/q/11130156/211734
 
     A context manager for doing a "deep suppression" of stdout and stderr in
@@ -23,11 +39,11 @@ class suppress_stdout_stderr(object):
        This will not suppress raised exceptions, since exceptions are printed
     to stderr just before a script exits, and after the context manager has
     exited (at least, I think that is why it lets exceptions through).
-    '''
+    """
 
     def __init__(self):
         # Open a pair of null files
-        self.null_fds =  [os.open(os.devnull,os.O_RDWR) for x in range(2)]
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
         # Save the actual stdout (1) and stderr (2) file descriptors.
         self.save_fds = [os.dup(1), os.dup(2)]
 
