@@ -20,19 +20,23 @@ Program flow:
 
 The functionality of this script relies on the other ``zmevent_*.py`` modules
 in this git repo.
+
+##########################################
+@TODO:
+- select Frames for object detection
+- run object detection on frames, save results to DB, add to dict to pass to HASS
+  - each detection should also be localized to one or a list of zones
+  - global config for objects to ignore - IgnoredObject classes that ObjectDetectionResult instances match against
+- serialize all that info and pass it to HASS via an event, to be handled by AppDaemon
+  - keep trying for 120s or so. If all fail, write to disk in logdir
 """
 
 import sys
 import os
-import time
 import logging
 from logging.handlers import SysLogHandler
 import argparse
 import json
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 
 try:
     import requests
@@ -61,7 +65,8 @@ from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 )
 from zmevent_image_analysis import YoloAnalyzer
-from zmevent_db import ZMEvent
+from zmevent_models import ZMEvent
+from zmevent_filters import *
 
 #: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [YoloAnalyzer]
@@ -71,86 +76,12 @@ ANALYZERS = [YoloAnalyzer]
 logger = None
 
 
-class EventFilter(object):
-    """
-    Responsible for determining whether an Event should be notified on or not.
-
-    Instantiate class and call :py:meth:`~.run`. After that, check the return
-    value of the :py:attr:`~.should_notify` property.
-    """
-
-    def __init__(self, event):
-        """
-        Initialize EventFilter.
-
-        :param event: the event to check
-        :type event: ZMEvent
-        """
-        self._event = event
-        self._should_notify = True
-        self._reason = []
-        self._suffix = None
-
-    def run(self):
-        """Test for all filter conditions, update should_notify."""
-        self._filter_ir_switch()
-
-    def _filter_ir_switch(self):
-        """Determine if the camera switched from or to IR during this event."""
-        f1 = self._event.FirstFrame
-        f2 = self._event.LastFrame
-        if f1.is_color and not f2.is_color:
-            self._should_notify = False
-            self._reason.append('Color to BW switch')
-            self._suffix = 'Color2BW'
-            return
-        if not f1.is_color and f2.is_color:
-            self._should_notify = False
-            self._reason.append('BW to color switch')
-            self._suffix = 'BW2Color'
-
-    @property
-    def should_notify(self):
-        """
-        Whether we should send (True) or suppress (False) a notification for
-        this event.
-
-        :returns: whether to send a notification or not
-        :rtype: bool
-        """
-        return self._should_notify
-
-    @property
-    def reason(self):
-        """
-        Return the reason why notification should be suppressed or None.
-
-        :return: reason why notification should be suppressed, or None
-        :rtype: ``str`` or ``None``
-        """
-        if len(self._reason) == 0:
-            return None
-        elif len(self._reason) == 1:
-            return self._reason[0]
-        return '; '.join(self._reason)
-
-    @property
-    def suffix(self):
-        """
-        Return a suffix to append to the event name describing the suppression
-        reason.
-
-        :return: event suffix
-        :rtype: str
-        """
-        return self._suffix
-
-
 class ImageAnalysisWrapper(object):
     """Wraps calling the ``ANALYZER`` classes and storing their results."""
 
     def __init__(self, event):
         self._event = event
+        logger.debug('Connecting to MySQL')
         self._conn = pymysql.connect(
             host='localhost', user=CONFIG['MYSQL_USER'],
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
@@ -198,6 +129,7 @@ class ImageAnalysisWrapper(object):
     def analyze_event(self):
         """returns True or False whether to notify about this event"""
         for a in ANALYZERS:
+            logger.debug('Running object detection with: %s', a)
             cls = a(self._event)
             cls.analyze()
             self._analyzers.append(cls)
@@ -294,7 +226,7 @@ def setup_logging(args):
 
 
 def run(args):
-    # populate the event
+    # populate the event from ZoneMinder DB
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
@@ -304,71 +236,36 @@ def run(args):
             ' (not UID %s)', event.path, evt_owner, os.geteuid()
         )
     logger.debug('Loaded event: %s', event.as_json)
-    # instantiate the analysis wrapper
-    analyzer = ImageAnalysisWrapper(event)
     # wait for the event to finish - we wait up to 30s then continue
     event.wait_for_finish()
-    if not event.is_finished:
-        logger.warning('Event did not finish after 30s')
-    # run initial filter on the event; see if we should suppress it
-    try:
-        filter = EventFilter(event)
-        filter.run()
-        if not filter.should_notify:
-            logger.warning(
-                'Suppressing notification for event %s because of filter',
-                event
+    result = {
+        'event': event,
+        'filters': [],
+        'object_detections': []
+    }
+    # run filters on event
+    logger.debug('Running filters on %s', event)
+    for cls in EventFilter.__subclasses__():
+        try:
+            logger.debug('Filter: %s', cls)
+            f = cls(event)
+            f.run()
+            result['filters'].append(f)
+        except Exception:
+            logger.critical(
+                'Exception running filter %s on event %s',
+                cls, event, exc_info=True
             )
-            EmailNotifier(
-                event, analyzer, args.dry_run
-            ).build_and_send(filter.reason)
-            if args.dry_run:
-                logger.warning('DRY RUN - would add suffix to event name: %s',
-                               filter.suffix)
-            else:
-                event.add_suffix_to_name(filter.suffix)
-            return
-    except Exception:
-        logger.critical(
-            'ERROR filtering event: %s', event.as_json, exc_info=True
-        )
-        raise
     # run object detection on the event
     try:
-        if not analyzer.analyze_event():
-            logger.warning(
-                'Suppressing notification for event %s because of image '
-                'analysis', event
-            )
-            EmailNotifier(event, analyzer, args.dry_run).build_and_send(
-                analyzer.suppression_reason
-            )
-            if args.dry_run:
-                logger.warning('DRY RUN - would add suffix to event name: IA')
-            else:
-                event.add_suffix_to_name('IA')
-            return
+        analyzer = ImageAnalysisWrapper(event)
+        analyzer.analyze_event()
     except Exception:
         logger.critical(
-            'ERROR running ImageAnalysisWrapper on event: %s', event.as_json,
+            'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    # finally, if everything worked and the event wasn't suppressed, notify
-    try:
-        PushoverNotifier(event, analyzer, args.dry_run).generate_and_send()
-    except Exception as ex:
-        logger.critical(
-            'ERROR sending pushover notification for event %s: %s',
-            event.EventId, ex, exc_info=True
-        )
-    try:
-        EmailNotifier(event, analyzer, args.dry_run).build_and_send()
-    except Exception as ex:
-        logger.critical(
-            'ERROR sending email notification for event %s: %s',
-            event.EventId, ex, exc_info=True
-        )
-
+    raise NotImplementedError('send to HASS')
 
 
 def main():
@@ -385,6 +282,7 @@ def main():
         'Triggered; EventId=%s MonitorId=%s Cause=%s',
         args.event_id, args.monitor_id, args.cause
     )
+    # run...
     run(args)
 
 

@@ -26,11 +26,7 @@ CONFIG = {
     'MYSQL_DB': None,
     'MYSQL_USER': None,
     'MYSQL_PASS': None,
-    'BASE_URL': None,
-    'PUSHOVER_APIKEY': None,
-    'PUSHOVER_USERKEY': None,
-    'EMAIL_FROM': None,
-    'EMAIL_TO': None
+    'BASE_URL': None
 }
 
 

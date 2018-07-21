@@ -5,9 +5,7 @@ Database components of zmevent_handler.py
 import os
 import logging
 import time
-import requests
 import json
-from PIL import Image
 import pymysql
 
 from zmevent_config import (
