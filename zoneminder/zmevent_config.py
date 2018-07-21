@@ -43,8 +43,6 @@ class DateSafeJsonEncoder(json.JSONEncoder):
     - :py:class:`decimal.Decimal` objects are serialized as floats
     - Objects with ``as_dict`` properties are serialized as the dict returned
       by that property.
-    - Objects with ``as_json`` properties are serialized as a dict of all of
-      their attributes that begin with a capital letter.
     """
 
     def default(self, obj):
@@ -54,8 +52,4 @@ class DateSafeJsonEncoder(json.JSONEncoder):
             return float(obj)
         if hasattr(obj, 'as_dict'):
             return obj.as_dict
-        if hasattr(obj, 'as_json'):
-            return {
-                x: getattr(obj, x) for x in vars(obj) if x[0].isupper()
-            }
         return json.JSONEncoder.default(self, obj)

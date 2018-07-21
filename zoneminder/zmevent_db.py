@@ -21,31 +21,9 @@ class Monitor(object):
     """Class to represent a Monitor from ZoneMinder's database."""
 
     def __init__(self, **kwargs):
-        self.AlarmFrameCount = None
-        self.ControlAddress = None
-        self.ControlDevice = None
-        self.ControlId = None
-        self.Controllable = None
-        self.Enabled = None
-        self.EventPrefix = None
-        self.Function = None
         self.Height = None
-        self.Host = None
         self.Id = None
-        self.ImageBufferCount = None
-        self.LinkedMonitors = None
-        self.Method = None
         self.Name = None
-        self.Path = None
-        self.Port = None
-        self.PostEventCount = None
-        self.PreEventCount = None
-        self.Protocol = None
-        self.RefBlendPerc = None
-        self.SectionLength = None
-        self.SignalCheckColour = None
-        self.Type = None
-        self.WebColour = None
         self.Width = None
         self.Zones = {}
         for k, v in kwargs.items():
@@ -56,13 +34,10 @@ class Monitor(object):
         return '<Monitor(MonitorId=%d)>' % self.Id
 
     @property
-    def as_json(self):
-        d = {
+    def as_dict(self):
+        return {
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
 
 
 class FrameStats(object):
@@ -138,13 +113,8 @@ class Frame(object):
         }
         d['frame_filename'] = self.filename
         d['frame_path'] = self.path
+        d['is_color'] = self.is_color
         return d
-
-    @property
-    def as_json(self):
-        return json.dumps(
-            self.as_json, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
 
     @property
     def filename(self):
@@ -185,30 +155,11 @@ class MonitorZone(object):
     """Class to represent a Zone for a single Monitor from ZM's database."""
 
     def __init__(self, **kwargs):
-        self.AlarmRGB = None
-        self.Area = None
-        self.CheckMethod = None
         self.Coords = None
-        self.ExtendAlarmFrames = None
-        self.FilterX = None
-        self.FilterY = None
         self.Id = None
-        self.MaxAlarmPixels = None
-        self.MaxBlobPixels = None
-        self.MaxBlobs = None
-        self.MaxFilterPixels = None
-        self.MaxPixelThreshold = None
-        self.MinAlarmPixels = None
-        self.MinBlobPixels = None
-        self.MinBlobs = None
-        self.MinFilterPixels = None
-        self.MinPixelThreshold = None
         self.MonitorId = None
         self.Name = None
-        self.NumCoords = None
-        self.OverloadFrames = None
         self.Type = None
-        self.Units = None
         for k, v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -275,12 +226,17 @@ class ZMEvent(object):
         )
 
     @property
-    def as_json(self):
+    def as_dict(self):
         d = {
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
+        d['path'] = self.path
+        return d
+
+    @property
+    def as_json(self):
         return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+            self.as_dict, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
         )
 
     def _query_and_return(self, sql, args, onlyone=True, none_ok=False):

@@ -26,6 +26,7 @@ import sys
 import os
 import time
 import logging
+from logging.handlers import SysLogHandler
 import argparse
 import json
 import smtplib
@@ -60,7 +61,7 @@ from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 )
 from zmevent_image_analysis import YoloAnalyzer
-from zmevent_db import ZMEvent, Monitor, MonitorZone, FrameStats, Frame
+from zmevent_db import ZMEvent
 
 #: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [YoloAnalyzer]
@@ -68,341 +69,6 @@ ANALYZERS = [YoloAnalyzer]
 #: logger - this will be set in :py:func:`~.main` to log to either stdout/err
 #: or a file depending on options
 logger = None
-
-
-class PushoverNotifier(object):
-    """Send specially-formatted Pushover notification for an event."""
-
-    def __init__(self, zmevent, analyzer, dry_run=False):
-        """
-        Initialize PushoverNotifier
-
-        :param zmevent: the event to notify for
-        :type zmevent: ZMEvent
-        :param analyzer: the image analysis wrapper
-        :type analyzer: ImageAnalysisWrapper
-        :param dry_run: whether or not this is a dry run
-        :type dry_run: bool
-        """
-        self._event = zmevent
-        self._analyzer = analyzer
-        self._dry_run = dry_run
-
-    def generate(self):
-        """generate params for the POST to pushover"""
-        logger.debug('Generating parameters for notification...')
-        e = self._event
-        d = {
-            'data': {
-                'token': CONFIG['PUSHOVER_APIKEY'],
-                'user': CONFIG['PUSHOVER_USERKEY'],
-                'title': 'ZoneMinder Alarm on %s (%s) Event %s' % (
-                    e.Monitor.Name,
-                    ', '.join(self._analyzer.analyzers[0].new_objects),
-                    e.EventId
-                ),
-                'message': '%s - %.2f seconds, %d alarm frames - Scores: '
-                           'total=%d avg=%d max=%d' % (
-                               e.Notes, e.Length, e.AlarmFrames,
-                               e.TotScore, e.AvgScore, e.MaxScore
-                           ),
-                'timestamp': time.mktime(e.StartTime.timetuple()),
-                'sound': 'siren'
-            },
-            'files': {}
-        }
-        cls = self._analyzer.analyzers[0]
-        k = cls.frames['Best'].get('analyzed')
-        if k is not None:
-            fname = '%s_%s_%s' % (
-                'Best',
-                cls.__class__.__name__,
-                os.path.basename(k)
-            )
-            d['files']['attachment'] = (
-                fname, open(k, 'rb').read(), 'image/jpeg'
-            )
-        else:
-            d['files']['attachment'] = (
-                e.BestFrame.path,
-                open(e.BestFrame.path, 'rb'),
-                'image/jpeg'
-            )
-        d['data']['url'] = '%s?view=event&mode=stream&mid=%s&eid=%s' % (
-            CONFIG['BASE_URL'], e.MonitorId, e.EventId
-        )
-        d['data']['retry'] = 300  # 5 minutes
-        return d
-
-    def send(self, params):
-        """send to pushover"""
-        url = 'https://api.pushover.net/1/messages.json'
-        if self._dry_run:
-            logger.warning('DRY RUN - Would POST to %s: %s', url, params)
-            return
-        logger.debug('Sending Pushover notification; params=%s', params)
-        r = requests.post(url, **params)
-        logger.debug(
-            'Pushover POST response HTTP %s: %s', r.status_code, r.text
-        )
-        r.raise_for_status()
-        if r.json()['status'] != 1:
-            raise RuntimeError('Error response from Pushover: %s', r.text)
-        logger.warning('Pushover Notification Success: %s', r.text)
-
-    def generate_and_send(self):
-        """generate params and POST to pushover"""
-        self.send(self.generate())
-
-
-class EmailNotifier(object):
-    """Send specially-formatted HTML email notification for an event."""
-
-    def __init__(self, zmevent, analyzer, dry_run=False):
-        """
-        Initialize EmailNotifier
-
-        :param zmevent: the event to notify for
-        :type zmevent: ZMEvent
-        :param analyzer: the image analysis wrapper
-        :type analyzer: ImageAnalysisWrapper
-        :param dry_run: whether or not this is a dry run
-        :type dry_run: bool
-        """
-        self._event = zmevent
-        self._analyzer = analyzer
-        self._dry_run = dry_run
-
-    def build_message(self, suppression_reason=None):
-        """
-        Build the email message; return a string email message.
-
-        :param suppression_reason: if the event is being suppressed, the string
-          reason for it.
-        :type suppression_reason: ``None`` or ``str``
-        :return: email to send
-        :rtype: str
-        """
-        e = self._event
-        msg = MIMEMultipart()
-        supp_text = ''
-        if suppression_reason is not None:
-            supp_text = 'SUPPRESSED '
-        msg['Subject'] = 'ZoneMinder: %sAlarm - %s-%s - %s ' \
-                         '(%s sec, t%s/m%s/a%s)' % (
-            supp_text, e.Monitor.Name, e.EventId, e.Notes, e.Length,
-            e.TotScore, e.MaxScore, e.AvgScore
-        )
-        msg['From'] = CONFIG['EMAIL_FROM']
-        msg['To'] = CONFIG['EMAIL_TO']
-        html = '<html><head></head><body>\n'
-        if suppression_reason is None:
-            html += '<p>ZoneMinder has detected an alarm:</p>\n'
-        else:
-            html += '<p>ZoneMinder detected an alarm that was ' \
-                    '<strong>suppressed</strong> because: <strong>%s</strong>' \
-                    '</p>\n' % suppression_reason
-        html += '<table style="border-spacing: 0px; box-shadow: 5px 5px 5px ' \
-                'grey; border-collapse:separate; border-radius: 7px;">\n'
-        html += self._table_rows([
-            [
-                'Monitor',
-                '<a href="%s?view=watch&mid=%s">%s (%s)</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.Monitor.Name,
-                    e.MonitorId
-                )
-            ],
-            [
-                'Event',
-                '<a href="%s?view=event&mid=%s&eid=%s">%s (%s)</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.EventId, e.Name,
-                    e.EventId
-                )
-            ],
-            ['Cause', e.Cause],
-            ['Notes', e.Notes],
-            ['Length', e.Length],
-            ['Start Time', e.StartTime],
-            ['Frames', '%s (%s alarm)' % (len(e.AllFrames), e.AlarmFrames)],
-            [
-                'Best Image',
-                '<a href="%s?view=frame&mid=%s&eid=%s&fid=%s">Frame %s</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.EventId,
-                    e.BestFrame.FrameId, e.BestFrame.FrameId
-                )
-            ],
-            ['Scores', '%s Total / %s Max / %s Avg' % (
-                e.TotScore, e.MaxScore, e.AvgScore
-            )],
-            [
-                'Live Monitor',
-                '<a href="%s?view=watch&mid=%s">%s Live View</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.Monitor.Name
-                )
-            ]
-        ])
-        html += '</table>\n'
-        # BEGIN image analysis
-        html += '<p>Image Analysis Results</p>\n'
-        html += '<p><strong>New Objects: %s</strong></p>\n' % ', '.join(
-            self._analyzer.new_object_labels
-        )
-        html += '<table style="border-spacing: 0px; box-shadow: 5px 5px 5px ' \
-                'grey; border-collapse:separate; border-radius: 7px;">\n'
-        html += '<tr>' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Class</th>\n' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Runtime</th>\n' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Results</th>\n' \
-                '</tr>\n'
-        for a in self._analyzer.analyzers:
-            html += self._analyzer_table_row(a)
-        html += '</table>\n'
-        # END image analysis
-        html += '</body></html>\n'
-        msg.attach(MIMEText(html, 'html'))
-        if self._dry_run:
-            logger.warning('MESSAGE:\n%s', msg.as_string())
-        if e.BestFrame.path != e.FirstFrame.path:
-            if self._dry_run:
-                logger.warning('Would attach: %s', e.FirstFrame.path)
-            msg.attach(
-                MIMEImage(
-                    open(e.FirstFrame.path, 'rb').read(),
-                    name='first_%s' % e.FirstFrame.filename
-                )
-            )
-            for cls in self._analyzer.analyzers:
-                k = cls.frames['First'].get('analyzed')
-                if k is not None:
-                    fname = '%s_%s_%s' % (
-                        'First',
-                        cls.__class__.__name__,
-                        os.path.basename(k)
-                    )
-                    msg.attach(
-                        MIMEImage(open(k, 'rb').read(), name=fname)
-                    )
-                    if self._dry_run:
-                        logger.warning(
-                            'Would attach: %s as "%s"', k, fname
-                        )
-        if self._dry_run:
-            logger.warning('Would attach: %s', e.BestFrame.path)
-        msg.attach(
-            MIMEImage(
-                open(e.BestFrame.path, 'rb').read(),
-                name='best_%s' % e.BestFrame.filename
-            )
-        )
-        for cls in self._analyzer.analyzers:
-            k = cls.frames['Best'].get('analyzed')
-            if k is not None:
-                fname = '%s_%s_%s' % (
-                    'Best',
-                    cls.__class__.__name__,
-                    os.path.basename(k)
-                )
-                msg.attach(
-                    MIMEImage(open(k, 'rb').read(), name=fname)
-                )
-                if self._dry_run:
-                    logger.warning(
-                        'Would attach: %s as "%s"', k, fname
-                    )
-            k = cls.frames['Last'].get('analyzed')
-            if k is not None:
-                fname = '%s_%s_%s' % (
-                    'Last',
-                    cls.__class__.__name__,
-                    os.path.basename(k)
-                )
-                msg.attach(
-                    MIMEImage(open(k, 'rb').read(), name=fname)
-                )
-                if self._dry_run:
-                    logger.warning(
-                        'Would attach: %s as "%s"', k, fname
-                    )
-        return msg.as_string()
-
-    def _analyzer_table_row(self, result):
-        s = ''
-        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
-             'padding: 5px;"%s>%s</td>\n'
-        s += '<tr>'
-        s += td % (' rowspan="3"', result.__class__.__name__)
-        s += td % (' rowspan="3"', '%.2f sec' % result.runtime)
-        content = '<strong>First:</strong><br />' + '<br />'.join(
-            result.result['First']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        s += '<tr>'
-        content = '<strong>Best:</strong><br />' + '<br />'.join(
-            result.result['Best']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        s += '<tr>'
-        content = '<strong>Last:</strong><br />' + '<br />'.join(
-            result.result['Last']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        return s
-
-    def _table_rows(self, data):
-        s = ''
-        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
-             'padding: 5px;">%s</td>\n'
-        for row in data:
-            s += '<tr>'
-            s += td % row[0]
-            s += td % row[1]
-            s += '</tr>\n'
-        return s
-
-    def send_message(self, msg):
-        """send the email message (notification)"""
-        logger.debug('Connecting to SMTP on smtp.gmail.com:587')
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.ehlo()
-        s.starttls()
-        s.ehlo()
-        creds = self._get_creds()
-        s.login(creds['AuthUser'], creds['AuthPass'])
-        if self._dry_run:
-            logger.warning(
-                'DRY RUN - Would send mail FROM=%s TO=%s',
-                CONFIG['EMAIL_FROM'], CONFIG['EMAIL_TO']
-            )
-            s.quit()
-            return
-        logger.info(
-            'Sending mail From=%s To=%s', CONFIG['EMAIL_FROM'],
-            CONFIG['EMAIL_TO']
-        )
-        s.sendmail(CONFIG['EMAIL_FROM'], CONFIG['EMAIL_TO'], msg)
-        logger.warning('EMail sent.')
-        s.quit()
-
-    def _get_creds(self):
-        """retrieve GMail credentials from ssmtp.conf"""
-        with open('/etc/ssmtp/ssmtp.conf', 'r') as fh:
-            lines = fh.readlines()
-        items = {
-            x.split('=', 1)[0]: x.split('=', 1)[1] for x in lines
-        }
-        return items
-
-    def build_and_send(self, suppression_reason=None):
-        """build and then send the email notification"""
-        self.send_message(
-            self.build_message(suppression_reason=suppression_reason)
-        )
 
 
 class EventFilter(object):
@@ -613,25 +279,23 @@ def get_basicconfig_kwargs(args):
     return log_kwargs
 
 
-def main():
-    # setsid so calling process can continue without terminating
-    os.setsid()
-    # populate secrets
-    populate_secrets()
-    # setup logging
+def setup_logging(args):
     global logger
-    args = parse_args(sys.argv[1:])
-    logging.basicConfig(**get_basicconfig_kwargs(args))
+    kwargs = get_basicconfig_kwargs(args)
+    logging.basicConfig(**kwargs)
     logger = logging.getLogger()
-    # initial log
-    logger.warning(
-        'Triggered; EventId=%s MonitorId=%s Cause=%s',
-        args.event_id, args.monitor_id, args.cause
-    )
+    if args.foreground:
+        return
+    # if not running in foreground, log to syslog also
+    sh = SysLogHandler()
+    sh.ident = 'zmevent_handler.py'
+    sh.setFormatter(logging.Formatter(kwargs['format']))
+    logger.addHandler(sh)
+
+
+def run(args):
     # populate the event
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
-    # instantiate the analysis wrapper
-    analyzer = ImageAnalysisWrapper(event)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
     if os.geteuid() != evt_owner:
@@ -640,6 +304,8 @@ def main():
             ' (not UID %s)', event.path, evt_owner, os.geteuid()
         )
     logger.debug('Loaded event: %s', event.as_json)
+    # instantiate the analysis wrapper
+    analyzer = ImageAnalysisWrapper(event)
     # wait for the event to finish - we wait up to 30s then continue
     event.wait_for_finish()
     if not event.is_finished:
@@ -702,6 +368,24 @@ def main():
             'ERROR sending email notification for event %s: %s',
             event.EventId, ex, exc_info=True
         )
+
+
+
+def main():
+    # setsid so we can continue running even if caller dies
+    os.setsid()
+    # populate secrets from environment variables
+    populate_secrets()
+    # parse command line arguments
+    args = parse_args(sys.argv[1:])
+    # setup logging
+    setup_logging(args)
+    # initial log
+    logger.warning(
+        'Triggered; EventId=%s MonitorId=%s Cause=%s',
+        args.event_id, args.monitor_id, args.cause
+    )
+    run(args)
 
 
 if __name__ == "__main__":

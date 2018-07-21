@@ -62,8 +62,17 @@ class suppress_stdout_stderr(object):
 
 
 class ImageAnalyzer(object):
+    """
+    Base class for specific object detection algorithms/packages.
+    """
 
     def __init__(self, event):
+        """
+        Initialize an image analyzer.
+
+        :param event: the event to analyze
+        :type event: ZMEvent
+        """
         self._event = event
         self._start = 0
         self._end = 0
@@ -80,6 +89,9 @@ class ImageAnalyzer(object):
         }
 
     def analyze(self):
+        """
+        Analyze the frames; set instance variables exposed as properties.
+        """
         raise NotImplementedError('Implement in subclass!')
 
     @property
@@ -100,8 +112,10 @@ class ImageAnalyzer(object):
 
 
 class YoloAnalyzer(ImageAnalyzer):
+    """Object detection using yolo34py and yolov3-tiny"""
 
     def _ensure_configs(self):
+        """Ensure that yolov3-tiny configs and data are in place."""
         # This uses the yolov3-tiny, because I only have a 1GB GPU
         if not os.path.exists(YOLO_CFG_PATH):
             logger.warning('Creating directory: %s', YOLO_CFG_PATH)
@@ -148,6 +162,17 @@ class YoloAnalyzer(ImageAnalyzer):
         return os.path.join(YOLO_CFG_PATH, f)
 
     def do_image_yolo(self, net, fname, detected_fname):
+        """
+        Analyze a single image using yolo34py.
+        :param net: the yolo network to use
+        :type net: pydarknet.Detector
+        :param fname: path to input image
+        :type fname: str
+        :param detected_fname: file path to write object detection image to
+        :type detected_fname: str
+        :return: yolo3 detection results
+        :rtype: list of (str category, float score, tuple bounds) tuples
+        """
         logger.debug('Starting: %s', fname)
         img = cv2.imread(fname)
         img2 = Image(img)
