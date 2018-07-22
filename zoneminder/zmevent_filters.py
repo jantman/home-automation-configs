@@ -9,7 +9,7 @@ class EventFilter(object):
     should be notified on or not.
 
     Instantiate class and call :py:meth:`~.run`. After that, check the return
-    value of the :py:attr:`~.should_notify` property.
+    value of the :py:attr:`~.matched` property.
     """
 
     def __init__(self, event):
@@ -20,8 +20,8 @@ class EventFilter(object):
         :type event: ZMEvent
         """
         self._event = event
-        self._should_notify = True
-        self._reason = []
+        self._matched = False
+        self._reasons = []
         self._suffix = None
 
     def run(self):
@@ -29,15 +29,14 @@ class EventFilter(object):
         raise NotImplementedError()
 
     @property
-    def should_notify(self):
+    def matched(self):
         """
-        Whether we should send (True) or suppress (False) a notification for
-        this event.
+        Whether or not the filter matched this event.
 
-        :returns: whether to send a notification or not
+        :returns: whether filter matched or not
         :rtype: bool
         """
-        return self._should_notify
+        return self._matched
 
     @property
     def reason(self):
@@ -47,11 +46,11 @@ class EventFilter(object):
         :return: reason why notification should be suppressed, or None
         :rtype: ``str`` or ``None``
         """
-        if len(self._reason) == 0:
+        if len(self._reasons) == 0:
             return None
-        elif len(self._reason) == 1:
-            return self._reason[0]
-        return '; '.join(self._reason)
+        elif len(self._reasons) == 1:
+            return self._reasons[0]
+        return '; '.join(self._reasons)
 
     @property
     def suffix(self):
@@ -70,8 +69,9 @@ class EventFilter(object):
     def as_dict(self):
         return {
             'filter_name': self.__class__.__name__,
-            'should_notify': self.should_notify,
-
+            'matched': self.matched,
+            'reason': self.reason,
+            'suffix': self.suffix
         }
 
 
@@ -95,11 +95,11 @@ class IRChangeFilter(EventFilter):
         f1_is_color = self._image_is_color(f1)
         f2_is_color = self._image_is_color(f2)
         if f1_is_color and not f2_is_color:
-            self._should_notify = False
-            self._reason.append('Color to BW switch')
+            self._matched = True
+            self._reasons.append('Color to BW switch')
             self._suffix = 'Color2BW'
             return
         if not f1_is_color and f2_is_color:
-            self._should_notify = False
-            self._reason.append('BW to color switch')
+            self._matched = True
+            self._reasons.append('BW to color switch')
             self._suffix = 'BW2Color'
