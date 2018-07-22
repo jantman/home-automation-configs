@@ -184,9 +184,9 @@ class ZMEvent(object):
         self.StartTime = None
         self.TotScore = None
         self.Width = None
-        self.BestFrame = None
-        self.FirstFrame = None
-        self.LastFrame = None
+        self.BestFrameId = None
+        self.FirstFrameId = None
+        self.LastFrameId = None
 
         self.Monitor = None
         self.AllFrames = {}
@@ -217,9 +217,7 @@ class ZMEvent(object):
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
         d['path'] = self.path
-        d['BestFrameId'] = self.BestFrame.FrameId
-        for k in ['AllFrames', 'FirstFrame', 'BestFrame', 'LastFrame']:
-            del d[k]
+        del d['AllFrames']
         return d
 
     @property
@@ -339,28 +337,24 @@ class ZMEvent(object):
             self.MonitorId, onlyone=False, none_ok=True
         )
         if len(self.AllFrames) > 0:
-            self.FirstFrame = self.AllFrames[
-                min(self.AllFrames.keys())
-            ]
-            self.LastFrame = self.AllFrames[
-                max(self.AllFrames.keys())
-            ]
-            self.BestFrame = sorted(
-                self.AllFrames.values(), key=lambda x: (x.Score, x.FrameId)
-            )[-1]
+            self._set_analysis_frames()
         for zone in results:
             self.Monitor.Zones[zone['Id']] = MonitorZone(**zone)
         logger.info('Done populating.')
         self._conn.commit()
-        self._set_analysis_frames()
 
     def _set_analysis_frames(self):
         """Generate and set ``self.FramesForAnalysis``."""
         logger.debug('Determining Frames to analyze')
+        self.FirstFrameId = min(self.AllFrames.keys())
+        self.LastFrameId = max(self.AllFrames.keys())
+        self.BestFrameId = sorted(
+            self.AllFrames.values(), key=lambda x: (x.Score, x.FrameId)
+        )[-1].FrameId
         self.FramesForAnalysis = {
-            self.FirstFrame.FrameId: self.FirstFrame,
-            self.BestFrame.FrameId: self.BestFrame,
-            self.LastFrame.FrameId: self.LastFrame
+            self.FirstFrameId: self.AllFrames[self.FirstFrameId],
+            self.BestFrameId: self.AllFrames[self.BestFrameId],
+            self.LastFrameId: self.AllFrames[self.LastFrameId]
         }
         logger.info('Frames to analyze: %s', self.FramesForAnalysis)
 
