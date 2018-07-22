@@ -238,9 +238,10 @@ class YoloAnalyzer(ImageAnalyzer):
         logger.info('Done with: %s', fname)
         return retval
 
-    def analyze(self, frame_path):
+    def analyze(self, frame):
         _start = time.time()
         # get all the results
+        frame_path = frame.path
         output_path = frame_path.replace('.jpg', '.yolo3.jpg')
         res = self.do_image_yolo(frame_path, output_path)
         _end = time.time()
