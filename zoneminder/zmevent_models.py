@@ -70,13 +70,10 @@ class FrameStats(object):
         )
 
     @property
-    def as_json(self):
-        d = {
+    def as_dict(self):
+        return {
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
 
 
 class Frame(object):
