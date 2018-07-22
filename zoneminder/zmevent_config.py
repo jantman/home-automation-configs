@@ -29,8 +29,8 @@ CONFIG = {
     'MYSQL_DB': None,
     'MYSQL_USER': None,
     'MYSQL_PASS': None,
-    'BASE_URL': None,
-    'HASS_API_URL': 'http://localhost:8123/api',
+    'BASE_URL': None,  # ZoneMinder base URL, i.e.: http://localhost/zm/
+    'HASS_API_URL': None,  # usually should be: http://localhost:8123/api
 }
 
 

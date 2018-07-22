@@ -7,6 +7,8 @@ import logging
 import time
 import json
 import pymysql
+from PIL import Image
+import requests
 
 from zmevent_config import (
     EVENTS_PATH, CONFIG, DateSafeJsonEncoder
