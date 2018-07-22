@@ -5,6 +5,7 @@ Configuration for zmevent_handler.py and related scripts.
 import json
 from datetime import datetime
 from decimal import Decimal
+from zmevent_object_filter import IgnoredObject
 
 #: If logging to a file, the file path to log to.
 LOG_PATH = '/var/cache/zoneminder/temp/zmevent_handler.log'
@@ -32,6 +33,22 @@ CONFIG = {
     'BASE_URL': None,  # ZoneMinder base URL, i.e.: http://localhost/zm/
     'HASS_API_URL': None,  # usually should be: http://localhost:8123/api
 }
+
+#: IgnoredObject instances to filter objects out from detection results
+IGNORED_OBJECTS = [
+    # False detection for porch railing
+    IgnoredObject(
+        ['bench', 'chair', 'zebra'],
+        monitor_num=3,
+        bounding_box=(470, 430, 300, 300)
+    ),
+    # my car when parked
+    IgnoredObject(
+        ['car'],
+        monitor_num=3,
+        bounding_box=(1550, 730, 200, 200)
+    )
+]
 
 
 class DateSafeJsonEncoder(json.JSONEncoder):

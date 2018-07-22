@@ -6,6 +6,7 @@ import logging
 from textwrap import dedent
 import requests
 from shapely.geometry.polygon import LinearRing, Polygon
+from zmevent_config import IGNORED_OBJECTS
 
 try:
     import cv2
@@ -234,31 +235,43 @@ class YoloAnalyzer(ImageAnalyzer):
         retval = []
         for cat, score, bounds in results:
             x, y, w, h = bounds
+            zones = self._zones_for_object(frame, x, y, w, h)
+            filter_results = [
+                x.should_ignore(cat, x, y, zones) for x in IGNORED_OBJECTS
+            ]
+            if any(y is True for y in filter_results):
+                # object should be ignored
+                rect_color = (104, 104, 104)
+                text_color = (111, 247, 93)
+            else:
+                # object should not be ignored; add to result
+                rect_color = (255, 0, 0)
+                text_color = (255, 255, 0)
+                retval.append(DetectedObject(
+                    cat, zones, score, x, y, w, h
+                ))
             cv2.rectangle(
                 img, (int(x - w / 2), int(y - h / 2)),
-                (int(x + w / 2), int(y + h / 2)), (255, 0, 0), thickness=2
+                (int(x + w / 2), int(y + h / 2)), rect_color, thickness=2
             )
             cv2.putText(
                 img, '%s (%.2f)' % (cat.decode('utf-8'), score),
                 (int(x), int(y)),
-                cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 0)
+                cv2.FONT_HERSHEY_COMPLEX, 1, text_color
             )
-            zones = self._zones_for_object(frame, x, y, w, h)
-            retval.append(DetectedObject(
-                cat, zones, score, x, y, w, h
-            ))
         logger.info('Writing: %s', detected_fname)
         cv2.imwrite(detected_fname, img)
         logger.info('Done with: %s', fname)
         return retval
 
     def _xywh_to_ring(self, x, y, width, height):
-        points = []
-        points.append((x - (width / 2.0), y - (height / 2.0)))
-        points.append((x - (width / 2.0), y + (height / 2.0)))
-        points.append((x + (width / 2.0), y + (height / 2.0)))
-        points.append((x + (width / 2.0), y - (height / 2.0)))
-        points.append((x - (width / 2.0), y - (height / 2.0)))
+        points = [
+            (x - (width / 2.0), y - (height / 2.0)),
+            (x - (width / 2.0), y + (height / 2.0)),
+            (x + (width / 2.0), y + (height / 2.0)),
+            (x + (width / 2.0), y - (height / 2.0)),
+            (x - (width / 2.0), y - (height / 2.0))
+        ]
         return Polygon(LinearRing(points))
 
     def _zones_for_object(self, frame, x, y, w, h):

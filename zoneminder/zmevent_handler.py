@@ -21,12 +21,6 @@ Program flow:
 
 The functionality of this script relies on the other ``zmevent_*.py`` modules
 in this git repo.
-
-##########################################
-@TODO:
-  - global config for objects to ignore - IgnoredObject classes that ObjectDetectionResult instances match against
-- serialize all that info and pass it to HASS via an event, to be handled by AppDaemon
-  - keep trying for 120s or so. If all fail, write to disk in logdir
 """
 
 import sys
