@@ -9,6 +9,7 @@ import json
 import pymysql
 from PIL import Image
 import requests
+from shapely.geometry.polygon import LinearRing, Polygon
 
 from zmevent_config import (
     EVENTS_PATH, CONFIG, DateSafeJsonEncoder
@@ -137,10 +138,12 @@ class MonitorZone(object):
         self.MonitorId = None
         self.Name = None
         self.Type = None
+        self.polygon = None
         for k, v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
         self.point_list = self._parse_db_coords_string(self.Coords)
+        self.polygon = Polygon(LinearRing(self.point_list))
 
     def _parse_db_coords_string(self, s):
         res = []

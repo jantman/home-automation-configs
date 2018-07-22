@@ -5,6 +5,7 @@ import time
 import logging
 from textwrap import dedent
 import requests
+from shapely.geometry.polygon import LinearRing, Polygon
 
 try:
     import cv2
@@ -212,9 +213,12 @@ class YoloAnalyzer(ImageAnalyzer):
     def _config_path(self, f):
         return os.path.join(YOLO_CFG_PATH, f)
 
-    def do_image_yolo(self, fname, detected_fname):
+    def do_image_yolo(self, frame, fname, detected_fname):
         """
         Analyze a single image using yolo34py.
+
+        :param frame: the Frame being analyzed
+        :type frame: Frame
         :param fname: path to input image
         :type fname: str
         :param detected_fname: file path to write object detection image to
@@ -239,20 +243,42 @@ class YoloAnalyzer(ImageAnalyzer):
                 (int(x), int(y)),
                 cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 0)
             )
+            zones = self._zones_for_object(frame, x, y, w, h)
             retval.append(DetectedObject(
-                cat, [], score, x, y, w, h
+                cat, zones, score, x, y, w, h
             ))
         logger.info('Writing: %s', detected_fname)
         cv2.imwrite(detected_fname, img)
         logger.info('Done with: %s', fname)
         return retval
 
+    def _xywh_to_ring(self, x, y, width, height):
+        points = []
+        points.append((x - (width / 2.0), y - (height / 2.0)))
+        points.append((x - (width / 2.0), y + (height / 2.0)))
+        points.append((x + (width / 2.0), y + (height / 2.0)))
+        points.append((x + (width / 2.0), y - (height / 2.0)))
+        points.append((x - (width / 2.0), y - (height / 2.0)))
+        return Polygon(LinearRing(points))
+
+    def _zones_for_object(self, frame, x, y, w, h):
+        res = {}
+        obj_polygon = self._xywh_to_ring(x, y, w, h)
+        for zone in frame.event.Monitor.Zones.values():
+            if obj_polygon.intersects(zone.polygon):
+                amt = (
+                    obj_polygon.intersection(zone.polygon).area /
+                    obj_polygon.area
+                ) * 100
+                res[zone.Name] = amt
+        return res
+
     def analyze(self, frame):
         _start = time.time()
         # get all the results
         frame_path = frame.path
         output_path = frame_path.replace('.jpg', '.yolo3.jpg')
-        res = self.do_image_yolo(frame_path, output_path)
+        res = self.do_image_yolo(frame, frame_path, output_path)
         _end = time.time()
         return ObjectDetectionResult(
             self.__class__.__name__,

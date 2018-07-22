@@ -24,8 +24,6 @@ in this git repo.
 
 ##########################################
 @TODO:
-- run object detection on frames, save results to DB, add to dict to pass to HASS
-  - each detection should also be localized to one or a list of zones
   - global config for objects to ignore - IgnoredObject classes that ObjectDetectionResult instances match against
 - serialize all that info and pass it to HASS via an event, to be handled by AppDaemon
   - keep trying for 120s or so. If all fail, write to disk in logdir
