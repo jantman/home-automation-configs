@@ -64,7 +64,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 # Imports from this directory
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
-    HASS_EVENT_NAME
+    HASS_EVENT_NAME, CONFIG
 )
 from zmevent_image_analysis import YoloAnalyzer
 from zmevent_models import ZMEvent
