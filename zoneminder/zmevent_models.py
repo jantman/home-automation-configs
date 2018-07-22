@@ -190,6 +190,7 @@ class ZMEvent(object):
 
         self.Monitor = None
         self.AllFrames = {}
+        self.FramesForAnalysis = []
 
         self.frame_num_padding = None
         self.frame_fmt = None
@@ -216,6 +217,7 @@ class ZMEvent(object):
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
         d['path'] = self.path
+        del d['AllFrames']
         return d
 
     @property
@@ -348,6 +350,15 @@ class ZMEvent(object):
             self.Monitor.Zones[zone['Id']] = MonitorZone(**zone)
         logger.info('Done populating.')
         self._conn.commit()
+        self._set_analysis_frames()
+
+    def _set_analysis_frames(self):
+        """Generate and set ``self.FramesForAnalysis``."""
+        logger.debug('Determining Frames to analyze')
+        self.FramesForAnalysis = [
+            self.FirstFrame, self.BestFrame, self.LastFrame
+        ]
+        logger.info('Frames to analyze: %s', self.FramesForAnalysis)
 
     @property
     def is_finished(self):

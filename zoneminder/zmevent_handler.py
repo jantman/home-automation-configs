@@ -127,10 +127,7 @@ class ImageAnalysisWrapper(object):
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
             cls = a(self._event)
-            for frame in [
-                self._event.FirstFrame, self._event.BestFrame,
-                self._event.LastFrame
-            ]:
+            for frame in self._event.FramesForAnalysis:
                 res = cls.analyze(frame)
                 results.append(res)
                 try:
