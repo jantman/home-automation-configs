@@ -38,12 +38,14 @@ CONFIG = {
 IGNORED_OBJECTS = [
     # False detection for porch railing
     IgnoredObject(
+        'FrontPorchLeftRailing',
         ['bench', 'chair', 'zebra'],
         monitor_num=3,
         bounding_box=(470, 430, 300, 300)
     ),
     # my car when parked
     IgnoredObject(
+        'MyCarParked',
         ['car'],
         monitor_num=3,
         bounding_box=(1550, 730, 200, 200)

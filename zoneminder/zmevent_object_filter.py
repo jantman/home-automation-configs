@@ -7,7 +7,7 @@ class IgnoredObject(object):
     """Class to filter out an object from object detection results."""
 
     def __init__(
-        self, labels, monitor_num=None, bounding_box=None, zone_names=None
+        self, name, labels, monitor_num=None, bounding_box=None, zone_names=None
     ):
         """
         Initialize an IgnoredObject instance. When object detection is run on
@@ -19,6 +19,8 @@ class IgnoredObject(object):
         Only the ``labels`` parameter is required. Other parameters are additive
         if specified.
 
+        :param name: unique name for this filter
+        :type name: str
         :param labels: list of string object detection labels to ignore
         :type labels: list
         :param monitor_num: monitor number this filter is valid for. Leaving
@@ -33,6 +35,7 @@ class IgnoredObject(object):
         :type zone_names: list
         """
         assert isinstance(labels, type([]))
+        self.name = name
         self._labels = labels
         self._monitor_num = monitor_num
         self._bounding_box = bounding_box

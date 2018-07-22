@@ -236,11 +236,17 @@ class YoloAnalyzer(ImageAnalyzer):
         for cat, score, bounds in results:
             x, y, w, h = bounds
             zones = self._zones_for_object(frame, x, y, w, h)
-            filter_results = [
-                x.should_ignore(cat, x, y, zones) for x in IGNORED_OBJECTS
+            logger.debug('Checking IgnoredObject filters for detections...')
+            matched_filters = [
+                x.name for x in IGNORED_OBJECTS
+                if x.should_ignore(cat, x, y, zones)
             ]
-            if any(y is True for y in filter_results):
+            if len(matched_filters) > 0:
                 # object should be ignored
+                logger.debug(
+                    'Ignoring %s (%.2f) at %d,%d based on filters: %s',
+                    cat, score, x, y, matched_filters
+                )
                 rect_color = (104, 104, 104)
                 text_color = (111, 247, 93)
             else:
