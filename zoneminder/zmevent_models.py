@@ -190,7 +190,7 @@ class ZMEvent(object):
 
         self.Monitor = None
         self.AllFrames = {}
-        self.FramesForAnalysis = []
+        self.FramesForAnalysis = {}
 
         self.frame_num_padding = None
         self.frame_fmt = None
@@ -217,7 +217,9 @@ class ZMEvent(object):
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
         d['path'] = self.path
-        del d['AllFrames']
+        d['BestFrameId'] = self.BestFrame.FrameId
+        for k in ['AllFrames', 'FirstFrame', 'BestFrame', 'LastFrame']:
+            del d[k]
         return d
 
     @property
@@ -355,9 +357,11 @@ class ZMEvent(object):
     def _set_analysis_frames(self):
         """Generate and set ``self.FramesForAnalysis``."""
         logger.debug('Determining Frames to analyze')
-        self.FramesForAnalysis = [
-            self.FirstFrame, self.BestFrame, self.LastFrame
-        ]
+        self.FramesForAnalysis = {
+            self.FirstFrame.FrameId: self.FirstFrame,
+            self.BestFrame.FrameId: self.BestFrame,
+            self.LastFrame.FrameId: self.LastFrame
+        }
         logger.info('Frames to analyze: %s', self.FramesForAnalysis)
 
     @property
