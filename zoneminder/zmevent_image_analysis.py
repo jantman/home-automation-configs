@@ -64,7 +64,10 @@ class suppress_stdout_stderr(object):
 class DetectedObject(object):
 
     def __init__(self, label, zones, score, x, y, w, h):
-        self._label = label
+        if isinstance(label, str):
+            self._label = label
+        else:
+            self._label = label.decode()
         self._zones = zones
         self._score = score
         self._x = x
