@@ -122,24 +122,6 @@ class Frame(object):
         return os.path.join(self.event.path, self.filename)
 
     @property
-    def is_color(self):
-        if self._is_color is not None:
-            return self._is_color
-        img = self.image
-        logger.debug('Finding if image is color or not for %s', self)
-        bands = img.split()
-        histos = [x.histogram() for x in bands]
-        if histos[1:] == histos[:-1]:
-            self._is_color = False
-        else:
-            self._is_color = True
-        logger.info(
-            'Frame %s is_color=%s based on histograms of bands',
-            self, self._is_color
-        )
-        return self._is_color
-
-    @property
     def image(self):
         if self._image is not None:
             return self._image

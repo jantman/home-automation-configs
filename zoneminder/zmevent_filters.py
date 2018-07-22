@@ -81,16 +81,25 @@ class IRChangeFilter(EventFilter):
     or vice-versa.
     """
 
+    def _image_is_color(self, img):
+        bands = img.split()
+        histos = [x.histogram() for x in bands]
+        if histos[1:] == histos[:-1]:
+            return False
+        return True
+
     def run(self):
         """Determine if the camera switched from or to IR during this event."""
         f1 = self._event.FirstFrame
         f2 = self._event.LastFrame
-        if f1.is_color and not f2.is_color:
+        f1_is_color = self._image_is_color(f1)
+        f2_is_color = self._image_is_color(f2)
+        if f1_is_color and not f2_is_color:
             self._should_notify = False
             self._reason.append('Color to BW switch')
             self._suffix = 'Color2BW'
             return
-        if not f1.is_color and f2.is_color:
+        if not f1_is_color and f2_is_color:
             self._should_notify = False
             self._reason.append('BW to color switch')
             self._suffix = 'BW2Color'
