@@ -260,7 +260,7 @@ class YoloAnalyzer(ImageAnalyzer):
                 (int(x + w / 2), int(y + h / 2)), rect_color, thickness=2
             )
             cv2.putText(
-                img, '%s (%.2f)' % (cat.decode('utf-8'), score),
+                img, '%s (%.2f)' % (cat, score),
                 (int(x), int(y)),
                 cv2.FONT_HERSHEY_COMPLEX, 1, text_color
             )
