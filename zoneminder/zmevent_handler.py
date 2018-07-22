@@ -16,6 +16,8 @@ Program flow:
   and B&W (IR).
 - Feed images through darknet yolo3 object detection; capture object detection
   results as well as which Zone each object is in.
+  - Optionally ignore certain object labels/categories, optionally by Monitor
+    ID, Zone, and/or bounding box rectangle.
 - Pass the results of all this on to HASS via an event, that will be handled
   by an AppDaemon app.
 
