@@ -93,7 +93,6 @@ class Frame(object):
         self.Stats = {}
         self.event = None
         self._image = None
-        self._is_color = None
         for k, v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -110,7 +109,6 @@ class Frame(object):
         }
         d['frame_filename'] = self.filename
         d['frame_path'] = self.path
-        d['is_color'] = self.is_color
         return d
 
     @property
