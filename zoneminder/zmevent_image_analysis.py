@@ -91,13 +91,16 @@ class DetectedObject(object):
 class ObjectDetectionResult(object):
 
     def __init__(
-        self, analyzer_name, frame_path, detected_path, detections, runtime
+        self, analyzer_name, frame, frame_path, detected_path, detections,
+        runtime
     ):
         """
         Class to represent the results of running object detection on an image.
 
         :param analyzer_name: name of the analyzer class used
         :type analyzer_name: str
+        :param frame: the Frame that was analyzed
+        :type frame: Frame
         :param frame_path: path to the raw frame to analyze on disk
         :type frame_path: str
         :param detected_path: path to the output image with labels
@@ -110,6 +113,7 @@ class ObjectDetectionResult(object):
         self.detected_path = detected_path
         self.detections = detections
         self.runtime = runtime
+        self._frame = frame
 
     @property
     def as_dict(self):
@@ -118,7 +122,9 @@ class ObjectDetectionResult(object):
             'frame_path': self.frame_path,
             'output_path': self.detected_path,
             'detections': self.detections,
-            'runtime': self.runtime
+            'runtime': self.runtime,
+            'EventId': self._frame.EventId,
+            'FrameId': self._frame.FrameId
         }
 
 
@@ -250,6 +256,7 @@ class YoloAnalyzer(ImageAnalyzer):
         _end = time.time()
         return ObjectDetectionResult(
             self.__class__.__name__,
+            frame,
             frame_path,
             output_path,
             res,
