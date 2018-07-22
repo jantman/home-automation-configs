@@ -4,6 +4,7 @@ import os
 import time
 import logging
 from textwrap import dedent
+import requests
 
 try:
     import cv2
@@ -60,6 +61,64 @@ class suppress_stdout_stderr(object):
             os.close(fd)
 
 
+class DetectedObject(object):
+
+    def __init__(self, label, zones, score, x, y, w, h):
+        self._label = label
+        self._zones = zones
+        self._score = score
+        self._x = x
+        self._y = y
+        self._w = w
+        self._h = h
+
+    @property
+    def as_dict(self):
+        return {
+            'label': self._label,
+            'zones': self._zones,
+            'score': self._score,
+            'x': self._x,
+            'y': self._y,
+            'w': self._w,
+            'h': self._h
+        }
+
+
+class ObjectDetectionResult(object):
+
+    def __init__(
+        self, analyzer_name, frame_path, detected_path, detections, runtime
+    ):
+        """
+        Class to represent the results of running object detection on an image.
+
+        :param analyzer_name: name of the analyzer class used
+        :type analyzer_name: str
+        :param frame_path: path to the raw frame to analyze on disk
+        :type frame_path: str
+        :param detected_path: path to the output image with labels
+        :type detected_path: str
+        :param detections: list of DetectedObject instances
+        :type detections: list
+        """
+        self.analyzer_name = analyzer_name
+        self.frame_path = frame_path
+        self.detected_path = detected_path
+        self.detections = detections
+        self.runtime = runtime
+
+    @property
+    def as_dict(self):
+        return {
+            'analyzer_name': self.analyzer_name,
+            'frame_path': self.frame_path,
+            'output_path': self.detected_path,
+            'detections': self.detections,
+            'runtime': self.runtime
+        }
+
+
 class ImageAnalyzer(object):
     """
     Base class for specific object detection algorithms/packages.
@@ -73,45 +132,29 @@ class ImageAnalyzer(object):
         :type event: ZMEvent
         """
         self._event = event
-        self._start = 0
-        self._end = 0
-        self._result = {
-            'First': None,
-            'Best': None,
-            'Last': None,
-        }
-        self._raw_result = {}
-        self._frame_paths = {
-            'First': {},
-            'Best': {},
-            'Last': {}
-        }
 
-    def analyze(self):
+    def analyze(self, frame_path):
         """
-        Analyze the frames; set instance variables exposed as properties.
+        Analyze a frame; return an ObjectDetectionResult.
         """
-        raise NotImplementedError('Implement in subclass!')
-
-    @property
-    def result(self):
-        return self._result
-
-    @property
-    def frames(self):
-        return self._frame_paths
-
-    @property
-    def runtime(self):
-        return self._end - self._start
-
-    @property
-    def new_objects(self):
         raise NotImplementedError('Implement in subclass!')
 
 
 class YoloAnalyzer(ImageAnalyzer):
     """Object detection using yolo34py and yolov3-tiny"""
+
+    def __init__(self, event):
+        super(YoloAnalyzer, self).__init__(event)
+        self._ensure_configs()
+        logger.info('Instantiating YOLO3 Detector...')
+        with suppress_stdout_stderr():
+            self._net = Detector(
+                bytes(self._config_path("yolov3.cfg"), encoding="utf-8"),
+                bytes(self._config_path("yolov3.weights"), encoding="utf-8"),
+                0,
+                bytes(self._config_path("coco.data"), encoding="utf-8")
+            )
+        logger.debug('Done instantiating YOLO3 Detector.')
 
     def _ensure_configs(self):
         """Ensure that yolov3-tiny configs and data are in place."""
@@ -160,24 +203,22 @@ class YoloAnalyzer(ImageAnalyzer):
     def _config_path(self, f):
         return os.path.join(YOLO_CFG_PATH, f)
 
-    def do_image_yolo(self, net, fname, detected_fname):
+    def do_image_yolo(self, fname, detected_fname):
         """
         Analyze a single image using yolo34py.
-        :param net: the yolo network to use
-        :type net: pydarknet.Detector
         :param fname: path to input image
         :type fname: str
         :param detected_fname: file path to write object detection image to
         :type detected_fname: str
         :return: yolo3 detection results
-        :rtype: list of (str category, float score, tuple bounds) tuples
+        :rtype: list of DetectedObject instances
         """
         logger.debug('Starting: %s', fname)
         img = cv2.imread(fname)
         img2 = Image(img)
-        results = net.detect(img2, thresh=0.2, hier_thresh=0.3, nms=0.4)
+        results = self._net.detect(img2, thresh=0.2, hier_thresh=0.3, nms=0.4)
         logger.debug('Raw Results: %s', results)
-
+        retval = []
         for cat, score, bounds in results:
             x, y, w, h = bounds
             cv2.rectangle(
@@ -189,63 +230,24 @@ class YoloAnalyzer(ImageAnalyzer):
                 (int(x), int(y)),
                 cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 0)
             )
+            retval.append(DetectedObject(
+                cat, [], score, x, y, w, h
+            ))
         logger.info('Writing: %s', detected_fname)
         cv2.imwrite(detected_fname, img)
         logger.info('Done with: %s', fname)
-        return results
+        return retval
 
-    def analyze(self):
-        self._ensure_configs()
-        self._start = time.time()
-        logger.info('Instantiating YOLO3 Detector...')
-        with suppress_stdout_stderr():
-            net = Detector(
-                bytes(self._config_path("yolov3.cfg"), encoding="utf-8"),
-                bytes(self._config_path("yolov3.weights"), encoding="utf-8"),
-                0,
-                bytes(self._config_path("coco.data"), encoding="utf-8")
-            )
-        logger.debug('Done instantiating YOLO3 Detector.')
+    def analyze(self, frame_path):
+        _start = time.time()
         # get all the results
-        results = {}
-        logger.info('Analyzing first frame')
-        self._frame_paths['First']['original'] = self._event.FirstFrame.path
-        self._frame_paths['First']['analyzed'] = self._frame_paths[
-            'First']['original'].replace('.jpg', '.yolo3.jpg')
-        results['First'] = self.do_image_yolo(
-            net,
-            self._frame_paths['First']['original'],
-            self._frame_paths['First']['analyzed']
+        output_path = frame_path.replace('.jpg', '.yolo3.jpg')
+        res = self.do_image_yolo(frame_path, output_path)
+        _end = time.time()
+        return ObjectDetectionResult(
+            self.__class__.__name__,
+            frame_path,
+            output_path,
+            res,
+            _end - _start
         )
-        logger.info('Analyzing best frame')
-        self._frame_paths['Best']['original'] = self._event.BestFrame.path
-        self._frame_paths['Best']['analyzed'] = self._frame_paths[
-            'Best']['original'].replace('.jpg', '.yolo3.jpg')
-        results['Best'] = self.do_image_yolo(
-            net,
-            self._frame_paths['Best']['original'],
-            self._frame_paths['Best']['analyzed']
-        )
-        logger.info('Analyzing last frame')
-        self._frame_paths['Last']['original'] = self._event.LastFrame.path
-        self._frame_paths['Last']['analyzed'] = self._frame_paths[
-            'Last']['original'].replace('.jpg', '.yolo3.jpg')
-        results['Last'] = self.do_image_yolo(
-            net,
-            self._frame_paths['Last']['original'],
-            self._frame_paths['Last']['analyzed']
-        )
-        self._raw_result = results
-        for key, res in results.items():
-            self._result[key] = [
-                '%s - %.2f%% - %s' % (
-                    x[0].decode('utf-8'), (x[1] * 100), x[2]
-                ) for x in res
-            ]
-        self._end = time.time()
-
-    @property
-    def new_objects(self):
-        f = [x[0].decode('utf-8') for x in self._raw_result['First']]
-        b = [x[0].decode('utf-8') for x in self._raw_result['Best']]
-        return list(set(b) - set(f))

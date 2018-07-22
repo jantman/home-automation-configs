@@ -12,18 +12,18 @@ Program flow:
 - Called from zmeventnotification.pl with EventID, MonitorID and possible Cause.
   The event may still be in progress when called.
 - Populate Event information from the ZoneMinder database into objects.
-- Ignore events where the camera switched from B&W (IR) to color or from color
-  to B&W (IR).
-- Feed images through darknet yolo3 object detection.
-- Send email and pushover notifications with first/best/last motion frame and
-  object detection results, as well as some other stats.
+- Run Filters on the images in the event, such as detecting switch between color
+  and B&W (IR).
+- Feed images through darknet yolo3 object detection; capture object detection
+  results as well as which Zone each object is in.
+- Pass the results of all this on to HASS via an event, that will be handled
+  by an AppDaemon app.
 
 The functionality of this script relies on the other ``zmevent_*.py`` modules
 in this git repo.
 
 ##########################################
 @TODO:
-- select Frames for object detection
 - run object detection on frames, save results to DB, add to dict to pass to HASS
   - each detection should also be localized to one or a list of zones
   - global config for objects to ignore - IgnoredObject classes that ObjectDetectionResult instances match against
@@ -37,6 +37,7 @@ import logging
 from logging.handlers import SysLogHandler
 import argparse
 import json
+import time
 
 try:
     import requests
@@ -62,7 +63,8 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
 from zmevent_config import (
-    LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
+    LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
+    HASS_EVENT_NAME
 )
 from zmevent_image_analysis import YoloAnalyzer
 from zmevent_models import ZMEvent
@@ -88,74 +90,57 @@ class ImageAnalysisWrapper(object):
             charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
         )
         self._analyzers = []
-        self._suppression_reason = None
 
-    def _result_to_db(self, analyzer):
+    def _result_to_db(self, result, frame):
+        """Write an ObjectDetectionResult instance to DB"""
         sql = 'INSERT INTO `' + ANALYSIS_TABLE_NAME + \
               '` (`MonitorId`, `ZoneId`, `EventId`, `FrameId`, ' \
-              '`FrameType`, `AnalyzerName`, `RuntimeSec`, `Results`) ' \
-              'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ' \
+              '`AnalyzerName`, `RuntimeSec`, `Results`) ' \
+              'VALUES (%s, %s, %s, %s, %s, %s, %s) ' \
               'ON DUPLICATE KEY UPDATE `RuntimeSec`=%s, `Results`=%s'
-        for ftype in ['First', 'Best', 'Last']:
-            with self._conn.cursor() as cursor:
-                frame = getattr(self._event, '%sFrame' % ftype)
-                res = {
-                    'result': analyzer.result[ftype],
-                    'paths': analyzer.frames[ftype]
-                }
-                res_json = json.dumps(res)
-                args = [
-                    self._event.MonitorId,
-                    0,  # ZoneId
-                    self._event.EventId,
-                    frame.FrameId,
-                    ftype,
-                    analyzer.__class__.__name__,
-                    '%.2f' % analyzer.runtime,
-                    res_json,
-                    '%.2f' % analyzer.runtime,
-                    res_json
-                ]
-                try:
-                    logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
-                    cursor.execute(sql, args)
-                    self._conn.commit()
-                except Exception:
-                    logger.error(
-                        'ERROR executing %s; for %s frame type %s',
-                        sql, self._event, ftype, exc_info=True
-                    )
+        with self._conn.cursor() as cursor:
+            res_json = json.dumps(result.detections, cls=DateSafeJsonEncoder)
+            args = [
+                self._event.MonitorId,
+                0,  # ZoneId
+                self._event.EventId,
+                frame.FrameId,
+                result.analyzer_name,
+                '%.2f' % result.runtime,
+                res_json,
+                '%.2f' % result.runtime,
+                res_json
+            ]
+            try:
+                logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
+                cursor.execute(sql, args)
+                self._conn.commit()
+            except Exception:
+                logger.error(
+                    'ERROR executing %s; for %s',
+                    sql, self._event, exc_info=True
+                )
 
     def analyze_event(self):
-        """returns True or False whether to notify about this event"""
+        """returns a list of ObjectDetectionResult instances"""
+        results = []
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
             cls = a(self._event)
-            cls.analyze()
-            self._analyzers.append(cls)
-            try:
-                self._result_to_db(cls)
-            except Exception:
-                logger.critical(
-                    'Exception writing analysis result to DB for %s %s',
-                    self._event, a.__name__, exc_info=True
-                )
-        return True
-
-    @property
-    def suppression_reason(self):
-        return self._suppression_reason
-
-    @property
-    def analyzers(self):
-        return self._analyzers
-
-    @property
-    def new_object_labels(self):
-        o = []
-        for a in self.analyzers:
-            o.extend(a.new_objects)
-        return list(set(o))
+            for frame in [
+                self._event.FirstFrame, self._event.BestFrame,
+                self._event.LastFrame
+            ]:
+                res = cls.analyze(frame)
+                results.append(res)
+                try:
+                    self._result_to_db(res, frame)
+                except Exception:
+                    logger.critical(
+                        'Exception writing analysis result to DB for %s %s',
+                        self._event, a.__name__, exc_info=True
+                    )
+        return results
 
 
 def parse_args(argv):
@@ -225,6 +210,32 @@ def setup_logging(args):
     logger.addHandler(sh)
 
 
+def send_to_hass(json_str, event_id):
+    logger.info(json_str)
+    url = '%s/events/%s' % (CONFIG['HASS_API_URL'], HASS_EVENT_NAME)
+    count = 0
+    while count < 13:
+        count += 1
+        try:
+            logger.debug('Try POST to: %s', url)
+            r = requests.post(
+                url, data=json_str, timeout=5,
+                headers={'Content-Type': 'application/json'}
+            )
+            r.raise_for_status()
+            assert 'message' in r.json()
+            logger.info('Event successfully posted to HASS: %s', r.text)
+            return
+        except Exception:
+            logger.error('Error POSTing to HASS at %s: %s', url, r.text)
+    fname = os.path.join(
+        os.path.dirname(LOG_PATH), 'event_%s.json' % event_id
+    )
+    with open(fname, 'w') as fh:
+        fh.write(json_str)
+    logger.critical('Event not sent to HASS; persisted to: %s', fname)
+
+
 def run(args):
     # populate the event from ZoneMinder DB
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
@@ -259,13 +270,17 @@ def run(args):
     # run object detection on the event
     try:
         analyzer = ImageAnalysisWrapper(event)
-        analyzer.analyze_event()
+        analysis = analyzer.analyze_event()
+        result['object_detections'] = analysis
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    raise NotImplementedError('send to HASS')
+    res_json = json.dumps(
+        result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+    )
+    send_to_hass(res_json, event.EventId)
 
 
 def main():

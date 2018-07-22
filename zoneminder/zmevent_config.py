@@ -20,13 +20,17 @@ ANALYSIS_TABLE_NAME = 'zmevent_handler_ImageAnalysis'
 #: Path on disk where ZoneMinder events are stored
 EVENTS_PATH = '/usr/share/zoneminder/www/events'
 
+#: Name of the event to send homeassistant
+HASS_EVENT_NAME = 'ZM_ALARM'
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {
     'MYSQL_DB': None,
     'MYSQL_USER': None,
     'MYSQL_PASS': None,
-    'BASE_URL': None
+    'BASE_URL': None,
+    'HASS_API_URL': 'http://localhost:8123/api',
 }
 
 
