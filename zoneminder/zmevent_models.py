@@ -140,6 +140,14 @@ class MonitorZone(object):
         for k, v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
+        self.point_list = self._parse_db_coords_string(self.Coords)
+
+    def _parse_db_coords_string(self, s):
+        res = []
+        for point in s.split():
+            x, y = point.split(',')
+            res.append((int(x), int(y)))
+        return res
 
     def __repr__(self):
         return '<MonitorZone(MonitorId=%d, Id=%s)>' % (
@@ -148,9 +156,12 @@ class MonitorZone(object):
 
     @property
     def as_dict(self):
-        return {
+        d = {
             x: getattr(self, x) for x in vars(self) if x[0].isupper()
         }
+        d['point_list'] = self.point_list
+        del d['Coords']
+        return d
 
 
 class ZMEvent(object):
