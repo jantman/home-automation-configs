@@ -66,10 +66,7 @@ class suppress_stdout_stderr(object):
 class DetectedObject(object):
 
     def __init__(self, label, zones, score, x, y, w, h):
-        if isinstance(label, str):
-            self._label = label
-        else:
-            self._label = label.decode()
+        self._label = label
         self._zones = zones
         self._score = score
         self._x = x
@@ -234,6 +231,8 @@ class YoloAnalyzer(ImageAnalyzer):
         logger.debug('Raw Results: %s', results)
         retval = []
         for cat, score, bounds in results:
+            if not isinstance(cat, str):
+                cat = cat.decode()
             x, y, w, h = bounds
             zones = self._zones_for_object(frame, x, y, w, h)
             logger.debug('Checking IgnoredObject filters for detections...')
