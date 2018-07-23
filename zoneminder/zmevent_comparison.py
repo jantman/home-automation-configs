@@ -90,10 +90,11 @@ class EventComparer(object):
 
     def run(self):
         self.purge_analysis_table()
+        # SELECT EventId,FrameId FROM zmevent_handler_ImageAnalysis WHERE AnalyzerName='YoloAnalyzer' AND (EventId, FrameId) NOT IN (SELECT EventId, FrameId FROM zmevent_handler_ImageAnalysis WHERE AnalyzerName='AlternateYoloAnalyzer');
 
     def purge_analysis_table(self):
         sql = 'DELETE FROM %s WHERE (EventId, FrameId) NOT IN ' \
-              '(SELECT EventId, FrameId FROM Frames);'
+              '(SELECT EventId, FrameId FROM Frames);' % ANALYSIS_TABLE_NAME
         with self._conn.cursor() as cursor:
             logger.warning('EXECUTING: %s', sql)
             num_rows = cursor.execute(sql)
