@@ -380,3 +380,12 @@ class YoloAnalyzer(ImageAnalyzer):
             res['ignored_detections'],
             _end - _start
         )
+
+
+class AlternateYoloAnalyzer(YoloAnalyzer):
+    """
+    This is used when I run from a script in a separate venv to compare CPU and
+    GPU results.
+    """
+
+    pass
