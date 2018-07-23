@@ -350,7 +350,9 @@ class EmailNotifier(object):
         # END image analysis
         html += '</body></html>\n'
         msg.attach(MIMEText(html, 'html'))
-        for d in self.data['object_detections']:
+        for d in sorted(
+            self.data['object_detections'], key=lambda x: x['FrameId']
+        ):
             msg.attach(
                 MIMEImage(
                     open(d['output_path'], 'rb').read(),
