@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 #: Path on disk where darknet yolo configs/weights will be stored
 YOLO_CFG_PATH = '/var/cache/zoneminder/yolo'
+YOLO_ALT_CFG_PATH = '/var/cache/zoneminder/yolo-alt'
 
 
 class suppress_stdout_stderr(object):
@@ -388,4 +389,49 @@ class AlternateYoloAnalyzer(YoloAnalyzer):
     GPU results.
     """
 
-    pass
+    def _config_path(self, f):
+        return os.path.join(YOLO_ALT_CFG_PATH, f)
+
+    def _ensure_configs(self):
+        """Ensure that yolov3-tiny configs and data are in place."""
+        # This uses the yolov3-tiny, because I only have a 1GB GPU
+        if not os.path.exists(YOLO_ALT_CFG_PATH):
+            logger.warning('Creating directory: %s', YOLO_ALT_CFG_PATH)
+            os.mkdir(YOLO_ALT_CFG_PATH)
+        configs = {
+            'yolov3.cfg': 'https://raw.githubusercontent.com/pjreddie/darknet/'
+                          'master/cfg/yolov3.cfg',
+            'coco.names': 'https://raw.githubusercontent.com/pjreddie/darknet/'
+                          'master/data/coco.names',
+            'yolov3.weights': 'https://pjreddie.com/media/files/'
+                              'yolov3.weights'
+        }
+        for fname, url in configs.items():
+            path = self._config_path(fname)
+            if os.path.exists(path):
+                continue
+            logger.warning('%s does not exist; downloading', path)
+            logger.info('Download %s to %s', url, path)
+            r = requests.get(url)
+            logger.info('Writing %d bytes to %s', len(r.content), path)
+            with open(path, 'wb') as fh:
+                fh.write(r.content)
+            logger.debug('Wrote %s', path)
+        # coco.data is special because we change it
+        path = self._config_path('coco.data')
+        if not os.path.exists(path):
+            content = dedent("""
+            classes= 80
+            train  = /home/pjreddie/data/coco/trainvalno5k.txt
+            valid = %s
+            names = %s
+            backup = /home/pjreddie/backup/
+            eval=coco
+            """)
+            logger.warning('%s does not exist; writing', path)
+            with open(path, 'w') as fh:
+                fh.write(content % (
+                    self._config_path('coco_val_5k.list'),
+                    self._config_path('coco.names')
+                ))
+            logger.debug('Wrote %s', path)
