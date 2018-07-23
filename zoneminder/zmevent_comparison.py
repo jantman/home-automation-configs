@@ -15,6 +15,7 @@ import logging
 import argparse
 import json
 import pymysql
+from collections import defaultdict
 
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -90,29 +91,46 @@ class EventComparer(object):
 
     def run(self):
         self.purge_analysis_table()
+        # find the events and frames we want to analyze
         to_analyze = self._events_to_analyze()
-        # 2. run analysis on all of them; store the results in memory
-        # 3. grab the YoloAnalyzer results for each event/frame
-        # 4. send an email with comparison information
+        results = {}
+        # analyze each event
+        for evt_id in to_analyze.keys():
+            logger.info(
+                'Analyzing %d Frames of EventId %d', len(to_analyze[evt_id]),
+                evt_id
+            )
+            # load the event
+            evt = ZMEvent(evt_id)
+            # set FramesForAnalysis to the same ones as currently in the DB
+            # for the GPU-based analyzer
+            evt.FramesForAnalysis = {}
+            for fid in to_analyze[evt_id]:
+                evt.FramesForAnalysis[fid] = evt.AllFrames[fid]
+            analyzer = ImageAnalysisWrapper(evt, ANALYZERS)
+            results[evt_id] = analyzer.analyze_event()
+            logger.debug('Done analyzing event %d', evt_id)
+        # @TODO grab the YoloAnalyzer results for each event/frame
+        # @TODO send an email with comparison information
 
     def _events_to_analyze(self):
-        """return list of 2-tuples (EventId, FrameId) to analyze"""
+        """dict of EventId to list of FrameIds to analyze"""
         sql = 'SELECT EventId,FrameId FROM %s WHERE ' \
               'AnalyzerName="YoloAnalyzer" AND (EventId, FrameId) NOT IN ' \
               '(SELECT EventId, FrameId FROM %s WHERE ' \
               'AnalyzerName="AlternateYoloAnalyzer");' % (
                   ANALYSIS_TABLE_NAME, ANALYSIS_TABLE_NAME
               )
+        results = defaultdict(list)
         with self._conn.cursor() as cursor:
             logger.info('Executing: %s', sql)
             cursor.execute(sql)
             res = cursor.fetchall()
             logger.info('Found %d Frames to analyze', len(res))
-            results = [
-                (r['EventId'], r['FrameId']) for r in res
-            ]
+            for r in res:
+                results[r['EventId']].append(r['FrameId'])
             self._conn.commit()
-        return results
+        return dict(results)
 
     def purge_analysis_table(self):
         sql = 'DELETE FROM %s WHERE (EventId, FrameId) NOT IN ' \
