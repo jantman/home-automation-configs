@@ -364,9 +364,9 @@ class ZMEvent(object):
         in_contig = False
         for fid in sorted(self.AllFrames.keys()):
             f = self.AllFrames[fid]
-            if f.score == 0 and not in_contig:
+            if f.Score == 0 and not in_contig:
                 continue
-            if f.score == 0 and in_contig:
+            if f.Score == 0 and in_contig:
                 # end run of contiguous frames
                 self.FramesForAnalysis[
                     contiguous_frames[0].FrameId
