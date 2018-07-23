@@ -204,9 +204,12 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
             'files': {}
         }
         image = primary_image['output_path']
-        self._log.info('Sending Pushover notification with image: %s', d)
+        self._log.info(
+            'Sending Pushover notification with image: %s (image: %s)', d,
+            image
+        )
         d['files']['attachment'] = (
-            os.path.basename(image), image, 'image/jpeg'
+            os.path.basename(image), open(image, 'rb'), 'image/jpeg'
         )
         self._send_pushover(d)
 
@@ -372,16 +375,18 @@ class EmailNotifier(object):
             return s
         s += td % (' rowspan="%d"' % len(dets), frame['FrameId'])
         s += td % (' rowspan="%d"' % len(dets), '%.2f sec' % frame['runtime'])
+        zoneinfo = [
+            '%s (%d%%)' % (x, dets[0]['zones'][x]) for x in
+            sorted(
+                dets[0]['zones'], key=lambda x: dets[0]['zones'][x],
+                reverse=True
+            )
+        ]
         s += td % (
             '',
             '%s (%.2f%%) %s (x=%d y=%d w=%d h=%d)' % (
-                dets[0]['label'], dets[0]['score'],
-                '/'.join(
-                    sorted(
-                        dets[0]['zones'], key=lambda x: dets[0]['zones'][x],
-                        reverse=True
-                    )
-                ),
+                dets[0]['label'], dets[0]['score'] * 100,
+                '/'.join(zoneinfo),
                 dets[0]['x'], dets[0]['y'], dets[0]['w'], dets[0]['h']
             )
         )
