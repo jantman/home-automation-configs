@@ -364,7 +364,7 @@ class EmailNotifier(object):
         dets = sorted(
             frame['detections'], reverse=True, key=lambda x: x['score']
         )
-        if dets == 0:
+        if len(dets) == 0:
             s += td % ('', frame['FrameId'])
             s += td % ('', '%.2f sec' % frame['runtime'])
             s += td % ('', 'None')
