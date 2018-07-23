@@ -359,6 +359,30 @@ class ZMEvent(object):
             self.BestFrameId: self.AllFrames[self.BestFrameId],
             self.LastFrameId: self.AllFrames[self.LastFrameId]
         }
+        # find all contiguous runs of alarm frames; add first and best from each
+        contiguous_frames = []
+        in_contig = False
+        for fid in sorted(self.AllFrames.keys()):
+            f = self.AllFrames[fid]
+            if f.score == 0 and not in_contig:
+                continue
+            if f.score == 0 and in_contig:
+                # end run of contiguous frames
+                self.FramesForAnalysis[
+                    contiguous_frames[0].FrameId
+                ] = contiguous_frames[0]
+                tmp = sorted(
+                    contiguous_frames, key=lambda x: x.Score
+                )[-1]
+                self.FramesForAnalysis[tmp.FrameId] = tmp
+                contiguous_frames = []
+                in_contig = False
+                continue
+            # frame has a score; it's an alarm frame
+            contiguous_frames.append(f)
+            in_contig = True
+        # because of the post-event buffer, the last frames should always be
+        # non-alarm
         logger.info('Frames to analyze: %s', self.FramesForAnalysis)
 
     @property
