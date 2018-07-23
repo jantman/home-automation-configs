@@ -5,9 +5,7 @@ import logging
 import pymysql
 
 sys.path.append('/usr/local/bin')
-from zmevent_handler import (
-    ANALYSIS_TABLE_NAME, MYSQL_USER, MYSQL_PASS, MYSQL_DB
-)
+from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -15,9 +13,9 @@ logger = logging.getLogger()
 
 def ensure_table():
     conn = pymysql.connect(
-        host='localhost', user=MYSQL_USER, password=MYSQL_PASS,
-        db=MYSQL_DB, charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
+        host='localhost', user=CONFIG['MYSQL_USER'],
+        password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
+        charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
     )
     try:
         with conn.cursor() as cursor:

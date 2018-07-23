@@ -1,17 +1,37 @@
 #!/usr/bin/env python3
+"""
+My Python script for handling ZoneMinder events. This is called by
+zmeventnotification.pl.
+
+<https://github.com/jantman/home-automation-configs/blob/master/zoneminder/zmevent_handler.py>
+
+Configuration is in ``zmevent_config.py``.
+
+Program flow:
+
+- Called from zmeventnotification.pl with EventID, MonitorID and possible Cause.
+  The event may still be in progress when called.
+- Populate Event information from the ZoneMinder database into objects.
+- Run Filters on the images in the event, such as detecting switch between color
+  and B&W (IR).
+- Feed images through darknet yolo3 object detection; capture object detection
+  results as well as which Zone each object is in.
+  - Optionally ignore certain object labels/categories, optionally by Monitor
+    ID, Zone, and/or bounding box rectangle.
+- Pass the results of all this on to HASS via an event, that will be handled
+  by an AppDaemon app.
+
+The functionality of this script relies on the other ``zmevent_*.py`` modules
+in this git repo.
+"""
 
 import sys
 import os
-from datetime import datetime
-import time
 import logging
+from logging.handlers import SysLogHandler
 import argparse
 import json
-from decimal import Decimal
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
+import time
 
 try:
     import requests
@@ -36,7 +56,13 @@ except ImportError:
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
+from zmevent_config import (
+    LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
+    HASS_EVENT_NAME, CONFIG
+)
 from zmevent_image_analysis import YoloAnalyzer
+from zmevent_models import ZMEvent
+from zmevent_filters import *
 
 #: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [YoloAnalyzer]
@@ -45,976 +71,67 @@ ANALYZERS = [YoloAnalyzer]
 #: or a file depending on options
 logger = None
 
-#: If logging to a file, the file path to log to.
-LOG_PATH = '/var/cache/zoneminder/temp/zmevent_handler.log'
-
-#: Minimum log level to run with. This can be used to enable debug logging
-#: in the script itself overriding the command-line arguments, i.e. if you're
-#: debugging the script but don't want to edit whatever calls it.
-MIN_LOG_LEVEL = 1
-
-#: Name of the MySQL table in the zoneminder database to store results in.
-ANALYSIS_TABLE_NAME = 'zmevent_handler_ImageAnalysis'
-
-#: Path on disk where ZoneMinder events are stored
-EVENTS_PATH = '/usr/share/zoneminder/www/events'
-
-#: Configuration populated from environment variables; see
-#: :py:func:`~.populate_secrets`
-CONFIG = {
-    'MYSQL_DB': None,
-    'MYSQL_USER': None,
-    'MYSQL_PASS': None,
-    'BASE_URL': None,
-    'PUSHOVER_APIKEY': None,
-    'PUSHOVER_USERKEY': None,
-    'EMAIL_FROM': None,
-    'EMAIL_TO': None
-}
-
-
-class DateSafeJsonEncoder(json.JSONEncoder):
-    """
-    Subclass of :py:class:`json.JSONEncoder` with special logic for some types.
-
-    - :py:class:`datetime.datetime` objects are serialized as strings in
-      ``%Y-%m-%d %H:%M:%S`` format
-    - :py:class:`decimal.Decimal` objects are serialized as floats
-    - Objects with ``as_dict`` properties are serialized as the dict returned
-      by that property.
-    - Objects with ``as_json`` properties are serialized as a dict of all of
-      their attributes that begin with a capital letter.
-    """
-
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        if isinstance(obj, Decimal):
-            return float(obj)
-        if hasattr(obj, 'as_dict'):
-            return obj.as_dict
-        if hasattr(obj, 'as_json'):
-            return {
-                x: getattr(obj, x) for x in vars(obj) if x[0].isupper()
-            }
-        return json.JSONEncoder.default(self, obj)
-
-
-class PushoverNotifier(object):
-    """Send specially-formatted Pushover notification for an event."""
-
-    def __init__(self, zmevent, analyzer, dry_run=False):
-        """
-        Initialize PushoverNotifier
-
-        :param zmevent: the event to notify for
-        :type zmevent: ZMEvent
-        :param analyzer: the image analysis wrapper
-        :type analyzer: ImageAnalysisWrapper
-        :param dry_run: whether or not this is a dry run
-        :type dry_run: bool
-        """
-        self._event = zmevent
-        self._analyzer = analyzer
-        self._dry_run = dry_run
-
-    def generate(self):
-        """generate params for the POST to pushover"""
-        logger.debug('Generating parameters for notification...')
-        e = self._event
-        d = {
-            'data': {
-                'token': CONFIG['PUSHOVER_APIKEY'],
-                'user': CONFIG['PUSHOVER_USERKEY'],
-                'title': 'ZoneMinder Alarm on %s (%s) Event %s' % (
-                    e.Monitor.Name,
-                    ', '.join(self._analyzer.analyzers[0].new_objects),
-                    e.EventId
-                ),
-                'message': '%s - %.2f seconds, %d alarm frames - Scores: '
-                           'total=%d avg=%d max=%d' % (
-                               e.Notes, e.Length, e.AlarmFrames,
-                               e.TotScore, e.AvgScore, e.MaxScore
-                           ),
-                'timestamp': time.mktime(e.StartTime.timetuple()),
-                'sound': 'siren'
-            },
-            'files': {}
-        }
-        cls = self._analyzer.analyzers[0]
-        k = cls.frames['Best'].get('analyzed')
-        if k is not None:
-            fname = '%s_%s_%s' % (
-                'Best',
-                cls.__class__.__name__,
-                os.path.basename(k)
-            )
-            d['files']['attachment'] = (
-                fname, open(k, 'rb').read(), 'image/jpeg'
-            )
-        else:
-            d['files']['attachment'] = (
-                e.BestFrame.path,
-                open(e.BestFrame.path, 'rb'),
-                'image/jpeg'
-            )
-        d['data']['url'] = '%s?view=event&mode=stream&mid=%s&eid=%s' % (
-            CONFIG['BASE_URL'], e.MonitorId, e.EventId
-        )
-        d['data']['retry'] = 300  # 5 minutes
-        return d
-
-    def send(self, params):
-        """send to pushover"""
-        url = 'https://api.pushover.net/1/messages.json'
-        if self._dry_run:
-            logger.warning('DRY RUN - Would POST to %s: %s', url, params)
-            return
-        logger.debug('Sending Pushover notification; params=%s', params)
-        r = requests.post(url, **params)
-        logger.debug(
-            'Pushover POST response HTTP %s: %s', r.status_code, r.text
-        )
-        r.raise_for_status()
-        if r.json()['status'] != 1:
-            raise RuntimeError('Error response from Pushover: %s', r.text)
-        logger.warning('Pushover Notification Success: %s', r.text)
-
-    def generate_and_send(self):
-        """generate params and POST to pushover"""
-        self.send(self.generate())
-
-
-class EmailNotifier(object):
-    """Send specially-formatted HTML email notification for an event."""
-
-    def __init__(self, zmevent, analyzer, dry_run=False):
-        """
-        Initialize EmailNotifier
-
-        :param zmevent: the event to notify for
-        :type zmevent: ZMEvent
-        :param analyzer: the image analysis wrapper
-        :type analyzer: ImageAnalysisWrapper
-        :param dry_run: whether or not this is a dry run
-        :type dry_run: bool
-        """
-        self._event = zmevent
-        self._analyzer = analyzer
-        self._dry_run = dry_run
-
-    def build_message(self, suppression_reason=None):
-        """
-        Build the email message; return a string email message.
-
-        :param suppression_reason: if the event is being suppressed, the string
-          reason for it.
-        :type suppression_reason: ``None`` or ``str``
-        :return: email to send
-        :rtype: str
-        """
-        e = self._event
-        msg = MIMEMultipart()
-        supp_text = ''
-        if suppression_reason is not None:
-            supp_text = 'SUPPRESSED '
-        msg['Subject'] = 'ZoneMinder: %sAlarm - %s-%s - %s ' \
-                         '(%s sec, t%s/m%s/a%s)' % (
-            supp_text, e.Monitor.Name, e.EventId, e.Notes, e.Length,
-            e.TotScore, e.MaxScore, e.AvgScore
-        )
-        msg['From'] = CONFIG['EMAIL_FROM']
-        msg['To'] = CONFIG['EMAIL_TO']
-        html = '<html><head></head><body>\n'
-        if suppression_reason is None:
-            html += '<p>ZoneMinder has detected an alarm:</p>\n'
-        else:
-            html += '<p>ZoneMinder detected an alarm that was ' \
-                    '<strong>suppressed</strong> because: <strong>%s</strong>' \
-                    '</p>\n' % suppression_reason
-        html += '<table style="border-spacing: 0px; box-shadow: 5px 5px 5px ' \
-                'grey; border-collapse:separate; border-radius: 7px;">\n'
-        html += self._table_rows([
-            [
-                'Monitor',
-                '<a href="%s?view=watch&mid=%s">%s (%s)</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.Monitor.Name,
-                    e.MonitorId
-                )
-            ],
-            [
-                'Event',
-                '<a href="%s?view=event&mid=%s&eid=%s">%s (%s)</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.EventId, e.Name,
-                    e.EventId
-                )
-            ],
-            ['Cause', e.Cause],
-            ['Notes', e.Notes],
-            ['Length', e.Length],
-            ['Start Time', e.StartTime],
-            ['Frames', '%s (%s alarm)' % (len(e.AllFrames), e.AlarmFrames)],
-            [
-                'Best Image',
-                '<a href="%s?view=frame&mid=%s&eid=%s&fid=%s">Frame %s</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.EventId,
-                    e.BestFrame.FrameId, e.BestFrame.FrameId
-                )
-            ],
-            ['Scores', '%s Total / %s Max / %s Avg' % (
-                e.TotScore, e.MaxScore, e.AvgScore
-            )],
-            [
-                'Live Monitor',
-                '<a href="%s?view=watch&mid=%s">%s Live View</a>' % (
-                    CONFIG['BASE_URL'], e.MonitorId, e.Monitor.Name
-                )
-            ]
-        ])
-        html += '</table>\n'
-        # BEGIN image analysis
-        html += '<p>Image Analysis Results</p>\n'
-        html += '<p><strong>New Objects: %s</strong></p>\n' % ', '.join(
-            self._analyzer.new_object_labels
-        )
-        html += '<table style="border-spacing: 0px; box-shadow: 5px 5px 5px ' \
-                'grey; border-collapse:separate; border-radius: 7px;">\n'
-        html += '<tr>' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Class</th>\n' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Runtime</th>\n' \
-                '<th style="border: 1px solid #a1bae2; text-align: center; ' \
-                'padding: 5px;">Results</th>\n' \
-                '</tr>\n'
-        for a in self._analyzer.analyzers:
-            html += self._analyzer_table_row(a)
-        html += '</table>\n'
-        # END image analysis
-        html += '</body></html>\n'
-        msg.attach(MIMEText(html, 'html'))
-        if self._dry_run:
-            logger.warning('MESSAGE:\n%s', msg.as_string())
-        if e.BestFrame.path != e.FirstFrame.path:
-            if self._dry_run:
-                logger.warning('Would attach: %s', e.FirstFrame.path)
-            msg.attach(
-                MIMEImage(
-                    open(e.FirstFrame.path, 'rb').read(),
-                    name='first_%s' % e.FirstFrame.filename
-                )
-            )
-            for cls in self._analyzer.analyzers:
-                k = cls.frames['First'].get('analyzed')
-                if k is not None:
-                    fname = '%s_%s_%s' % (
-                        'First',
-                        cls.__class__.__name__,
-                        os.path.basename(k)
-                    )
-                    msg.attach(
-                        MIMEImage(open(k, 'rb').read(), name=fname)
-                    )
-                    if self._dry_run:
-                        logger.warning(
-                            'Would attach: %s as "%s"', k, fname
-                        )
-        if self._dry_run:
-            logger.warning('Would attach: %s', e.BestFrame.path)
-        msg.attach(
-            MIMEImage(
-                open(e.BestFrame.path, 'rb').read(),
-                name='best_%s' % e.BestFrame.filename
-            )
-        )
-        for cls in self._analyzer.analyzers:
-            k = cls.frames['Best'].get('analyzed')
-            if k is not None:
-                fname = '%s_%s_%s' % (
-                    'Best',
-                    cls.__class__.__name__,
-                    os.path.basename(k)
-                )
-                msg.attach(
-                    MIMEImage(open(k, 'rb').read(), name=fname)
-                )
-                if self._dry_run:
-                    logger.warning(
-                        'Would attach: %s as "%s"', k, fname
-                    )
-            k = cls.frames['Last'].get('analyzed')
-            if k is not None:
-                fname = '%s_%s_%s' % (
-                    'Last',
-                    cls.__class__.__name__,
-                    os.path.basename(k)
-                )
-                msg.attach(
-                    MIMEImage(open(k, 'rb').read(), name=fname)
-                )
-                if self._dry_run:
-                    logger.warning(
-                        'Would attach: %s as "%s"', k, fname
-                    )
-        return msg.as_string()
-
-    def _analyzer_table_row(self, result):
-        s = ''
-        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
-             'padding: 5px;"%s>%s</td>\n'
-        s += '<tr>'
-        s += td % (' rowspan="3"', result.__class__.__name__)
-        s += td % (' rowspan="3"', '%.2f sec' % result.runtime)
-        content = '<strong>First:</strong><br />' + '<br />'.join(
-            result.result['First']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        s += '<tr>'
-        content = '<strong>Best:</strong><br />' + '<br />'.join(
-            result.result['Best']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        s += '<tr>'
-        content = '<strong>Last:</strong><br />' + '<br />'.join(
-            result.result['Last']
-        )
-        s += td % ('', content)
-        s += '</tr>'
-        return s
-
-    def _table_rows(self, data):
-        s = ''
-        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
-             'padding: 5px;">%s</td>\n'
-        for row in data:
-            s += '<tr>'
-            s += td % row[0]
-            s += td % row[1]
-            s += '</tr>\n'
-        return s
-
-    def send_message(self, msg):
-        """send the email message (notification)"""
-        logger.debug('Connecting to SMTP on smtp.gmail.com:587')
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.ehlo()
-        s.starttls()
-        s.ehlo()
-        creds = self._get_creds()
-        s.login(creds['AuthUser'], creds['AuthPass'])
-        if self._dry_run:
-            logger.warning(
-                'DRY RUN - Would send mail FROM=%s TO=%s',
-                CONFIG['EMAIL_FROM'], CONFIG['EMAIL_TO']
-            )
-            s.quit()
-            return
-        logger.info(
-            'Sending mail From=%s To=%s', CONFIG['EMAIL_FROM'],
-            CONFIG['EMAIL_TO']
-        )
-        s.sendmail(CONFIG['EMAIL_FROM'], CONFIG['EMAIL_TO'], msg)
-        logger.warning('EMail sent.')
-        s.quit()
-
-    def _get_creds(self):
-        """retrieve GMail credentials from ssmtp.conf"""
-        with open('/etc/ssmtp/ssmtp.conf', 'r') as fh:
-            lines = fh.readlines()
-        items = {
-            x.split('=', 1)[0]: x.split('=', 1)[1] for x in lines
-        }
-        return items
-
-    def build_and_send(self, suppression_reason=None):
-        """build and then send the email notification"""
-        self.send_message(
-            self.build_message(suppression_reason=suppression_reason)
-        )
-
-
-class EventFilter(object):
-    """
-    Responsible for determining whether an Event should be notified on or not.
-
-    Instantiate class and call :py:meth:`~.run`. After that, check the return
-    value of the :py:attr:`~.should_notify` property.
-    """
-
-    def __init__(self, event):
-        """
-        Initialize EventFilter.
-
-        :param event: the event to check
-        :type event: ZMEvent
-        """
-        self._event = event
-        self._should_notify = True
-        self._reason = []
-        self._suffix = None
-
-    def run(self):
-        """Test for all filter conditions, update should_notify."""
-        self._filter_ir_switch()
-
-    def _filter_ir_switch(self):
-        """Determine if the camera switched from or to IR during this event."""
-        f1 = self._event.FirstFrame
-        f2 = self._event.LastFrame
-        if f1.is_color and not f2.is_color:
-            self._should_notify = False
-            self._reason.append('Color to BW switch')
-            self._suffix = 'Color2BW'
-            return
-        if not f1.is_color and f2.is_color:
-            self._should_notify = False
-            self._reason.append('BW to color switch')
-            self._suffix = 'BW2Color'
-
-    @property
-    def should_notify(self):
-        """
-        Whether we should send (True) or suppress (False) a notification for
-        this event.
-
-        :returns: whether to send a notification or not
-        :rtype: bool
-        """
-        return self._should_notify
-
-    @property
-    def reason(self):
-        """
-        Return the reason why notification should be suppressed or None.
-
-        :return: reason why notification should be suppressed, or None
-        :rtype: ``str`` or ``None``
-        """
-        if len(self._reason) == 0:
-            return None
-        elif len(self._reason) == 1:
-            return self._reason[0]
-        return '; '.join(self._reason)
-
-    @property
-    def suffix(self):
-        """
-        Return a suffix to append to the event name describing the suppression
-        reason.
-
-        :return: event suffix
-        :rtype: str
-        """
-        return self._suffix
-
-
-class Monitor(object):
-    """Class to represent a Monitor from ZoneMinder's database."""
-
-    def __init__(self, **kwargs):
-        self.AlarmFrameCount = None
-        self.ControlAddress = None
-        self.ControlDevice = None
-        self.ControlId = None
-        self.Controllable = None
-        self.Enabled = None
-        self.EventPrefix = None
-        self.Function = None
-        self.Height = None
-        self.Host = None
-        self.Id = None
-        self.ImageBufferCount = None
-        self.LinkedMonitors = None
-        self.Method = None
-        self.Name = None
-        self.Path = None
-        self.Port = None
-        self.PostEventCount = None
-        self.PreEventCount = None
-        self.Protocol = None
-        self.RefBlendPerc = None
-        self.SectionLength = None
-        self.SignalCheckColour = None
-        self.Type = None
-        self.WebColour = None
-        self.Width = None
-        self.Zones = {}
-        for k, v in kwargs.items():
-            if hasattr(self, k):
-                setattr(self, k, v)
-
-    def __repr__(self):
-        return '<Monitor(MonitorId=%d)>' % self.Id
-
-    @property
-    def as_json(self):
-        d = {
-            x: getattr(self, x) for x in vars(self) if x[0].isupper()
-        }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
-
-
-class FrameStats(object):
-    """Class to represent frame stats from ZoneMinder's Database."""
-
-    def __init__(self, **kwargs):
-        self.AlarmPixels = None
-        self.BlobPixels = None
-        self.Blobs = None
-        self.EventId = None
-        self.FilterPixels = None
-        self.FrameId = None
-        self.MaxBlobSize = None
-        self.MaxX = None
-        self.MaxY = None
-        self.MinBlobSize = None
-        self.MinX = None
-        self.MinY = None
-        self.MonitorId = None
-        self.PixelDiff = None
-        self.Score = None
-        self.ZoneId = None
-        for k, v in kwargs.items():
-            if hasattr(self, k):
-                setattr(self, k, v)
-
-    def __repr__(self):
-        return '<FrameStats(FrameId=%d, EventId=%d, ZoneId=%s)>' % (
-            self.FrameId, self.EventId, self.ZoneId
-        )
-
-    @property
-    def as_json(self):
-        d = {
-            x: getattr(self, x) for x in vars(self) if x[0].isupper()
-        }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
-
-
-class Frame(object):
-    """
-    Class to represent a frame from ZoneMinder's database, augmented with some
-    additional information.
-    """
-
-    def __init__(self, **kwargs):
-        self.Id = None
-        self.EventId = None
-        self.FrameId = None
-        self.Delta = None
-        self.Score = None
-        self.TimeStamp = None
-        self.Type = None
-        self.Stats = {}
-        self.event = None
-        self._image = None
-        self._is_color = None
-        for k, v in kwargs.items():
-            if hasattr(self, k):
-                setattr(self, k, v)
-
-    def __repr__(self):
-        return '<Frame(Id=%d, EventId=%d, FrameId=%s)>' % (
-            self.Id, self.EventId, self.FrameId
-        )
-
-    @property
-    def as_dict(self):
-        d = {
-            x: getattr(self, x) for x in vars(self) if x[0].isupper()
-        }
-        d['frame_filename'] = self.filename
-        d['frame_path'] = self.path
-        return d
-
-    @property
-    def as_json(self):
-        return json.dumps(
-            self.as_json, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
-
-    @property
-    def filename(self):
-        return self.event.frame_fmt % self.FrameId
-
-    @property
-    def path(self):
-        return os.path.join(self.event.path, self.filename)
-
-    @property
-    def is_color(self):
-        if self._is_color is not None:
-            return self._is_color
-        img = self.image
-        logger.debug('Finding if image is color or not for %s', self)
-        bands = img.split()
-        histos = [x.histogram() for x in bands]
-        if histos[1:] == histos[:-1]:
-            self._is_color = False
-        else:
-            self._is_color = True
-        logger.info(
-            'Frame %s is_color=%s based on histograms of bands',
-            self, self._is_color
-        )
-        return self._is_color
-
-    @property
-    def image(self):
-        if self._image is not None:
-            return self._image
-        logger.debug('Loading image for %s from: %s', self, self.path)
-        self._image = Image.open(self.path)
-        return self._image
-
-
-class MonitorZone(object):
-    """Class to represent a Zone for a single Monitor from ZM's database."""
-
-    def __init__(self, **kwargs):
-        self.AlarmRGB = None
-        self.Area = None
-        self.CheckMethod = None
-        self.Coords = None
-        self.ExtendAlarmFrames = None
-        self.FilterX = None
-        self.FilterY = None
-        self.Id = None
-        self.MaxAlarmPixels = None
-        self.MaxBlobPixels = None
-        self.MaxBlobs = None
-        self.MaxFilterPixels = None
-        self.MaxPixelThreshold = None
-        self.MinAlarmPixels = None
-        self.MinBlobPixels = None
-        self.MinBlobs = None
-        self.MinFilterPixels = None
-        self.MinPixelThreshold = None
-        self.MonitorId = None
-        self.Name = None
-        self.NumCoords = None
-        self.OverloadFrames = None
-        self.Type = None
-        self.Units = None
-        for k, v in kwargs.items():
-            if hasattr(self, k):
-                setattr(self, k, v)
-
-    def __repr__(self):
-        return '<MonitorZone(MonitorId=%d, Id=%s)>' % (
-            self.MonitorId, self.Id
-        )
-
-    @property
-    def as_json(self):
-        d = {
-            x: getattr(self, x) for x in vars(self) if x[0].isupper()
-        }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
-
-
-class ZMEvent(object):
-    """Class to store overall representation of a ZoneMinder Event."""
-
-    def __init__(self, event_id, monitor_id=None, cause=None):
-        self.EventId = event_id
-        self.MonitorId = monitor_id
-        self.Cause = cause
-        self.AlarmFrames = None
-        self.Archived = None
-        self.AvgScore = None
-        self.EndTime = None
-        self.Frames = None
-        self.Height = None
-        self.Length = None
-        self.MaxScore = None
-        self.Name = None
-        self.Notes = None
-        self.StartTime = None
-        self.TotScore = None
-        self.Width = None
-        self.BestFrame = None
-        self.FirstFrame = None
-        self.LastFrame = None
-
-        self.Monitor = None
-        self.AllFrames = {}
-
-        self.frame_num_padding = None
-        self.frame_fmt = None
-        self.zm_url = None
-        self.path = None
-
-        self._conn = pymysql.connect(
-            host='localhost', user=CONFIG['MYSQL_USER'],
-            password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
-            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
-        )
-        self._populate()
-        if self.is_finished:
-            self._conn.close()
-
-    def __repr__(self):
-        return '<Event(EventId=%d, MonitorId=%d)>' % (
-            self.EventId, self.MonitorId
-        )
-
-    @property
-    def as_json(self):
-        d = {
-            x: getattr(self, x) for x in vars(self) if x[0].isupper()
-        }
-        return json.dumps(
-            d, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-        )
-
-    def _query_and_return(self, sql, args, onlyone=True, none_ok=False):
-        if not isinstance(args, type([])):
-            args = [args]
-        with self._conn.cursor() as cursor:
-            logger.debug(
-                'EXECUTE: %s ARGS: %s', sql,
-                ', '.join(['%s (%s)' % (x, type(x)) for x in args])
-            )
-            cursor.execute(sql, args)
-            if onlyone:
-                result = cursor.fetchone()
-                if result is None and not none_ok:
-                    raise RuntimeError(
-                        'ERROR: No row in DB for SQL: %s\nargs: %s' % (
-                            sql, args
-                        )
-                    )
-            else:
-                result = cursor.fetchall()
-                if (result is None or len(result) == 0) and not none_ok:
-                    raise RuntimeError(
-                        'ERROR: No row in DB for SQL: %s\nargs: %s' % (
-                            sql, args
-                        )
-                    )
-        return result
-
-    def _class_from_sql(
-        self, klass, attr, sql, args, onlyone=True, none_ok=False,
-        key_attr=None, extra_args={}
-    ):
-        result = self._query_and_return(
-            sql, args, onlyone=onlyone, none_ok=none_ok
-        )
-        if onlyone:
-            result.update(extra_args)
-            setattr(self, attr, klass(**result))
-            return
-        if key_attr is None:
-            tmp = []
-            for x in result:
-                cls_args = x
-                cls_args.update(extra_args)
-                tmp.append(klass(**cls_args))
-            setattr(self, attr, tmp)
-            return
-        tmp = {}
-        for x in result:
-            cls_args = x
-            cls_args.update(extra_args)
-            tmp[x[key_attr]] = klass(**cls_args)
-        setattr(self, attr, tmp)
-
-    def _populate(self):
-        logger.info('Populating from DB...')
-        # Query-once items:
-        if self.frame_num_padding is None:
-            self.frame_num_padding = int(self._query_and_return(
-                'SELECT `Value` FROM `Config` WHERE '
-                '`Name`="ZM_EVENT_IMAGE_DIGITS";',
-                []
-            )['Value'])
-        logger.debug('Found EVENT_IMAGE_DIGITS as: %s' % self.frame_num_padding)
-        self.frame_fmt = '%.{fp}d-capture.jpg'.format(fp=self.frame_num_padding)
-        if self.zm_url is None:
-            self.zm_url = self._query_and_return(
-                'SELECT `Value` FROM `Config` WHERE Name="ZM_URL";',
-                []
-            )['Value']
-        logger.debug('ZM_URL: %s', self.zm_url)
-        # Event itself
-        res = self._query_and_return(
-            'SELECT * FROM `Events` WHERE `Id`=%s;', self.EventId
-        )
-        for k, v in res.items():
-            if hasattr(self, k):
-                setattr(self, k, v)
-        self.path = os.path.join(
-            EVENTS_PATH, '%s' % self.MonitorId,
-            self.StartTime.strftime('%y/%m/%d/%H/%M/%S')
-        )
-        logger.debug(self.as_json)
-        # Other items
-        self._class_from_sql(
-            Monitor, 'Monitor',
-            'SELECT * FROM `Monitors` WHERE `Id`=%s;',
-            self.MonitorId
-        )
-        self._class_from_sql(
-            Frame, 'AllFrames',
-            'SELECT * FROM Frames WHERE EventId=%s;',
-            self.EventId,
-            onlyone=False, key_attr='FrameId', none_ok=True,
-            extra_args={'event': self}
-        )
-        results = self._query_and_return(
-            'SELECT * FROM Stats WHERE EventId=%s;',
-            self.EventId,
-            onlyone=False, none_ok=True
-        )
-        for stat in results:
-            if stat['FrameId'] not in self.AllFrames:
-                continue
-            self.AllFrames[stat['FrameId']].Stats[
-                stat['ZoneId']
-            ] = FrameStats(**stat)
-        results = self._query_and_return(
-            'SELECT * FROM Zones WHERE MonitorId=%s;',
-            self.MonitorId, onlyone=False, none_ok=True
-        )
-        if len(self.AllFrames) > 0:
-            self.FirstFrame = self.AllFrames[
-                min(self.AllFrames.keys())
-            ]
-            self.LastFrame = self.AllFrames[
-                max(self.AllFrames.keys())
-            ]
-            self.BestFrame = sorted(
-                self.AllFrames.values(), key=lambda x: (x.Score, x.FrameId)
-            )[-1]
-        for zone in results:
-            self.Monitor.Zones[zone['Id']] = MonitorZone(**zone)
-        logger.info('Done populating.')
-        self._conn.commit()
-
-    @property
-    def is_finished(self):
-        return self.EndTime is not None
-
-    def wait_for_finish(self, timeout_sec=30):
-        if self.is_finished:
-            return
-        logger.info('Waiting up to %ds for event to finish...', timeout_sec)
-        t = time.time()
-        end_time = t + timeout_sec
-        while t <= end_time:
-            self._populate()
-            if self.is_finished:
-                logger.info('Event ended.')
-                return
-            time.sleep(2)
-        logger.warning('%s did not end in %ds' % (self, timeout_sec))
-
-    def add_suffix_to_name(self, suffix):
-        if suffix is None:
-            logger.error('Cannot add None suffix to event name!')
-            return
-        newname = '%s_SUP:%s' % (self.Name, suffix)
-        logger.warning(
-            'Renaming Event %s from "%s" to "%s"',
-            self.EventId, self.Name, newname
-        )
-        r = requests.put(
-            'http://localhost/zm/api/events/%s.json' % self.EventId,
-            data={'Event[Name]': newname}
-        )
-        r.raise_for_status()
-        assert r.json()['message'] == 'Saved'
-        logger.info('%s renamed', self)
-
 
 class ImageAnalysisWrapper(object):
     """Wraps calling the ``ANALYZER`` classes and storing their results."""
 
     def __init__(self, event):
         self._event = event
+        logger.debug('Connecting to MySQL')
         self._conn = pymysql.connect(
             host='localhost', user=CONFIG['MYSQL_USER'],
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
             charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
         )
         self._analyzers = []
-        self._suppression_reason = None
 
-    def _result_to_db(self, analyzer):
+    def _result_to_db(self, result, frame):
+        """Write an ObjectDetectionResult instance to DB"""
         sql = 'INSERT INTO `' + ANALYSIS_TABLE_NAME + \
               '` (`MonitorId`, `ZoneId`, `EventId`, `FrameId`, ' \
-              '`FrameType`, `AnalyzerName`, `RuntimeSec`, `Results`) ' \
-              'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ' \
+              '`AnalyzerName`, `RuntimeSec`, `Results`) ' \
+              'VALUES (%s, %s, %s, %s, %s, %s, %s) ' \
               'ON DUPLICATE KEY UPDATE `RuntimeSec`=%s, `Results`=%s'
-        for ftype in ['First', 'Best', 'Last']:
-            with self._conn.cursor() as cursor:
-                frame = getattr(self._event, '%sFrame' % ftype)
-                res = {
-                    'result': analyzer.result[ftype],
-                    'paths': analyzer.frames[ftype]
-                }
-                res_json = json.dumps(res)
-                args = [
-                    self._event.MonitorId,
-                    0,  # ZoneId
-                    self._event.EventId,
-                    frame.FrameId,
-                    ftype,
-                    analyzer.__class__.__name__,
-                    '%.2f' % analyzer.runtime,
-                    res_json,
-                    '%.2f' % analyzer.runtime,
-                    res_json
-                ]
-                try:
-                    logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
-                    cursor.execute(sql, args)
-                    self._conn.commit()
-                except Exception:
-                    logger.error(
-                        'ERROR executing %s; for %s frame type %s',
-                        sql, self._event, ftype, exc_info=True
-                    )
+        with self._conn.cursor() as cursor:
+            res_json = json.dumps(result.detections, cls=DateSafeJsonEncoder)
+            args = [
+                self._event.MonitorId,
+                0,  # ZoneId
+                self._event.EventId,
+                frame.FrameId,
+                result.analyzer_name,
+                '%.2f' % result.runtime,
+                res_json,
+                '%.2f' % result.runtime,
+                res_json
+            ]
+            try:
+                logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
+                cursor.execute(sql, args)
+                self._conn.commit()
+            except Exception:
+                logger.error(
+                    'ERROR executing %s; for %s',
+                    sql, self._event, exc_info=True
+                )
 
     def analyze_event(self):
-        """returns True or False whether to notify about this event"""
+        """returns a list of ObjectDetectionResult instances"""
+        results = []
         for a in ANALYZERS:
+            logger.debug('Running object detection with: %s', a)
             cls = a(self._event)
-            cls.analyze()
-            self._analyzers.append(cls)
-            try:
-                self._result_to_db(cls)
-            except Exception:
-                logger.critical(
-                    'Exception writing analysis result to DB for %s %s',
-                    self._event, a.__name__, exc_info=True
-                )
-        return True
-
-    @property
-    def suppression_reason(self):
-        return self._suppression_reason
-
-    @property
-    def analyzers(self):
-        return self._analyzers
-
-    @property
-    def new_object_labels(self):
-        o = []
-        for a in self.analyzers:
-            o.extend(a.new_objects)
-        return list(set(o))
+            for frame in self._event.FramesForAnalysis.values():
+                res = cls.analyze(frame)
+                results.append(res)
+                try:
+                    self._result_to_db(res, frame)
+                except Exception:
+                    logger.critical(
+                        'Exception writing analysis result to DB for %s %s',
+                        self._event, a.__name__, exc_info=True
+                    )
+        return results
 
 
 def parse_args(argv):
@@ -1070,25 +187,49 @@ def get_basicconfig_kwargs(args):
     return log_kwargs
 
 
-def main():
-    # setsid so calling process can continue without terminating
-    os.setsid()
-    # populate secrets
-    populate_secrets()
-    # setup logging
+def setup_logging(args):
     global logger
-    args = parse_args(sys.argv[1:])
-    logging.basicConfig(**get_basicconfig_kwargs(args))
+    kwargs = get_basicconfig_kwargs(args)
+    logging.basicConfig(**kwargs)
     logger = logging.getLogger()
-    # initial log
-    logger.warning(
-        'Triggered; EventId=%s MonitorId=%s Cause=%s',
-        args.event_id, args.monitor_id, args.cause
+    if args.foreground:
+        return
+    # if not running in foreground, log to syslog also
+    sh = SysLogHandler()
+    sh.ident = 'zmevent_handler.py'
+    sh.setFormatter(logging.Formatter(kwargs['format']))
+    logger.addHandler(sh)
+
+
+def send_to_hass(json_str, event_id):
+    logger.info(json_str)
+    url = '%s/events/%s' % (CONFIG['HASS_API_URL'], HASS_EVENT_NAME)
+    count = 0
+    while count < 13:
+        count += 1
+        try:
+            logger.debug('Try POST to: %s', url)
+            r = requests.post(
+                url, data=json_str, timeout=5,
+                headers={'Content-Type': 'application/json'}
+            )
+            r.raise_for_status()
+            assert 'message' in r.json()
+            logger.info('Event successfully posted to HASS: %s', r.text)
+            return
+        except Exception:
+            logger.error('Error POSTing to HASS at %s: %s', url, r.text)
+    fname = os.path.join(
+        os.path.dirname(LOG_PATH), 'event_%s.json' % event_id
     )
-    # populate the event
+    with open(fname, 'w') as fh:
+        fh.write(json_str)
+    logger.critical('Event not sent to HASS; persisted to: %s', fname)
+
+
+def run(args):
+    # populate the event from ZoneMinder DB
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
-    # instantiate the analysis wrapper
-    analyzer = ImageAnalysisWrapper(event)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
     if os.geteuid() != evt_owner:
@@ -1099,66 +240,56 @@ def main():
     logger.debug('Loaded event: %s', event.as_json)
     # wait for the event to finish - we wait up to 30s then continue
     event.wait_for_finish()
-    if not event.is_finished:
-        logger.warning('Event did not finish after 30s')
-    # run initial filter on the event; see if we should suppress it
-    try:
-        filter = EventFilter(event)
-        filter.run()
-        if not filter.should_notify:
-            logger.warning(
-                'Suppressing notification for event %s because of filter',
-                event
+    result = {
+        'event': event,
+        'filters': [],
+        'object_detections': []
+    }
+    # run filters on event
+    logger.debug('Running filters on %s', event)
+    for cls in EventFilter.__subclasses__():
+        try:
+            logger.debug('Filter: %s', cls)
+            f = cls(event)
+            f.run()
+            result['filters'].append(f)
+        except Exception:
+            logger.critical(
+                'Exception running filter %s on event %s',
+                cls, event, exc_info=True
             )
-            EmailNotifier(
-                event, analyzer, args.dry_run
-            ).build_and_send(filter.reason)
-            if args.dry_run:
-                logger.warning('DRY RUN - would add suffix to event name: %s',
-                               filter.suffix)
-            else:
-                event.add_suffix_to_name(filter.suffix)
-            return
-    except Exception:
-        logger.critical(
-            'ERROR filtering event: %s', event.as_json, exc_info=True
-        )
-        raise
     # run object detection on the event
     try:
-        if not analyzer.analyze_event():
-            logger.warning(
-                'Suppressing notification for event %s because of image '
-                'analysis', event
-            )
-            EmailNotifier(event, analyzer, args.dry_run).build_and_send(
-                analyzer.suppression_reason
-            )
-            if args.dry_run:
-                logger.warning('DRY RUN - would add suffix to event name: IA')
-            else:
-                event.add_suffix_to_name('IA')
-            return
+        analyzer = ImageAnalysisWrapper(event)
+        analysis = analyzer.analyze_event()
+        result['object_detections'] = analysis
     except Exception:
         logger.critical(
-            'ERROR running ImageAnalysisWrapper on event: %s', event.as_json,
+            'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    # finally, if everything worked and the event wasn't suppressed, notify
-    try:
-        PushoverNotifier(event, analyzer, args.dry_run).generate_and_send()
-    except Exception as ex:
-        logger.critical(
-            'ERROR sending pushover notification for event %s: %s',
-            event.EventId, ex, exc_info=True
-        )
-    try:
-        EmailNotifier(event, analyzer, args.dry_run).build_and_send()
-    except Exception as ex:
-        logger.critical(
-            'ERROR sending email notification for event %s: %s',
-            event.EventId, ex, exc_info=True
-        )
+    res_json = json.dumps(
+        result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+    )
+    send_to_hass(res_json, event.EventId)
+
+
+def main():
+    # setsid so we can continue running even if caller dies
+    os.setsid()
+    # populate secrets from environment variables
+    populate_secrets()
+    # parse command line arguments
+    args = parse_args(sys.argv[1:])
+    # setup logging
+    setup_logging(args)
+    # initial log
+    logger.warning(
+        'Triggered; EventId=%s MonitorId=%s Cause=%s',
+        args.event_id, args.monitor_id, args.cause
+    )
+    # run...
+    run(args)
 
 
 if __name__ == "__main__":
