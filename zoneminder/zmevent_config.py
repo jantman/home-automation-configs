@@ -71,6 +71,12 @@ IGNORED_OBJECTS = [
         ['person'],
         bounding_box=(385, 635, 15, 15),
         min_score=0.3
+    ),
+    # yolo3-tiny thinks this tree stump in my yard is a sheep or cow...
+    IgnoredObject(
+        'FrontTreeStump',
+        ['sheep', 'cow'],
+        bounding_box=(1540, 335, 20, 20)
     )
 ]
 
