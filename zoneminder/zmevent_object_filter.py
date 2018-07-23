@@ -8,7 +8,7 @@ class IgnoredObject(object):
 
     def __init__(
         self, name, labels, monitor_num=None, bounding_box=None,
-        zone_names=None, min_score=0
+        zone_names=None, min_score=None
     ):
         """
         Initialize an IgnoredObject instance. When object detection is run on
@@ -86,7 +86,7 @@ class IgnoredObject(object):
                 return False
             if not (bb_y - bb_h) < y < (bb_y + bb_h):
                 return False
-        if score >= self._min_score:
+        if self._min_score is not None and score >= self._min_score:
             return False
         # all conditions matched; ignore
         return True
