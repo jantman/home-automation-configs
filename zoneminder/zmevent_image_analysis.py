@@ -435,3 +435,20 @@ class AlternateYoloAnalyzer(YoloAnalyzer):
                     self._config_path('coco.names')
                 ))
             logger.debug('Wrote %s', path)
+
+    def analyze(self, frame):
+        _start = time.time()
+        # get all the results
+        frame_path = frame.path
+        output_path = frame_path.replace('.jpg', '.yolo3alt.jpg')
+        res = self.do_image_yolo(frame, frame_path, output_path)
+        _end = time.time()
+        return ObjectDetectionResult(
+            self.__class__.__name__,
+            frame,
+            frame_path,
+            output_path,
+            res['detections'],
+            res['ignored_detections'],
+            _end - _start
+        )

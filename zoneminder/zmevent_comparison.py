@@ -90,13 +90,35 @@ class EventComparer(object):
 
     def run(self):
         self.purge_analysis_table()
-        # SELECT EventId,FrameId FROM zmevent_handler_ImageAnalysis WHERE AnalyzerName='YoloAnalyzer' AND (EventId, FrameId) NOT IN (SELECT EventId, FrameId FROM zmevent_handler_ImageAnalysis WHERE AnalyzerName='AlternateYoloAnalyzer');
+        to_analyze = self._events_to_analyze()
+        # 2. run analysis on all of them; store the results in memory
+        # 3. grab the YoloAnalyzer results for each event/frame
+        # 4. send an email with comparison information
+
+    def _events_to_analyze(self):
+        """return list of 2-tuples (EventId, FrameId) to analyze"""
+        sql = 'SELECT EventId,FrameId FROM %s WHERE ' \
+              'AnalyzerName="YoloAnalyzer" AND (EventId, FrameId) NOT IN ' \
+              '(SELECT EventId, FrameId FROM %s WHERE ' \
+              'AnalyzerName="AlternateYoloAnalyzer");' % (
+                  ANALYSIS_TABLE_NAME, ANALYSIS_TABLE_NAME
+              )
+        with self._conn.cursor() as cursor:
+            logger.info('Executing: %s', sql)
+            cursor.execute(sql)
+            res = cursor.fetchall()
+            logger.info('Found %d Frames to analyze', len(res))
+            results = [
+                (r['EventId'], r['FrameId']) for r in res
+            ]
+            self._conn.commit()
+        return results
 
     def purge_analysis_table(self):
         sql = 'DELETE FROM %s WHERE (EventId, FrameId) NOT IN ' \
               '(SELECT EventId, FrameId FROM Frames);' % ANALYSIS_TABLE_NAME
         with self._conn.cursor() as cursor:
-            logger.warning('EXECUTING: %s', sql)
+            logger.info('EXECUTING: %s', sql)
             num_rows = cursor.execute(sql)
             logger.warning(
                 'Purged %d rows from %s', num_rows, ANALYSIS_TABLE_NAME
