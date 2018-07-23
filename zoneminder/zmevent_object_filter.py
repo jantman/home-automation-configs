@@ -7,7 +7,8 @@ class IgnoredObject(object):
     """Class to filter out an object from object detection results."""
 
     def __init__(
-        self, name, labels, monitor_num=None, bounding_box=None, zone_names=None
+        self, name, labels, monitor_num=None, bounding_box=None,
+        zone_names=None, min_score=0
     ):
         """
         Initialize an IgnoredObject instance. When object detection is run on
@@ -33,6 +34,10 @@ class IgnoredObject(object):
         :param zone_names: list of zone names to ignore this object in.
           Effectively meaningless when ``bounding_box`` is set.
         :type zone_names: list
+        :param min_score: minimum score required; objects that match other
+          conditions and have a score below this will be ignored. Specified as
+          a float from 0 to 1.
+        :type min_score: float
         """
         assert isinstance(labels, type([]))
         self.name = name
@@ -40,8 +45,9 @@ class IgnoredObject(object):
         self._monitor_num = monitor_num
         self._bounding_box = bounding_box
         self._zone_names = zone_names
+        self._min_score = min_score
 
-    def should_ignore(self, label, x, y, zones):
+    def should_ignore(self, label, x, y, zones, score):
         """
         Return True if this object should be ignored based on the parameters of
         this filter, False otherwise.
@@ -54,6 +60,9 @@ class IgnoredObject(object):
         :type y: int
         :param zones: list of zone names the object bounding box is in
         :type zones: list
+        :param score: the score/confidence of the detection, as a decimal
+          percentage (0 to 1)
+        :type score: float
         :return: whether or not to ignore the object
         :rtype: bool
         """
@@ -77,5 +86,7 @@ class IgnoredObject(object):
                 return False
             if not (bb_y - bb_h) < y < (bb_y + bb_h):
                 return False
+        if score >= self._min_score:
+            return False
         # all conditions matched; ignore
         return True

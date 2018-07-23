@@ -62,11 +62,16 @@ IGNORED_OBJECTS = [
         'IndoorStuff',
         ['cup', 'dog', 'cat', 'book', 'tvmonitor'],
         monitor_num=2
-    )
+    ),
     # yolo3-tiny seems to randomly be classifying my kitchen window, wire
     # metal shelving and rice cooker as a person, with < 30% confidence.
     # ignore that.
-    # x=386 y=637 w=352 h=825
+    IgnoredObject(
+        'KitchenShelvesAsPerson',
+        ['person'],
+        bounding_box=(385, 635, 15, 15),
+        min_score=0.3
+    )
 ]
 
 

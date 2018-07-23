@@ -238,7 +238,7 @@ class YoloAnalyzer(ImageAnalyzer):
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
                 foo.name for foo in IGNORED_OBJECTS
-                if foo.should_ignore(cat, x, y, zones)
+                if foo.should_ignore(cat, x, y, zones, score)
             ]
             if len(matched_filters) > 0:
                 # object should be ignored
