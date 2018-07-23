@@ -33,7 +33,7 @@ more general/configurable.
 
 - 3-state alarm: Disarmed, Home, Away. Home triggers on exterior (i.e. door /
   window) sensors only, Away also triggers on interior (i.e. motion) sensors.
-- ZoneMinder RunState is also updated to match the alarm state.
+- Turn on/off a list of ZoneMinder cameras when system is armed in Away.
 - Alarm state set based on manual input_select in UI or device tracker. If the
   device_tracker entity_id for my phone (configurable) enters the "Home" zone,
   disarm the alarm. If it leaves the "Home" zone, arm it as Away.
@@ -124,6 +124,12 @@ CAMERA_IMAGE_ENTITIES = {
     'binary_sensor.ecolink_doorwindow_sensor_sensor_4': (4, 2),  # kitchen
     'binary_sensor.ecolink_doorwindow_sensor_sensor': (3, 1)  # front door
 }
+
+#: List of camera entities to turn on when system is armed in AWAY mode, and
+#: turn off when camera is in HOME or DISARMED.
+AWAY_CAMERA_ENTITIES = [
+    'switch.cam1_state'
+]
 
 #: The ID of the ZoneMinder monitor with PTZ support, for the above.
 PTZ_MONITOR_ID = 2
@@ -513,8 +519,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             'System has been armed in "Home" mode. All exterior sensors '
             'secure.', sound='gamelan'
         )
-        self._log.info('Setting ZoneMinder runstate to Home')
-        self.call_service('zoneminder/set_run_state', name='Home')
+        self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+        for cam_entity in AWAY_CAMERA_ENTITIES:
+            self.turn_off(cam_entity)
 
     def _arm_away(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Away."""
@@ -536,8 +543,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             'System has been armed in "Away" mode. All exterior sensors '
             'secure.', sound='gamelan'
         )
-        self._log.info('Setting ZoneMinder runstate to Home')
-        self.call_service('zoneminder/set_run_state', name='Away')
+        self._log.info('Turning on cameras: %s', AWAY_CAMERA_ENTITIES)
+        for cam_entity in AWAY_CAMERA_ENTITIES:
+            self.turn_on(cam_entity)
 
     def _disarm(self, prev_state):
         """Disarm the system."""
@@ -546,8 +554,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             'System Disarmed',
             'System has been disarmed.'
         )
-        self._log.info('Setting ZoneMinder runstate to Monitor')
-        self.call_service('zoneminder/set_run_state', name='Monitor')
+        self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+        for cam_entity in AWAY_CAMERA_ENTITIES:
+            self.turn_off(cam_entity)
 
     def _exterior_doors_open(self):
         """Return a list of the friendly_name of any open exterior sensors."""
