@@ -151,7 +151,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
         for d in sorted(
             img['detections'], key=lambda x: x['score'], reverse=True
         ):
-            s.append('%s (%d%% %s)' % (
+            s.append('%s (%d%%; %s)' % (
                 d['label'], d['score'] * 100,
                 '/'.join(
                     sorted(
