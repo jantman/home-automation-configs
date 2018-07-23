@@ -7,6 +7,10 @@ from textwrap import dedent
 import requests
 from shapely.geometry.polygon import LinearRing, Polygon
 from zmevent_config import IGNORED_OBJECTS
+import pymysql
+import json
+
+from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 
 try:
     import cv2
@@ -61,6 +65,68 @@ class suppress_stdout_stderr(object):
         # Close all file descriptors
         for fd in self.null_fds + self.save_fds:
             os.close(fd)
+
+
+class ImageAnalysisWrapper(object):
+    """Wraps calling the ``ANALYZER`` classes and storing their results."""
+
+    def __init__(self, event, analyzers):
+        self._event = event
+        logger.debug('Connecting to MySQL')
+        self._conn = pymysql.connect(
+            host='localhost', user=CONFIG['MYSQL_USER'],
+            password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
+            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+        )
+        self._analyzers = analyzers
+
+    def _result_to_db(self, result, frame):
+        """Write an ObjectDetectionResult instance to DB"""
+        sql = 'INSERT INTO `' + ANALYSIS_TABLE_NAME + \
+              '` (`MonitorId`, `ZoneId`, `EventId`, `FrameId`, ' \
+              '`AnalyzerName`, `RuntimeSec`, `Results`) ' \
+              'VALUES (%s, %s, %s, %s, %s, %s, %s) ' \
+              'ON DUPLICATE KEY UPDATE `RuntimeSec`=%s, `Results`=%s'
+        with self._conn.cursor() as cursor:
+            res_json = json.dumps(result.detections, cls=DateSafeJsonEncoder)
+            args = [
+                self._event.MonitorId,
+                0,  # ZoneId
+                self._event.EventId,
+                frame.FrameId,
+                result.analyzer_name,
+                '%.2f' % result.runtime,
+                res_json,
+                '%.2f' % result.runtime,
+                res_json
+            ]
+            try:
+                logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
+                cursor.execute(sql, args)
+                self._conn.commit()
+            except Exception:
+                logger.error(
+                    'ERROR executing %s; for %s',
+                    sql, self._event, exc_info=True
+                )
+
+    def analyze_event(self):
+        """returns a list of ObjectDetectionResult instances"""
+        results = []
+        for a in self._analyzers:
+            logger.debug('Running object detection with: %s', a)
+            cls = a(self._event)
+            for frame in self._event.FramesForAnalysis.values():
+                res = cls.analyze(frame)
+                results.append(res)
+                try:
+                    self._result_to_db(res, frame)
+                except Exception:
+                    logger.critical(
+                        'Exception writing analysis result to DB for %s %s',
+                        self._event, a.__name__, exc_info=True
+                    )
+        return results
 
 
 class DetectedObject(object):
