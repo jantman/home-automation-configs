@@ -376,7 +376,12 @@ class EmailNotifier(object):
             '',
             '%s (%.2f%%) %s (x=%d y=%d w=%d h=%d)' % (
                 dets[0]['label'], dets[0]['score'],
-                ZMEventAlarmHandler.detection_str(dets[0]),
+                '/'.join(
+                    sorted(
+                        dets[0]['zones'], key=lambda x: dets[0]['zones'][x],
+                        reverse=True
+                    )
+                ),
                 dets[0]['x'], dets[0]['y'], dets[0]['w'], dets[0]['h']
             )
         )
@@ -387,7 +392,12 @@ class EmailNotifier(object):
                 '',
                 '%s (%.2f%%) %s (x=%d y=%d w=%d h=%d)' % (
                     d['label'], d['score'],
-                    ZMEventAlarmHandler.detection_str(d),
+                    '/'.join(
+                        sorted(
+                            d['zones'], key=lambda x: d['zones'][x],
+                            reverse=True
+                        )
+                    ),
                     d['x'], d['y'], d['w'], d['h']
                 )
             )
