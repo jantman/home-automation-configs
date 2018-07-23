@@ -77,8 +77,7 @@ EXTERIOR_SENSOR_REs = [
 #: List of regular expressions to match the binary_sensor entities for my
 #: "interor" zone, i.e. things that alarm only when I'm Away.
 INTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$'),
-    re.compile(r'^binary_sensor\..*_motion$')
+    re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$')
 ]
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
