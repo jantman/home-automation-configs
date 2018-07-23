@@ -135,6 +135,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
                 'Ignoring ZM_ALARM for Event %s - no objects detected',
                 data['event']['EventId']
             )
+            return
         # else our alarm isn't disarmed and we have some objects detected
         img = self._primary_detection_for_event(data)
         subject = 'ZoneMinder Alarm on %s - %s' % (
