@@ -131,7 +131,7 @@ class ImageAnalysisWrapper(object):
 
 class DetectedObject(object):
 
-    def __init__(self, label, zones, score, x, y, w, h):
+    def __init__(self, label, zones, score, x, y, w, h, ignore_reason=None):
         self._label = label
         self._zones = zones
         self._score = score
@@ -139,6 +139,7 @@ class DetectedObject(object):
         self._y = y
         self._w = w
         self._h = h
+        self._ignore_reason = None
 
     @property
     def as_dict(self):
@@ -149,7 +150,8 @@ class DetectedObject(object):
             'x': self._x,
             'y': self._y,
             'w': self._w,
-            'h': self._h
+            'h': self._h,
+            'ignore_reason': self._ignore_reason
         }
 
 
@@ -157,7 +159,7 @@ class ObjectDetectionResult(object):
 
     def __init__(
         self, analyzer_name, frame, frame_path, detected_path, detections,
-        runtime
+        ignored_detections, runtime
     ):
         """
         Class to represent the results of running object detection on an image.
@@ -177,6 +179,7 @@ class ObjectDetectionResult(object):
         self.frame_path = frame_path
         self.detected_path = detected_path
         self.detections = detections
+        self.ignored_detections = ignored_detections
         self.runtime = runtime
         self._frame = frame
 
@@ -187,6 +190,7 @@ class ObjectDetectionResult(object):
             'frame_path': self.frame_path,
             'output_path': self.detected_path,
             'detections': self.detections,
+            'ignored_detections': self.ignored_detections,
             'runtime': self.runtime,
             'EventId': self._frame.EventId,
             'FrameId': self._frame.FrameId
@@ -295,7 +299,7 @@ class YoloAnalyzer(ImageAnalyzer):
         img2 = Image(img)
         results = self._net.detect(img2, thresh=0.2, hier_thresh=0.3, nms=0.4)
         logger.debug('Raw Results: %s', results)
-        retval = []
+        retval = {'detections': [], 'ignored_detections': []}
         for cat, score, bounds in results:
             if not isinstance(cat, str):
                 cat = cat.decode()
@@ -314,11 +318,14 @@ class YoloAnalyzer(ImageAnalyzer):
                 )
                 rect_color = (104, 104, 104)
                 text_color = (111, 247, 93)
+                retval['ignored_detections'].append(DetectedObject(
+                    cat, zones, score, x, y, w, h, ignore_reason=matched_filters
+                ))
             else:
                 # object should not be ignored; add to result
                 rect_color = (255, 0, 0)
                 text_color = (255, 255, 0)
-                retval.append(DetectedObject(
+                retval['detections'].append(DetectedObject(
                     cat, zones, score, x, y, w, h
                 ))
             cv2.rectangle(
@@ -369,6 +376,7 @@ class YoloAnalyzer(ImageAnalyzer):
             frame,
             frame_path,
             output_path,
-            res,
+            res['detections'],
+            res['ignored_detections'],
             _end - _start
         )
