@@ -56,7 +56,17 @@ IGNORED_OBJECTS = [
         ['surfboard', 'suitcase', 'umbrella'],
         monitor_num=4,
         bounding_box=(1070, 575, 100, 100)
+    ),
+    # ignore... stuff... inside the house
+    IgnoredObject(
+        'IndoorStuff',
+        ['cup', 'dog', 'cat', 'book', 'tvmonitor'],
+        monitor_num=2
     )
+    # yolo3-tiny seems to randomly be classifying my kitchen window, wire
+    # metal shelving and rice cooker as a person, with < 30% confidence.
+    # ignore that.
+    # x=386 y=637 w=352 h=825
 ]
 
 
