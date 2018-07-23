@@ -164,20 +164,20 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
     def _primary_detection_for_event(self, data):
         best_id = data['event']['BestFrameId']
         max_id = 0
-        max_path = None
+        max_img = None
         for od in data['object_detections']:
             if od['FrameId'] == best_id:
                 self._log.debug(
                     'Pushover using image from Best frame (%s)', best_id
                 )
-                return od['output_path']
+                return od
             if od['FrameId'] > max_id:
                 max_id = od['FrameId']
-                max_path = od['output_path']
+                max_img = od
         self._log.debug(
             'Pushover using image from last frame (%s)', max_id
         )
-        return max_path
+        return max_img
 
     def _do_notify_pushover(self, subject, data, primary_image):
         """Build Pushover API request arguments and call _send_pushover"""
