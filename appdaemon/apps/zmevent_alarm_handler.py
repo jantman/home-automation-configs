@@ -354,7 +354,7 @@ class EmailNotifier(object):
             msg.attach(
                 MIMEImage(
                     open(d['output_path'], 'rb').read(),
-                    os.path.basename(d['output_path'])
+                    name=os.path.basename(d['output_path'])
                 )
             )
         return msg.as_string()
@@ -376,7 +376,7 @@ class EmailNotifier(object):
         s += td % (' rowspan="%d"' % len(dets), frame['FrameId'])
         s += td % (' rowspan="%d"' % len(dets), '%.2f sec' % frame['runtime'])
         zoneinfo = [
-            '%s (%d%%)' % (x, dets[0]['zones'][x]) for x in
+            '%s=%d%%' % (x, dets[0]['zones'][x]) for x in
             sorted(
                 dets[0]['zones'], key=lambda x: dets[0]['zones'][x],
                 reverse=True
