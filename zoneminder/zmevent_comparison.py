@@ -126,9 +126,6 @@ class EventComparer(object):
             logger.debug('Done analyzing event %d', evt_id)
         duration = datetime.now() - _start
         self._send_email(to_analyze, results, duration)
-        raise NotImplementedError(
-            'REMOVE LIMIT from selection in _events_to_analyze'
-        )
 
     def _get_hass_secrets(self):
         """
