@@ -41,6 +41,7 @@ def ensure_table():
                 "`AnalyzerName` VARCHAR(30) NOT NULL,",
                 "`RuntimeSec` decimal(10,2) DEFAULT '0.00',",
                 "`Results` text,",
+                "`IgnoredResults` text,",
                 "KEY `EventId` (`EventId`),",
                 "KEY `MonitorId` (`MonitorId`),",
                 "KEY `ZoneId` (`ZoneId`),",

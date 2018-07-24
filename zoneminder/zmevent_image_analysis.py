@@ -85,11 +85,15 @@ class ImageAnalysisWrapper(object):
         """Write an ObjectDetectionResult instance to DB"""
         sql = 'INSERT INTO `' + ANALYSIS_TABLE_NAME + \
               '` (`MonitorId`, `ZoneId`, `EventId`, `FrameId`, ' \
-              '`AnalyzerName`, `RuntimeSec`, `Results`) ' \
-              'VALUES (%s, %s, %s, %s, %s, %s, %s) ' \
-              'ON DUPLICATE KEY UPDATE `RuntimeSec`=%s, `Results`=%s'
+              '`AnalyzerName`, `RuntimeSec`, `Results`, `IgnoredResults`) ' \
+              'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ' \
+              'ON DUPLICATE KEY UPDATE `RuntimeSec`=%s, `Results`=%s,' \
+              '`IgnoredResults`=%s'
         with self._conn.cursor() as cursor:
             res_json = json.dumps(result.detections, cls=DateSafeJsonEncoder)
+            ign_json = json.dumps(
+                result.ignored_detections, cls=DateSafeJsonEncoder
+            )
             args = [
                 self._event.MonitorId,
                 0,  # ZoneId
@@ -98,8 +102,10 @@ class ImageAnalysisWrapper(object):
                 result.analyzer_name,
                 '%.2f' % result.runtime,
                 res_json,
+                ign_json,
                 '%.2f' % result.runtime,
-                res_json
+                res_json,
+                ign_json
             ]
             try:
                 logger.debug('EXECUTING: %s; ARGS: %s', sql, args)
