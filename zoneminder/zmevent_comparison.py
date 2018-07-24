@@ -112,13 +112,16 @@ class EventComparer(object):
             logger.debug('Done analyzing event %d', evt_id)
         # @TODO grab the YoloAnalyzer results for each event/frame
         # @TODO send an email with comparison information
+        raise NotImplementedError(
+            'REMOVE LIMIT from selection in _events_to_analyze'
+        )
 
     def _events_to_analyze(self):
         """dict of EventId to list of FrameIds to analyze"""
         sql = 'SELECT EventId,FrameId FROM %s WHERE ' \
               'AnalyzerName="YoloAnalyzer" AND (EventId, FrameId) NOT IN ' \
               '(SELECT EventId, FrameId FROM %s WHERE ' \
-              'AnalyzerName="AlternateYoloAnalyzer");' % (
+              'AnalyzerName="AlternateYoloAnalyzer") LIMIT 3;' % (
                   ANALYSIS_TABLE_NAME, ANALYSIS_TABLE_NAME
               )
         results = defaultdict(list)
