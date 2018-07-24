@@ -267,15 +267,19 @@ class EmailNotifier(object):
         html += '</table>\n'
         return html
 
-    def _analyzer_table_row(self, cpu_frm, tiny_frm_json):
+    def _analyzer_table_row(self, cpu_frm, tiny_frm_db):
         cpu_frm = cpu_frm.as_dict
         cpu_frm['detections'].extend(
             cpu_frm.get('ignored_detections', {})
         )
-        tiny_frm = json.loads(tiny_frm_json['Results'])
-        tiny_frm['detections'].extend(
-            tiny_frm.get('ignored_detections', {})
-        )
+        tiny_frm_db['Results'] = json.loads(tiny_frm_db['Results'])
+        try:
+            tiny_frm_db['IgnoredResults'] = json.loads(
+                tiny_frm_db['IgnoredResults']
+            )
+            tiny_frm_db['Results'].extend(tiny_frm_db['IgnoredResults'])
+        except Exception:
+            pass
         s = ''
         td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
              'padding: 5px;"%s>%s</td>\n'
@@ -284,19 +288,19 @@ class EmailNotifier(object):
             cpu_frm['detections'], reverse=True, key=lambda x: x._score
         )
         tiny_dets = sorted(
-            tiny_frm['Results']['detections'], reverse=True,
-            key=lambda x: x._score
+            tiny_frm_db['Results'], reverse=True,
+            key=lambda x: x['score']
         )
         if len(cpu_dets) == 0 and len(tiny_dets) == 0:
             s += td % ('', cpu_frm['FrameId'])
-            s += td % ('', '%.2f sec' % tiny_frm['runtime'])
+            s += td % ('', '%.2f sec' % tiny_frm_db['runtime'])
             s += td % ('', 'None')
             s += td % ('', '%.2f sec' % cpu_frm['runtime'])
             s += td % ('', 'None')
             s += '</tr>'
             return s
         s += td % ('', cpu_frm['FrameId'])
-        s += td % ('', '%.2f sec' % tiny_frm['runtime'])
+        s += td % ('', '%.2f sec' % tiny_frm_db['runtime'])
         s += td % (
             '',
             '<br />'.join(
