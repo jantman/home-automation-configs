@@ -272,7 +272,7 @@ class EmailNotifier(object):
         cpu_frm['detections'].extend(
             cpu_frm.get('ignored_detections', {})
         )
-        tiny_frm = json.loads(tiny_frm_json)
+        tiny_frm = json.loads(tiny_frm_json['Results'])
         tiny_frm['detections'].extend(
             tiny_frm.get('ignored_detections', {})
         )
