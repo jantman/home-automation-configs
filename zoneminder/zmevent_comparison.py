@@ -216,10 +216,7 @@ class EmailNotifier(object):
         html = '<html><head></head><body>\n'
         html += '<p>Object detection comparison for last day</p>\n'
         html += '<p>Total runtime: %s</p>\n' % self.duration
-        for evt_id in sorted(
-            self.results.keys(),
-            key=lambda x: self.results[x].as_dict['FrameId']
-        ):
+        for evt_id in sorted(self.results.keys()):
             html += self._event_table(
                 evt_id,
                 self.results[evt_id],
@@ -272,7 +269,13 @@ class EmailNotifier(object):
 
     def _analyzer_table_row(self, cpu_frm, tiny_frm_json):
         cpu_frm = cpu_frm.as_dict
+        cpu_frm['detections'].extend(
+            cpu_frm.get('ignored_detections', {})
+        )
         tiny_frm = json.loads(tiny_frm_json)
+        tiny_frm['detections'].extend(
+            tiny_frm.get('ignored_detections', {})
+        )
         s = ''
         td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
              'padding: 5px;"%s>%s</td>\n'
