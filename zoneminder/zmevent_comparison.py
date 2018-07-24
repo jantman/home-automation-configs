@@ -117,10 +117,10 @@ class EventComparer(object):
             # set FramesForAnalysis to the same ones as currently in the DB
             # for the GPU-based analyzer
             evt.FramesForAnalysis = {}
-            for frame in to_analyze[evt_id].keys():
+            for frame_id in to_analyze[evt_id].keys():
                 evt.FramesForAnalysis[
-                    frame['FrameId']
-                ] = evt.AllFrames[frame['FrameId']]
+                    frame_id
+                ] = evt.AllFrames[frame_id]
             analyzer = ImageAnalysisWrapper(evt, ANALYZERS)
             results[evt_id] = analyzer.analyze_event()
             logger.debug('Done analyzing event %d', evt_id)
