@@ -24,6 +24,9 @@ EVENTS_PATH = '/usr/share/zoneminder/www/events'
 #: Name of the event to send homeassistant
 HASS_EVENT_NAME = 'ZM_ALARM'
 
+#: Path to homeassistant secrets.yaml
+HASS_SECRETS_PATH = '/opt/homeassistant/.homeassistant/secrets.yaml'
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {
