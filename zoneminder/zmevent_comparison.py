@@ -134,11 +134,11 @@ class EventComparer(object):
         """
         Return the dictionary contents of HASS ``secrets.yaml``.
         """
-        self._log.debug('Reading hass secrets from: %s', HASS_SECRETS_PATH)
+        logger.debug('Reading hass secrets from: %s', HASS_SECRETS_PATH)
         # load the YAML
         with open(HASS_SECRETS_PATH, 'r') as fh:
             conf = load_yaml(fh, Loader=Loader)
-        self._log.debug('Loaded secrets.')
+        logger.debug('Loaded secrets.')
         # verify that the secrets we need are present
         assert 'gmail_username' in conf
         assert 'gmail_password' in conf
@@ -149,7 +149,7 @@ class EventComparer(object):
         hass_secrets = self._get_hass_secrets()
         addr = hass_secrets['gmail_username']
         msg = EmailNotifier(to_analyze, results, duration, addr).build_message()
-        self._log.debug('Connecting to SMTP on smtp.gmail.com:587')
+        logger.debug('Connecting to SMTP on smtp.gmail.com:587')
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.ehlo()
         s.starttls()
@@ -157,9 +157,9 @@ class EventComparer(object):
         s.login(
             hass_secrets['gmail_username'], hass_secrets['gmail_password']
         )
-        self._log.info('Sending mail From=%s To=%s', addr, addr)
+        logger.info('Sending mail From=%s To=%s', addr, addr)
         s.sendmail(addr, addr, msg)
-        self._log.info('EMail sent.')
+        logger.info('EMail sent.')
         s.quit()
 
     def _events_to_analyze(self):
