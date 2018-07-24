@@ -167,7 +167,7 @@ class EventComparer(object):
         sql = 'SELECT * FROM %s WHERE ' \
               'AnalyzerName="YoloAnalyzer" AND (EventId, FrameId) NOT IN ' \
               '(SELECT EventId, FrameId FROM %s WHERE ' \
-              'AnalyzerName="AlternateYoloAnalyzer") LIMIT 3;' % (
+              'AnalyzerName="AlternateYoloAnalyzer");' % (
                   ANALYSIS_TABLE_NAME, ANALYSIS_TABLE_NAME
               )
         results = defaultdict(dict)
@@ -270,7 +270,7 @@ class EmailNotifier(object):
     def _analyzer_table_row(self, cpu_frm, tiny_frm_db):
         cpu_frm = cpu_frm.as_dict
         cpu_frm['detections'].extend(
-            cpu_frm.get('ignored_detections', {})
+            cpu_frm.get('ignored_detections', [])
         )
         tiny_frm_db['Results'] = json.loads(tiny_frm_db['Results'])
         try:
@@ -293,14 +293,14 @@ class EmailNotifier(object):
         )
         if len(cpu_dets) == 0 and len(tiny_dets) == 0:
             s += td % ('', cpu_frm['FrameId'])
-            s += td % ('', '%.2f sec' % tiny_frm_db['runtime'])
+            s += td % ('', '%.2f sec' % tiny_frm_db['RuntimeSec'])
             s += td % ('', 'None')
             s += td % ('', '%.2f sec' % cpu_frm['runtime'])
             s += td % ('', 'None')
             s += '</tr>'
             return s
         s += td % ('', cpu_frm['FrameId'])
-        s += td % ('', '%.2f sec' % tiny_frm_db['runtime'])
+        s += td % ('', '%.2f sec' % tiny_frm_db['RuntimeSec'])
         s += td % (
             '',
             '<br />'.join(
@@ -320,9 +320,9 @@ class EmailNotifier(object):
             '<br />'.join(
                 [
                     '%s (%.2f%%) x=%d y=%d w=%d h=%d' % (
-                        x['label'], x['score'] * 100,
-                        x['x'], x['y'], x['w'],
-                        x['h']
+                        x.as_dict['label'], x.as_dict['score'] * 100,
+                        x.as_dict['x'], x.as_dict['y'], x.as_dict['w'],
+                        x.as_dict['h']
                     )
                     for x in cpu_dets
                 ]

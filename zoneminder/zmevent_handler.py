@@ -209,6 +209,9 @@ def run(args):
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
+    if args.dry_run:
+        logger.warning('Would POST to HASS: %s', res_json)
+        return
     send_to_hass(res_json, event.EventId)
 
 
