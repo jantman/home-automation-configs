@@ -14,16 +14,27 @@ import os
 import logging
 import argparse
 import json
+from datetime import datetime
 import pymysql
 from collections import defaultdict
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from yaml import load as load_yaml
 
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
-from zmevent_config import ANALYSIS_TABLE_NAME, CONFIG
+from zmevent_config import ANALYSIS_TABLE_NAME, CONFIG, HASS_SECRETS_PATH
 from zmevent_image_analysis import ImageAnalysisWrapper, AlternateYoloAnalyzer
 from zmevent_models import ZMEvent
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 #: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [AlternateYoloAnalyzer]
@@ -90,6 +101,7 @@ class EventComparer(object):
         )
 
     def run(self):
+        _start = datetime.now()
         self.purge_analysis_table()
         # find the events and frames we want to analyze
         to_analyze = self._events_to_analyze()
@@ -105,33 +117,67 @@ class EventComparer(object):
             # set FramesForAnalysis to the same ones as currently in the DB
             # for the GPU-based analyzer
             evt.FramesForAnalysis = {}
-            for fid in to_analyze[evt_id]:
-                evt.FramesForAnalysis[fid] = evt.AllFrames[fid]
+            for frame in to_analyze[evt_id].keys():
+                evt.FramesForAnalysis[
+                    frame['FrameId']
+                ] = evt.AllFrames[frame['FrameId']]
             analyzer = ImageAnalysisWrapper(evt, ANALYZERS)
             results[evt_id] = analyzer.analyze_event()
             logger.debug('Done analyzing event %d', evt_id)
-        # @TODO grab the YoloAnalyzer results for each event/frame
-        # @TODO send an email with comparison information
+        duration = datetime.now() - _start
+        self._send_email(to_analyze, results, duration)
         raise NotImplementedError(
             'REMOVE LIMIT from selection in _events_to_analyze'
         )
 
+    def _get_hass_secrets(self):
+        """
+        Return the dictionary contents of HASS ``secrets.yaml``.
+        """
+        self._log.debug('Reading hass secrets from: %s', HASS_SECRETS_PATH)
+        # load the YAML
+        with open(HASS_SECRETS_PATH, 'r') as fh:
+            conf = load_yaml(fh, Loader=Loader)
+        self._log.debug('Loaded secrets.')
+        # verify that the secrets we need are present
+        assert 'gmail_username' in conf
+        assert 'gmail_password' in conf
+        # return the full dict
+        return conf
+
+    def _send_email(self, to_analyze, results, duration):
+        hass_secrets = self._get_hass_secrets()
+        addr = hass_secrets['gmail_username']
+        msg = EmailNotifier(to_analyze, results, duration, addr).build_message()
+        self._log.debug('Connecting to SMTP on smtp.gmail.com:587')
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.ehlo()
+        s.starttls()
+        s.ehlo()
+        s.login(
+            hass_secrets['gmail_username'], hass_secrets['gmail_password']
+        )
+        self._log.info('Sending mail From=%s To=%s', addr, addr)
+        s.sendmail(addr, addr, msg)
+        self._log.info('EMail sent.')
+        s.quit()
+
     def _events_to_analyze(self):
         """dict of EventId to list of FrameIds to analyze"""
-        sql = 'SELECT EventId,FrameId FROM %s WHERE ' \
+        sql = 'SELECT * FROM %s WHERE ' \
               'AnalyzerName="YoloAnalyzer" AND (EventId, FrameId) NOT IN ' \
               '(SELECT EventId, FrameId FROM %s WHERE ' \
               'AnalyzerName="AlternateYoloAnalyzer") LIMIT 3;' % (
                   ANALYSIS_TABLE_NAME, ANALYSIS_TABLE_NAME
               )
-        results = defaultdict(list)
+        results = defaultdict(dict)
         with self._conn.cursor() as cursor:
             logger.info('Executing: %s', sql)
             cursor.execute(sql)
             res = cursor.fetchall()
             logger.info('Found %d Frames to analyze', len(res))
             for r in res:
-                results[r['EventId']].append(r['FrameId'])
+                results[r['EventId']][r['FrameId']] = r
             self._conn.commit()
         return dict(results)
 
@@ -145,6 +191,149 @@ class EventComparer(object):
                 'Purged %d rows from %s', num_rows, ANALYSIS_TABLE_NAME
             )
             self._conn.commit()
+
+
+class EmailNotifier(object):
+    """Send specially-formatted HTML email notification for an event."""
+
+    def __init__(self, to_analyze, results, duration, addr):
+        self.to_analyze = to_analyze
+        self.results = results
+        self.duration = duration
+        self.addr = addr
+
+    def build_message(self):
+        """
+        Build the email message; return a string email message.
+
+        :return: email to send
+        :rtype: str
+        """
+        msg = MIMEMultipart()
+        msg['Subject'] = 'Yolo Object Detection Comparison'
+        msg['From'] = self.addr
+        msg['To'] = self.addr
+        html = '<html><head></head><body>\n'
+        html += '<p>Object detection comparison for last day</p>\n'
+        html += '<p>Total runtime: %s</p>\n' % self.duration
+        for evt_id in sorted(
+            self.results.keys(),
+            key=lambda x: self.results[x].as_dict['FrameId']
+        ):
+            html += self._event_table(
+                evt_id,
+                self.results[evt_id],
+                self.to_analyze[evt_id]
+            )
+        # END image analysis
+        html += '</body></html>\n'
+        msg.attach(MIMEText(html, 'html'))
+        return msg.as_string()
+
+    def _event_table(self, evt_id, odr_list, db_dict):
+        html = '<p>Event %s</p>\n' % evt_id
+        html += '<table style="border-spacing: 0px; box-shadow: 5px 5px ' \
+                '5px grey; border-collapse:separate; ' \
+                'border-radius: 7px;">\n'
+        html += '<tr>' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">&nbsp;</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;" colspan="2">GPU Tiny</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;" colspan="2">CPU</th>\n' \
+                '</tr>\n'
+        html += '<tr>' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">Frame</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">Runtime</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">Results</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">Runtime</th>\n' \
+                '<th style="border: 1px solid #a1bae2; ' \
+                'text-align: center; ' \
+                'padding: 5px;">Results</th>\n' \
+                '</tr>\n'
+        for frm in sorted(odr_list, key=lambda x: x.as_dict['FrameId']):
+            html += self._analyzer_table_row(
+                frm, db_dict[frm.as_dict['FrameId']]
+            )
+        html += '</table>\n'
+        return html
+
+    def _analyzer_table_row(self, cpu_frm, tiny_frm_json):
+        cpu_frm = cpu_frm.as_dict
+        tiny_frm = json.loads(tiny_frm_json)
+        s = ''
+        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
+             'padding: 5px;"%s>%s</td>\n'
+        s += '<tr>'
+        cpu_dets = sorted(
+            cpu_frm['detections'], reverse=True, key=lambda x: x._score
+        )
+        tiny_dets = sorted(
+            tiny_frm['Results']['detections'], reverse=True,
+            key=lambda x: x._score
+        )
+        if len(cpu_dets) == 0 and len(tiny_dets) == 0:
+            s += td % ('', cpu_frm['FrameId'])
+            s += td % ('', '%.2f sec' % tiny_frm['runtime'])
+            s += td % ('', 'None')
+            s += td % ('', '%.2f sec' % cpu_frm['runtime'])
+            s += td % ('', 'None')
+            s += '</tr>'
+            return s
+        s += td % ('', cpu_frm['FrameId'])
+        s += td % ('', '%.2f sec' % tiny_frm['runtime'])
+        s += td % (
+            '',
+            '<br />'.join(
+                [
+                    '%s (%.2f%%) x=%d y=%d w=%d h=%d' % (
+                        x['label'], x['score'] * 100,
+                        x['x'], x['y'], x['w'],
+                        x['h']
+                    )
+                    for x in tiny_dets
+                ]
+            )
+        )
+        s += td % ('', '%.2f sec' % cpu_frm['runtime'])
+        s += td % (
+            '',
+            '<br />'.join(
+                [
+                    '%s (%.2f%%) x=%d y=%d w=%d h=%d' % (
+                        x['label'], x['score'] * 100,
+                        x['x'], x['y'], x['w'],
+                        x['h']
+                    )
+                    for x in cpu_dets
+                ]
+            )
+        )
+        s += '</tr>'
+        return s
+
+    def _table_rows(self, data):
+        s = ''
+        td = '<td style="border: 1px solid #a1bae2; text-align: center; ' \
+             'padding: 5px;">%s</td>\n'
+        for row in data:
+            s += '<tr>'
+            s += td % row[0]
+            s += td % row[1]
+            s += '</tr>\n'
+        return s
 
 
 def parse_args(argv):
