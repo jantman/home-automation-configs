@@ -182,7 +182,7 @@ def _set_event_name(event_id, name, dry_run=False):
 
 
 def update_event_name(event, analysis, dry_run=False):
-    if not event.Notes.startswith('Motion:'):
+    if event.Cause != 'Motion':
         _set_event_name(
             event.EventId, '%s-NotMotion' % event.Name, dry_run=dry_run
         )
@@ -206,7 +206,7 @@ def update_event_name(event, analysis, dry_run=False):
             # else the object was in a zone that had motion
             if od._score > objects[od._label]:
                 objects[od._label] = od._score
-    if len(zones) == 0:
+    if len(objects) == 0:
         _set_event_name(
             event.EventId,
             '%s-NoObject-%s' % (event.Name, '/'.join(zones)),
