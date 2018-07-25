@@ -522,6 +522,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
+        # turn off the camera-silencing input when alarm state changes
+        self.turn_off('input_boolean.cameras_silent')
 
     def _arm_away(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Away."""
@@ -546,6 +548,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self._log.info('Turning on cameras: %s', AWAY_CAMERA_ENTITIES)
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_on(cam_entity)
+        # turn off the camera-silencing input when alarm state changes
+        self.turn_off('input_boolean.cameras_silent')
 
     def _disarm(self, prev_state):
         """Disarm the system."""
@@ -557,6 +561,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
+        # turn off the camera-silencing input when alarm state changes
+        self.turn_off('input_boolean.cameras_silent')
 
     def _exterior_doors_open(self):
         """Return a list of the friendly_name of any open exterior sensors."""

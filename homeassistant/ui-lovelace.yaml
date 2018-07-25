@@ -175,6 +175,7 @@ views:
           title: Controls
           entities:
             - input_select.alarmstate
+            - input_boolean.cameras_silent
             - group.lights
         - type: picture-entity
           entity: switch.cam2_state

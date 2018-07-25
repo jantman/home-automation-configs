@@ -219,6 +219,9 @@ input_boolean:
   trigger_first_morning:
     name: Waiting for first morning motion
     icon: mdi:kettle
+  cameras_silent:
+    name: Silence ZoneMinder Alerts
+    icon: mdi:volume-off
 
 input_select:
   runstate:
