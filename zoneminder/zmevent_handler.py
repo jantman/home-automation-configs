@@ -32,6 +32,8 @@ from logging.handlers import SysLogHandler
 import argparse
 import json
 import time
+import re
+from collections import defaultdict
 
 try:
     import requests
@@ -165,6 +167,54 @@ def send_to_hass(json_str, event_id):
     logger.critical('Event not sent to HASS; persisted to: %s', fname)
 
 
+def _set_event_name(event_id, name):
+    logger.info('Renaming event %s to: %s', event_id, name)
+    r = requests.put(
+        'http://localhost/zm/api/events/%s.json' % event_id,
+        data={'Event[Name]': name}
+    )
+    r.raise_for_status()
+    assert r.json()['message'] == 'Saved'
+    logger.debug('Event renamed.')
+
+
+def update_event_name(event, analysis):
+    if not event.Name.startswith('Motion:'):
+        _set_event_name(event.EventId, '%s-NotMotion' % event.Name)
+        return
+    m = re.match(
+        r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Name
+    )
+    if not m:
+        _set_event_name(event.EventId, '%s-UnknownZones' % event.Name)
+        return
+    zones = [x.strip() for x in m.group(1).split(',')]
+    objects = defaultdict(int)
+    for odr in analysis:
+        for od in odr.detections:
+            motion_zones = set(zones).intersection(set(od._zones.keys()))
+            if not motion_zones:
+                # this object isn't in any of the zones that had motion
+                continue
+            # else the object was in a zone that had motion
+            if od._score > objects[od._label]:
+                objects[od._label] = od._score
+    if len(zones) == 0:
+        _set_event_name(
+            event.EventId,
+            '%s-NoObject-%s' % (event.Name, '/'.join(zones))
+        )
+        return
+    # else we have objects detected in zones with motion
+    name = event.Name + '-'
+    for label, _ in sorted(objects.items(), key=lambda kv: kv[1]):
+        if len(name + label + ',') > 63:
+            break
+        name += label + ','
+    name = name.strip(',')
+    _set_event_name(event.EventId, name)
+
+
 def run(args):
     # populate the event from ZoneMinder DB
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
@@ -201,6 +251,7 @@ def run(args):
         analyzer = ImageAnalysisWrapper(event, ANALYZERS)
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
+        update_event_name(event, analysis)
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
