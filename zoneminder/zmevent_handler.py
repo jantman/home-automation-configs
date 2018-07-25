@@ -207,7 +207,7 @@ def update_event_name(event, analysis):
         return
     # else we have objects detected in zones with motion
     name = event.Name + '-'
-    for label, _ in sorted(objects.items(), key=lambda kv: kv[1]):
+    for label, _ in sorted(objects.items(), key=lambda kv: kv[1], reverse=True):
         if len(name + label + ',') > 63:
             break
         name += label + ','
