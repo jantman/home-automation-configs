@@ -167,7 +167,10 @@ def send_to_hass(json_str, event_id):
     logger.critical('Event not sent to HASS; persisted to: %s', fname)
 
 
-def _set_event_name(event_id, name):
+def _set_event_name(event_id, name, dry_run=False):
+    if dry_run:
+        logger.warning('WOULD rename event %s to: %s', event_id, name)
+        return
     logger.info('Renaming event %s to: %s', event_id, name)
     r = requests.put(
         'http://localhost/zm/api/events/%s.json' % event_id,
@@ -178,15 +181,19 @@ def _set_event_name(event_id, name):
     logger.debug('Event renamed.')
 
 
-def update_event_name(event, analysis):
+def update_event_name(event, analysis, dry_run=False):
     if not event.Notes.startswith('Motion:'):
-        _set_event_name(event.EventId, '%s-NotMotion' % event.Name)
+        _set_event_name(
+            event.EventId, '%s-NotMotion' % event.Name, dry_run=dry_run
+        )
         return
     m = re.match(
         r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Notes
     )
     if not m:
-        _set_event_name(event.EventId, '%s-UnknownZones' % event.Name)
+        _set_event_name(
+            event.EventId, '%s-UnknownZones' % event.Name, dry_run=dry_run
+        )
         return
     zones = [x.strip() for x in m.group(1).split(',')]
     objects = defaultdict(int)
@@ -202,7 +209,8 @@ def update_event_name(event, analysis):
     if len(zones) == 0:
         _set_event_name(
             event.EventId,
-            '%s-NoObject-%s' % (event.Name, '/'.join(zones))
+            '%s-NoObject-%s' % (event.Name, '/'.join(zones)),
+            dry_run=dry_run
         )
         return
     # else we have objects detected in zones with motion
@@ -212,7 +220,7 @@ def update_event_name(event, analysis):
             break
         name += label + ','
     name = name.strip(',')
-    _set_event_name(event.EventId, name)
+    _set_event_name(event.EventId, name, dry_run=dry_run)
 
 
 def run(args):
@@ -251,7 +259,7 @@ def run(args):
         analyzer = ImageAnalysisWrapper(event, ANALYZERS)
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
-        update_event_name(event, analysis)
+        update_event_name(event, analysis, dry_run=args.dry_run)
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
