@@ -179,11 +179,11 @@ def _set_event_name(event_id, name):
 
 
 def update_event_name(event, analysis):
-    if not event.Name.startswith('Motion:'):
+    if not event.Notes.startswith('Motion:'):
         _set_event_name(event.EventId, '%s-NotMotion' % event.Name)
         return
     m = re.match(
-        r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Name
+        r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Notes
     )
     if not m:
         _set_event_name(event.EventId, '%s-UnknownZones' % event.Name)
