@@ -63,7 +63,7 @@ IGNORED_OBJECTS = [
     # ignore... stuff... inside the house
     IgnoredObject(
         'IndoorStuff',
-        ['cup', 'dog', 'cat', 'book', 'tvmonitor'],
+        ['cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote'],
         monitor_num=2
     ),
     # yolo3-tiny seems to randomly be classifying my kitchen window, wire
