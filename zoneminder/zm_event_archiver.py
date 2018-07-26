@@ -63,7 +63,8 @@ class ZmEventArchiver(object):
                 events.append(r['Id'])
             self._conn.commit()
         logger.info(
-            'Found %d unarchived events older than %d days', len(events)
+            'Found %d unarchived events older than %d days', len(events),
+            num_days
         )
         return events
 
@@ -90,7 +91,7 @@ class ZmEventArchiver(object):
         with self._conn.cursor() as cursor:
             logger.debug('EXECUTING: %s', sql)
             num_rows = cursor.execute(sql)
-            logger.warning(
+            logger.info(
                 'Purged %d rows from %s', num_rows, ANALYSIS_TABLE_NAME
             )
             self._conn.commit()
