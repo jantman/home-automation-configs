@@ -224,12 +224,6 @@ input_boolean:
     icon: mdi:volume-off
 
 input_select:
-  runstate:
-    name: ZM Run State
-    options:
-      - Home
-      - Away
-      - Monitor
   alarmstate:
     name: Alarm State
     options:

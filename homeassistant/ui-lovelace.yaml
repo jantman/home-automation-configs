@@ -202,8 +202,6 @@ views:
           show_header_toggle: false
           title: Cameras
           entities:
-            - input_select.runstate
-            - sensor.run_state
             - sensor.cam1_events
             - sensor.cam1_status
             - switch.cam1_state
