@@ -49,7 +49,8 @@ IGNORED_OBJECTS = [
     # my car when parked
     IgnoredObject(
         'MyCarParked',
-        ['car'],
+        # yolo3-tiny often categorizes my car as a suitcase
+        ['car', 'suitcase'],
         monitor_num=3,
         bounding_box=(1550, 730, 200, 200)
     ),
@@ -73,13 +74,22 @@ IGNORED_OBJECTS = [
         'KitchenShelvesAsPerson',
         ['person'],
         bounding_box=(385, 635, 15, 15),
-        min_score=0.3
+        min_score=0.3,
+        monitor_num=2
     ),
     # yolo3-tiny thinks this tree stump in my yard is a sheep or cow...
     IgnoredObject(
         'FrontTreeStump',
         ['sheep', 'cow'],
-        bounding_box=(1540, 335, 20, 20)
+        bounding_box=(1540, 335, 50, 50),
+        monitor_num=3
+    ),
+    # yolo3-tiny often sees this OTHER tree as a giraffe...
+    IgnoredObject(
+        'SideTree',
+        ['giraffe'],
+        bounding_box=(400, 670, 50, 50),
+        monitor_num=5
     )
 ]
 
