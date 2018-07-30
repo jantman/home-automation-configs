@@ -6,3 +6,4 @@ include/
 lib/
 pip-selfcheck.json
 testing/hass-config
+testing/appdaemon-configs
