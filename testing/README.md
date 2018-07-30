@@ -16,3 +16,5 @@ __Before Running docker-compose,__ run ``./config_prep.sh``.
 * __Restart HASS:__ ``docker-compose restart hass``
 * __View Logs:__ ``docker-compose logs [-f] [hass|appdaemon]``
 * __Stop everything:__ ``docker-compose down``
+
+Use ``state_setter.py`` to set initial states and update states. Requires ``requests``.

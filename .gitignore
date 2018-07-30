@@ -7,3 +7,4 @@ lib/
 pip-selfcheck.json
 testing/hass-config
 testing/appdaemon-config
+*.pyc
