@@ -1,0 +1,5 @@
+FROM acockburn/appdaemon:3.0.1
+
+COPY requirements-appdaemon.txt /usr/src/app/requirements-appdaemon.txt
+RUN pip3 install numpy==1.15.0
+RUN pip3 install -r /usr/src/app/requirements-appdaemon.txt

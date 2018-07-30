@@ -11,9 +11,12 @@ services:
     restart: always
   appdaemon:
     container_name: appdaemon
-    image: acockburn/appdaemon:3.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile.appdaemon
     volumes:
       - ./appdaemon-config:/conf
+      - ./hass-config:/config
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - hass
