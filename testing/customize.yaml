@@ -1,0 +1,19 @@
+device_tracker.02157df2c2d6e627:
+  friendly_name: GalaxyS6
+light.zipato_bulb_2_level: {}
+binary_sensor.ecolink_motion_detector_sensor:
+  device_class: motion
+binary_sensor.ecolink_doorwindow_sensor_sensor_2:
+  device_class: door
+binary_sensor.ecolink_doorwindow_sensor_sensor:
+  device_class: door
+  friendly_name: FrontDoor
+binary_sensor.ecolink_doorwindow_sensor_sensor_3:
+  device_class: door
+binary_sensor.ecolink_doorwindow_sensor_sensor_4:
+  device_class: door
+zwave.inovelli_unknown_type2400_id2400:
+  device_class: light
+  icon: lightbulb
+switch.livingroomlight_switch:
+  friendly_name: LivingRoomLight Switch
