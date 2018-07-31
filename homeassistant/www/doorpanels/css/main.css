@@ -1,0 +1,28 @@
+body {
+  background-color: #6699ff;
+  width: 480px;
+  height: 320px;
+}
+
+button {
+    /*
+    background-color: #4CAF50;
+    border: none;
+    */
+    background: transparent;
+    border: 2px solid #0000ff;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+button:active {
+  background-color: #99ccff;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
