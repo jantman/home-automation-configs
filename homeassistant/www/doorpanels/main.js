@@ -21,6 +21,11 @@ function doorPanelInit() {
     conn => {
       hawsConn = conn;
       conn.subscribeEvents(handleEvent);
+      conn.getStates().then(states => {
+        states.forEach(function(s) {
+          if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+        });
+      });
     },
     err => {
       $('#container').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
@@ -34,7 +39,18 @@ function doorPanelInit() {
  * Param is an Event object that includes old and new states.
  */
 function handleEvent(e) {
-  console.log('event: %o', e);
+  if(e.event_type == 'state_changed') {
+    if(e.data.entity_id == 'input_select.alarmstate') { handleAlarmState(e.data.new_state.state); }
+  }
+}
+
+/**
+ * Update the display/UI depending on the current state of the alarm.
+ *
+ * @param st_name string - the current state of the alarmstate input_select.
+ */
+function handleAlarmState(st_name) {
+  console.log('handleAlarmState: %s', st_name);
 }
 
 /**
