@@ -7,6 +7,7 @@ services:
       - "8123:8123"
     volumes:
       - ./hass-config:/config
+      - ../homeassistant/www:/config/www
       - /etc/localtime:/etc/localtime:ro
     restart: always
   appdaemon:
