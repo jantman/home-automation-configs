@@ -20,7 +20,6 @@ function doorPanelInit() {
   HAWS.createConnection(hassBaseUrl).then(
     conn => {
       hawsConn = conn;
-      HAWS.subscribeEntities(conn, handleStateChange);
       conn.subscribeEvents(handleEvent);
     },
     err => {
@@ -28,16 +27,6 @@ function doorPanelInit() {
       window.setTimeout(doorPanelInit, 10000);
     }
   );
-}
-
-/**
- * Callback on the HAWS connection; called at initial load and then on any
- * state change to any entity.
- *
- * Param entities is a single object, keyed by ``entity_id``.
- */
-function handleStateChange(entities) {
-  console.log('handleStateChange: %o', entities);
 }
 
 /** Callback on the HAWS connection; called for all events.
