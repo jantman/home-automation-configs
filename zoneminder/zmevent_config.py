@@ -66,7 +66,7 @@ IGNORED_OBJECTS = [
         'IndoorStuff',
         [
             'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
-            'sink', 'bowl', 'refrigerator'
+            'sink', 'bowl', 'refrigerator', 'laptop', 'chair', 'diningtable'
         ],
         monitor_num=2
     ),
