@@ -23,3 +23,17 @@ lights:
   entities:
     - group.all_lights
     - switch.livingroomlight_switch
+kitchenlights:
+  name: Kitchen Lights
+  view: no
+  icon: mdi:lightbulb
+  entities:
+    - light.linear_lb60z1_dimmable_led_light_bulb_level # Kitchen bulb
+    - light.linear_lb60z1_dimmable_led_light_bulb_level_2 # Kitchen bulb 2
+porchlights:
+  name: Porch Lights
+  view: no
+  icon: mdi:lightbulb
+  entities:
+    - light.zipato_bulb_2_level # Porch bulb
+    - light.linear_lb60z1_dimmable_led_light_bulb_level_3 # Porch bulb 2

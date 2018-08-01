@@ -68,6 +68,8 @@ logbook:
       - group.all_switches
       - group.doors
       - group.motion
+      - group.kitchenlights
+      - group.porchlights
       - sensor.bedroomsensor_alarm_level
       - sensor.bedroomsensor_alarm_type
       - sensor.bedroomsensor_appliance
