@@ -1,6 +1,7 @@
 var myIP = null;
 var hawsConn = null;
 var hassBaseUrl = null;
+var currentCode = '';
 
 /**
  * Main entrypoint / pre-initializer. Finds our IP address then calls
@@ -42,6 +43,35 @@ function handleEvent(e) {
   if(e.event_type == 'state_changed') {
     if(e.data.entity_id == 'input_select.alarmstate') { handleAlarmState(e.data.new_state.state); }
   }
+}
+
+/**
+ * Handle the click of an alarm button.
+ *
+ * @param name [String] button name - "stay", "leave", "disarm", or "enterCode".
+ */
+function handleAlarmButton(name) {
+  console.log('Got alarm button: %s', name);
+}
+
+/**
+ * Handle the press of a button on the numeric pad for the alarm code. Appends
+ * the character to the current code string, and sets a timeout after which we
+ * should clear the current code string.
+ *
+ * @param char [String] the code character entered.
+ */
+function handleCode(char) {
+  console.log('Got alarm code entry: %s', char);
+}
+
+/**
+ * Handle the click of a light-control button.
+ *
+ * @param name [String] light or group name - "porch", "lr" or "kitchen".
+ */
+function handleLightButton(name) {
+  console.log('Got light button: %s', name);
 }
 
 /**

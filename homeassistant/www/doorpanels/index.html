@@ -9,13 +9,61 @@
 
   <title>HASS DoorPanel</title>
 
-  <script src="haws.umd.js"></script>
-  <script src="jquery-3.3.1.min.js"></script>
-  <script src="main.js"></script>
+  <link href="css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/haws.umd.js"></script>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/main.js"></script>
 </head>
 
 <body>
 <div id="container">
+  <div id="home-disarmed" style="display: none;">
+    <button id="stay" style="position: absolute; width: 148px; height: 62px; top: 75px;left: 86px;" onclick="handleAlarmButton('stay');">
+      <i class="mdi mdi-home-lock"></i> Stay
+    </button>
+    <button id="leave" style="position: absolute; width: 164px; height: 62px; top: 75px; left: 238px;" onclick="handleAlarmButton('leave');">
+      <i class="mdi mdi-car-side"></i> Leave
+    </button>
+    <button class="porch-light" style="position: absolute; width: 164px; height: 62px; top: 175px; left: 78px;" onclick="handleLightButton('porch');">
+      <i class="mdi mdi-lightbulb-on" style="color: yellow;"></i> Porch
+    </button>
+    <button class="lr-light" style="position: absolute; width: 130px; height: 62px; top: 175px; left: 255px;" onclick="handleLightButton('lr');">
+      <i class="mdi mdi-lightbulb-outline"></i> LR
+    </button>
+  </div>
+  <div id="home-armed" style="display: none;">
+    <button id="disarm" style="position: absolute; width: 180px; height: 62px; top: 75px;left: 150px;" onclick="handleAlarmButton('disarm');">
+      <i class="mdi mdi-lock-open"></i> Disarm
+    </button>
+    <button class="button-porch-light" style="position: absolute; width: 164px; height: 62px; top: 175px; left: 78px;" onclick="handleLightButton('porch');">
+      <i class="mdi mdi-lightbulb-on" style="color: yellow;"></i> Porch
+    </button>
+    <button class="button-lr-light" style="position: absolute; width: 130px; height: 62px; top: 175px; left: 255px;" onclick="handleLightButton('lr');">
+      <i class="mdi mdi-lightbulb-outline"></i> LR
+    </button>
+  </div>
+  <div id="away-armed" style="display: none;">
+    <button id="0" style="position: absolute; width: 82px; height: 62px; top: 10px; left: 10px;">0</button>
+    <button id="1" style="position: absolute; width: 82px; height: 62px; top: 10px; left: 102px;">1</button>
+    <button id="2" style="position: absolute; width: 82px; height: 62px; top: 10px; left: 194px;">2</button>
+
+    <button id="3" style="position: absolute; width: 82px; height: 62px; top: 82px; left: 10px;">3</button>
+    <button id="4" style="position: absolute; width: 82px; height: 62px; top: 82px; left: 102px;">4</button>
+    <button id="5" style="position: absolute; width: 82px; height: 62px; top: 82px; left: 194px;">5</button>
+
+    <button id="6" style="position: absolute; width: 82px; height: 62px; top: 154px; left: 10px;">6</button>
+    <button id="7" style="position: absolute; width: 82px; height: 62px; top: 154px; left: 102px;">7</button>
+    <button id="8" style="position: absolute; width: 82px; height: 62px; top: 154px; left: 194px;">8</button>
+
+    <button id="pound" style="position: absolute; width: 82px; height: 62px; top: 226px; left: 10px;">#</button>
+    <button id="9" style="position: absolute; width: 82px; height: 62px; top: 226px; left: 102px;">9</button>
+    <button id="asterisk" style="position: absolute; width: 82px; height: 62px; top: 226px; left: 194px;">*</button>
+
+    <button id="unlock" style="position: absolute; width: 120px; height: 140px; top: 90px; left: 318px;" onclick="handleAlarmButton('enterCode');">
+      <i class="mdi mdi-lock-open mdi-48px"></i>
+    </button>
+  </div>
 </div>
 
 <script type="text/javascript">
