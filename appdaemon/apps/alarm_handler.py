@@ -95,7 +95,8 @@ DISARMED = 'Disarmed'
 #: List of entity IDs that should be turned on for 10 minutes after an alarm.
 LIGHT_ENTITIES = [
     # Kitchen
-    'group.kitchenlights',
+    'light.linear_lb60z1_dimmable_led_light_bulb_level',
+    'light.linear_lb60z1_dimmable_led_light_bulb_level_2',
     # Porch
     'light.linear_lb60z1_dimmable_led_light_bulb_level_3',
     # TV

@@ -55,7 +55,9 @@
     to: 'on'
   action:
     - service: homeassistant.turn_on
-      entity_id: group.kitchenlights
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_on
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
 - alias: Turn Kitchen Light Off 10 Minutes After Motion
   id: KitchenLightMotionOff
   trigger:
@@ -66,7 +68,9 @@
       minutes: 10
   action:
     - service: homeassistant.turn_off
-      entity_id: group.kitchenlights
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
 ################################################################################
 # Porch Lights                                                                 #
 ################################################################################
@@ -85,7 +89,9 @@
         before: sunrise
   action:
     - service: homeassistant.turn_on
-      entity_id: group.porchlights
+      entity_id: light.zipato_bulb_2_level
+    - service: homeassistant.turn_on
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
 - alias: Turn Porch Light Off 10 Minutes After Door Open After Sunset
   id: PorchLightFrontDoorOff
   trigger:
@@ -107,7 +113,9 @@
       state: 'home'
   action:
     - service: homeassistant.turn_off
-      entity_id: group.porchlights
+      entity_id: light.zipato_bulb_2_level
+    - service: homeassistant.turn_off
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
 - id: PorchLightOnDimWhenAwayAtSunset
   alias: Turn Porch Light On Dim When Away At Sunset
   trigger:
@@ -131,8 +139,14 @@
       event: sunrise
       offset: '+00:00:00'
   action:
-    - service: homeassistant.turn_off
-      entity_id: group.porchlights
+    - service: light.turn_off
+      data:
+        entity_id:
+          - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+    - service: light.turn_off
+      data:
+        entity_id:
+          - light.zipato_bulb_2_level
 - id: PorchLightOnFullWhenArrivingHomeAfterSunset
   alias: Porch Light On Full When Arriving Home After Sunset
   trigger:
@@ -150,7 +164,12 @@
     - service: light.turn_on
       data:
         entity_id:
-          - group.porchlights
+          - light.zipato_bulb_2_level
+          - white_value: 255
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.linear_lb60z1_dimmable_led_light_bulb_level_3
           - white_value: 255
 ################################################################################
 # Living Room Light                                                            #
@@ -226,7 +245,9 @@
     - service: homeassistant.turn_off
       entity_id: input_boolean.trigger_first_morning
     - service: homeassistant.turn_on
-      entity_id: group.kitchenlights
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_on
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
     - service: homeassistant.turn_on
       entity_id: switch.livingroomlight_switch
     - service: input_select.select_option

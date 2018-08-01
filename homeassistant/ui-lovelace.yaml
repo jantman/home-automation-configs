@@ -13,16 +13,28 @@ views:
             # BULBS
             - type: state-icon
               tap_action: toggle
-              entity: group.kitchenlights
+              entity: light.linear_lb60z1_dimmable_led_light_bulb_level # Kitchen bulb
               style:
                 top: 56%
                 left: 27%
             - type: state-icon
               tap_action: toggle
-              entity: group.porchlights
+              entity: light.linear_lb60z1_dimmable_led_light_bulb_level_2 # Kitchen bulb 2
+              style:
+                top: 47%
+                left: 27%
+            - type: state-icon
+              tap_action: toggle
+              entity: light.zipato_bulb_2_level # Porch bulb
               style:
                 top: 89%
                 left: 7%
+            - type: state-icon
+              tap_action: toggle
+              entity: light.linear_lb60z1_dimmable_led_light_bulb_level_3 # Porch bulb 2
+              style:
+                top: 89%
+                left: 2%
             - type: state-icon
               tap_action: toggle
               entity: switch.livingroomlight_switch
