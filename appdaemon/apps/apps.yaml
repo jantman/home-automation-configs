@@ -12,3 +12,7 @@ zmevent_alarm_handler:
   module: zmevent_alarm_handler
   class: ZMEventAlarmHandler
   global_dependencies: sane_app_logging
+doorpanels:
+  module: doorpanels
+  class: DoorPanelHandler
+  global_dependencies: sane_app_logging

@@ -2,6 +2,8 @@ var myIP = null;
 var hawsConn = null;
 var hassBaseUrl = null;
 var currentCode = '';
+var inputTimeout = null;
+var groupStates = {};
 
 /**
  * Main entrypoint / pre-initializer. Finds our IP address then calls
@@ -9,7 +11,7 @@ var currentCode = '';
  */
 function doorPanelPreInit() {
   hassBaseUrl = getHassWsUrl();
-  $('#container').html('Connecting to ' + hassBaseUrl + ' ...');
+  $('#status').html('Connecting to ' + hassBaseUrl + ' ...');
   findIP(gotIp);
 }
 
@@ -17,7 +19,7 @@ function doorPanelPreInit() {
  * Main initialization function, called after `gotIp()` found our IP address.
  */
 function doorPanelInit() {
-  $('#container').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
+  $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
   HAWS.createConnection(hassBaseUrl).then(
     conn => {
       hawsConn = conn;
@@ -25,11 +27,16 @@ function doorPanelInit() {
       conn.getStates().then(states => {
         states.forEach(function(s) {
           if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+          if (s.entity_id.startsWith('group.')) {
+            var groupName = s.entity_id.split(".")[1];
+            groupStates[groupName] = s.state;
+            handleLightStateChange(groupName, s.state);
+          }
         });
       });
     },
     err => {
-      $('#container').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
+      $('#status').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
       window.setTimeout(doorPanelInit, 10000);
     }
   );
@@ -42,6 +49,25 @@ function doorPanelInit() {
 function handleEvent(e) {
   if(e.event_type == 'state_changed') {
     if(e.data.entity_id == 'input_select.alarmstate') { handleAlarmState(e.data.new_state.state); }
+    if(e.data.entity_id.startsWith('group.')) {
+      var groupName = e.data.entity_id.split(".")[1];
+      groupStates[groupName] = e.data.new_state.state;
+      handleLightStateChange(groupName, e.data.new_state.state);
+    }
+  }
+}
+
+/**
+ * Handle state change for a light.
+ */
+function handleLightStateChange(groupName, newState) {
+  console.log('handleLightStateChange(%s, %s)', groupName, newState);
+  if(newState == 'on') {
+    $('.light-' + groupName + ' i').removeClass('mdi-lightbulb-outline');
+    $('.light-' + groupName + ' i').addClass('mdi-lightbulb-on');
+  } else {
+    $('.light-' + groupName + ' i').removeClass('mdi-lightbulb-on');
+    $('.light-' + groupName + ' i').addClass('mdi-lightbulb-outline');
   }
 }
 
@@ -51,7 +77,21 @@ function handleEvent(e) {
  * @param name [String] button name - "stay", "leave", "disarm", or "enterCode".
  */
 function handleAlarmButton(name) {
-  console.log('Got alarm button: %s', name);
+  if (name == 'stay') {
+    console.log('Got "stay" alarm button.');
+    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
+  } else if (name == 'leave') {
+    console.log('Got "leave" alarm button.');
+    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'leave', 'client': myIP });
+  } else if (name == 'disarm') {
+    console.log('Got "disarm" alarm button.');
+    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
+  } else if (name == 'enterCode') {
+    console.log('Sending Code: %s', currentCode);
+    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
+    clearTimeout(inputTimeout);
+    currentCode = '';
+  }
 }
 
 /**
@@ -62,7 +102,10 @@ function handleAlarmButton(name) {
  * @param char [String] the code character entered.
  */
 function handleCode(char) {
-  console.log('Got alarm code entry: %s', char);
+  console.log('Got alarm code entry: %s; currentCode=%s', char, currentCode);
+  clearTimeout(inputTimeout);
+  inputTimeout = setTimeout(function() { currentCode = ''; }, 5000);
+  currentCode = currentCode + char;
 }
 
 /**
@@ -72,15 +115,40 @@ function handleCode(char) {
  */
 function handleLightButton(name) {
   console.log('Got light button: %s', name);
+  if(groupStates[name] == 'on') {
+    hawsConn.callService('homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
+  } else {
+    hawsConn.callService('homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
+  }
 }
 
 /**
  * Update the display/UI depending on the current state of the alarm.
  *
- * @param st_name string - the current state of the alarmstate input_select.
+ * @param st_name [String] the current state of the alarmstate input_select.
  */
 function handleAlarmState(st_name) {
-  console.log('handleAlarmState: %s', st_name);
+  if (st_name == 'Home') {
+    $('#status').hide();
+    $('#disarmed').hide();
+    $('#away-armed').hide();
+    $('#home-armed').show();
+  } else if (st_name == 'Away') {
+    $('#status').hide();
+    $('#disarmed').hide();
+    $('#home-armed').hide();
+    $('#away-armed').show();
+  } else if (st_name == 'Disarmed') {
+    $('#status').hide();
+    $('#home-armed').hide();
+    $('#away-armed').hide();
+    $('#disarmed').show();
+  } else {
+    $('#disarmed').hide();
+    $('#home-armed').hide();
+    $('#away-armed').hide();
+    $('#status').show();
+  }
 }
 
 /**

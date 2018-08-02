@@ -26,3 +26,7 @@ button:active {
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
+.mdi-lightbulb-on {
+  color: yellow;
+}

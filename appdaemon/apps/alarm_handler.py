@@ -39,6 +39,8 @@ more general/configurable.
   disarm the alarm. If it leaves the "Home" zone, arm it as Away.
 - Listens for an event, ``CUSTOM_ALARM_STATE_SET``, to set the state. Event data
   is a ``state`` key with possible values the same as the input_select options.
+- Listens for a ``CUSTOM_ALARM_TRIGGER`` event. If found, triggers the alarm
+  with a message from the ``message`` event data key.
 - If alarm is triggered, all lights come on for 10-20 minutes and Pushover alert
   is sent.
 - If there is a ZoneMinder camera pointed at the location of the alarm event
@@ -229,6 +231,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self.listen_event(
             self._handle_state_set_event, event='CUSTOM_ALARM_STATE_SET'
         )
+        self.listen_event(
+            self._handle_trigger_event, event='CUSTOM_ALARM_TRIGGER'
+        )
         self._log.info('Done initializing AlarmHandler')
 
     @property
@@ -386,6 +391,25 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         )
         self._do_alarm_lights()
 
+    def _handle_trigger_event(self, event_name, data, _):
+        """
+        Handle the CUSTOM_ALARM_TRIGGER event.
+
+        event type: CUSTOM_ALARM_TRIGGER
+        data: dict with one key, ``message``.
+        """
+        self._log.info('Got %s event data=%s', event_name, data)
+        msg = data.get('message', '<no message>')
+        self.call_service(
+            'logbook/log', name='Alarm Triggered via Event (%s)' % msg,
+            message='Alarm has been triggered via explicit event'
+        )
+        self._do_notify_pushover(
+            'ALARM TRIGGERED via EVENT', 'Event message: %s' % msg,
+            sound='alien'
+        )
+        self._do_alarm_lights()
+
     def _handle_state_set_event(self, event_name, data, _):
         """
         Handle the CUSTOM_ALARM_STATE_SET event.
@@ -524,6 +548,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self.turn_off(cam_entity)
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
+        self.select_option(ALARM_STATE_SELECT_ENTITY, HOME)
 
     def _arm_away(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Away."""
@@ -550,6 +575,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self.turn_on(cam_entity)
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
+        self.select_option(ALARM_STATE_SELECT_ENTITY, AWAY)
 
     def _disarm(self, prev_state):
         """Disarm the system."""
@@ -563,6 +589,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self.turn_off(cam_entity)
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
+        self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
 
     def _exterior_doors_open(self):
         """Return a list of the friendly_name of any open exterior sensors."""
@@ -680,7 +707,10 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         else:
             self._log.info('Sending Pushover notification with image: %s', d)
             d['files']['attachment'] = ('frame.jpg', image, 'image/jpeg')
-        self._send_pushover(d)
+        try:
+            self._send_pushover(d)
+        except Exception:
+            self._log.critical('send_pushover raised exception', exc_info=True)
 
     def _send_pushover(self, params):
         """
