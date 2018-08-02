@@ -1,7 +1,0 @@
-appdaemon:
-  threads: 10
-  missing_app_warnings: 1
-  plugins:
-    HASS:
-      type: hass
-      ha_url: http://hass:8123
