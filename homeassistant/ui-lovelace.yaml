@@ -176,6 +176,7 @@ views:
           entities:
             - input_select.alarmstate
             - input_boolean.cameras_silent
+            - input_boolean.no_alarm_delay
             - group.lights
         - type: picture-entity
           entity: switch.cam2_state
