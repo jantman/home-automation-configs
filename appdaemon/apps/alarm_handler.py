@@ -147,6 +147,10 @@ LOG_DEBUG = False
 #: Delay from requesting delayed away arming, until armed
 AWAY_SECONDS = 15
 
+#: If armed AWAY and input_boolean.no_alarm_delay is "off", how many seconds to
+#: wait for disarming before triggering the alarm.
+AWAY_TRIGGER_DELAY_SECONDS = 10
+
 
 def fmt_entity(entity, kwargs):
     """
@@ -239,6 +243,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self._handle_trigger_event, event='CUSTOM_ALARM_TRIGGER'
         )
         self._leave_timer = None
+        self._trigger_delay_timer = None
         self._untrigger_timer = None
         self._log.info('Done initializing AlarmHandler')
 
@@ -469,6 +474,20 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self, subject='Alarm Triggered', message='alarm triggered', image=None
     ):
         """Trigger the alarm"""
+        if (
+            self.alarm_state == AWAY and
+            self.get_state('input_boolean.no_alarm_delay') == 'off' and
+            self._trigger_delay_timer is None
+        ):
+            self.turn_on('input_boolean.trigger_delay')
+            self._trigger_delay_timer = self.run_in(
+                self._trigger_alarm, AWAY_TRIGGER_DELAY_SECONDS,
+                subject=subject, message=message, image=image
+            )
+        # remove any trigger delay
+        if self._trigger_delay_timer is not None:
+            self.cancel_timer(self._trigger_delay_timer)
+            self._trigger_delay_timer = None
         # Add event/trigger to logbook
         self.call_service(
             'logbook/log', name=subject, message=message
@@ -625,6 +644,10 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
         self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
+        # remove any trigger delay
+        if self._trigger_delay_timer is not None:
+            self.cancel_timer(self._trigger_delay_timer)
+            self._trigger_delay_timer = None
         self.turn_off('input_boolean.trigger_delay')
 
     def _exterior_doors_open(self):
