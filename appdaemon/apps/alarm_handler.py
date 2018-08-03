@@ -339,8 +339,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
             image = self._image_for_camera(mon_id, ptz_preset=preset)
         self._trigger_alarm(
-            'ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
-            'System is in state %s; %s %s changed from %s to %s'
+            subject='ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
+            message='System is in state %s; %s %s changed from %s to %s'
             ' (Interior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
@@ -376,8 +376,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
             image = self._image_for_camera(mon_id, ptz_preset=preset)
         self._trigger_alarm(
-            'ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
-            'System is in state %s; %s %s changed from %s to %s'
+            subject='ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
+            message='System is in state %s; %s %s changed from %s to %s'
             ' (Exterior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
@@ -394,8 +394,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self._log.info('Got %s event data=%s', event_name, data)
         msg = data.get('message', '<no message>')
         self._trigger_alarm(
-            'ALARM TRIGGERED by Event',
-            'Event Message: ' % msg
+            subject='ALARM TRIGGERED by Event',
+            message='Event Message: ' % msg
         )
 
     def _handle_state_set_event(self, event_name, data, _):
@@ -465,7 +465,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
     def _arm_away_delay_callback(self, kwargs):
         self._arm_away(kwargs['prev_state'])
 
-    def _trigger_alarm(self, subject, message, image=None):
+    def _trigger_alarm(
+        self, subject='Alarm Triggered', message='alarm triggered', image=None
+    ):
         """Trigger the alarm"""
         # Add event/trigger to logbook
         self.call_service(
