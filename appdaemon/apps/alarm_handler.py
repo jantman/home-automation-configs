@@ -239,6 +239,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self._handle_trigger_event, event='CUSTOM_ALARM_TRIGGER'
         )
         self._leave_timer = None
+        self._untrigger_timer = None
         self._log.info('Done initializing AlarmHandler')
 
     @property
@@ -331,27 +332,20 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         e_name = entity
         if 'friendly_name' in kwargs:
             e_name = kwargs['friendly_name']
-        # Add event/trigger to logbook
-        self.call_service(
-            'logbook/log', name='Alarm Triggered (%s)' % a_state,
-            message='Interior zone - %s %s changed from %s to %s' % (
-                fmt_entity(entity, kwargs), attribute, old, new
-            )
-        )
         # If we have a camera pointing (or point-able via PTZ) at this sensor,
         # get the image from it to include in our notification.
         image = None
         if entity in CAMERA_IMAGE_ENTITIES.keys():
             mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
             image = self._image_for_camera(mon_id, ptz_preset=preset)
-        self._do_notify_pushover(
-            'ALARM: %s %s' % (e_name, st_name),
-            'System is in state %s; %s %s changed from %s to %s' % (
+        self._trigger_alarm(
+            'ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
+            'System is in state %s; %s %s changed from %s to %s'
+            ' (Interior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image, sound='alien'
+            image=image
         )
-        self._do_alarm_lights()
 
     def _handle_state_exterior(self, entity, attribute, old, new, kwargs):
         """Handle change to exterior sensors, i.e. door/window sensors"""
@@ -375,26 +369,20 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         e_name = entity
         if 'friendly_name' in kwargs:
             e_name = kwargs['friendly_name']
-        self.call_service(
-            'logbook/log', name='Alarm Triggered (%s)' % a_state,
-            message='Exterior zone - %s %s changed from %s to %s' % (
-                fmt_entity(entity, kwargs), attribute, old, new
-            )
-        )
         # If we have a camera pointing (or point-able via PTZ) at this sensor,
         # get the image from it to include in our notification.
         image = None
         if entity in CAMERA_IMAGE_ENTITIES.keys():
             mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
             image = self._image_for_camera(mon_id, ptz_preset=preset)
-        self._do_notify_pushover(
-            'ALARM: %s %s' % (e_name, st_name),
-            'System is in state %s; %s %s changed from %s to %s' % (
+        self._trigger_alarm(
+            'ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
+            'System is in state %s; %s %s changed from %s to %s'
+            ' (Exterior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image, sound='alien'
+            image=image
         )
-        self._do_alarm_lights()
 
     def _handle_trigger_event(self, event_name, data, _):
         """
@@ -405,15 +393,10 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         """
         self._log.info('Got %s event data=%s', event_name, data)
         msg = data.get('message', '<no message>')
-        self.call_service(
-            'logbook/log', name='Alarm Triggered via Event (%s)' % msg,
-            message='Alarm has been triggered via explicit event'
+        self._trigger_alarm(
+            'ALARM TRIGGERED by Event',
+            'Event Message: ' % msg
         )
-        self._do_notify_pushover(
-            'ALARM TRIGGERED via EVENT', 'Event message: %s' % msg,
-            sound='alien'
-        )
-        self._do_alarm_lights()
 
     def _handle_state_set_event(self, event_name, data, _):
         """
@@ -482,6 +465,29 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
     def _arm_away_delay_callback(self, kwargs):
         self._arm_away(kwargs['prev_state'])
 
+    def _trigger_alarm(self, subject, message, image=None):
+        """Trigger the alarm"""
+        # Add event/trigger to logbook
+        self.call_service(
+            'logbook/log', name=subject, message=message
+        )
+        self._do_notify_pushover(
+            subject, message, image=image, sound='alien'
+        )
+        self._do_alarm_lights()
+        # revert the lights somewhere from 10 to 20 minutes later
+        undo_delay = randint(600, 1200)
+        self._log.info(
+            'Scheduling _untrigger_alarm in %d seconds', undo_delay
+        )
+        self.turn_off('input_boolean.trigger_delay')
+        self._untrigger_timer = self.run_in(self._untrigger_alarm, undo_delay)
+
+    def _untrigger_alarm(self, _):
+        """Un-trigger / reset the alarm"""
+        self._undo_alarm_lights()
+        self._untrigger_timer = None
+
     def _do_alarm_lights(self):
         """
         Turn on all lights when alarm goes off. Save state of all lights before
@@ -494,12 +500,6 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self._log.info(
             'All lights turned on. Previous state: %s', self._light_states
         )
-        # revert the lights somewhere from 10 to 20 minutes later
-        undo_delay = randint(600, 1200)
-        self._log.info(
-            'Scheduling _undo_alarm_lights in %d seconds', undo_delay
-        )
-        self.run_in(self._undo_alarm_lights, undo_delay)
 
     def _undo_alarm_lights(self, _):
         """Revert lights back to previous state, 10-20 min. after alarm."""
@@ -509,7 +509,6 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 self.turn_off(e_id)
             # else it was on before, leave it on
         self._log.info('Done reverting light state')
-        self.turn_off('input_boolean.trigger_delay')
 
     def _input_alarmstate_change(self, entity, attribute, old, new, kwargs):
         """Arm or disarm the alarm based on the alarmstate input_select."""
