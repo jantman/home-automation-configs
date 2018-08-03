@@ -449,7 +449,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
 
     def _arm_away_delay(self, prev_state):
         self._log.info(
-            'Begin delayed AWAY arming (previous state: %s)', prev_state
+            'Begin delayed AWAY arming (previous state: %s; '
+            'delay of %d seconds)', prev_state, AWAY_SECONDS
         )
         open_doors = self._exterior_doors_open()
         if len(open_doors) > 0:
@@ -484,6 +485,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 self._trigger_alarm, AWAY_TRIGGER_DELAY_SECONDS,
                 subject=subject, message=message, image=image
             )
+            return
         # remove any trigger delay
         if self._trigger_delay_timer is not None:
             self.cancel_timer(self._trigger_delay_timer)
@@ -507,6 +509,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
     def _untrigger_alarm(self, _):
         """Un-trigger / reset the alarm"""
         self._undo_alarm_lights()
+        if self._untrigger_timer is not None:
+            self.cancel_timer(self._untrigger_timer)
         self._untrigger_timer = None
 
     def _do_alarm_lights(self):
@@ -648,6 +652,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         if self._trigger_delay_timer is not None:
             self.cancel_timer(self._trigger_delay_timer)
             self._trigger_delay_timer = None
+        # cancel any current alarm
+        if self._untrigger_timer is not None:
+            self._untrigger_alarm(None)
         self.turn_off('input_boolean.trigger_delay')
 
     def _exterior_doors_open(self):
@@ -673,19 +680,26 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
           camera, capture an image for ``PTZ_MONITOR_ID``, and return the JPEG
           byte array of the two images merged into one, side-by-side.
         """
-        if ptz_preset is None:
-            return self._get_camera_capture(monitor_id)
-        if monitor_id == PTZ_MONITOR_ID:
+        try:
+            if ptz_preset is None:
+                return self._get_camera_capture(monitor_id)
+            if monitor_id == PTZ_MONITOR_ID:
+                self._ptz_to(ptz_preset)
+                return self._get_camera_capture(PTZ_MONITOR_ID)
+            # else we actually want TWO images...
+            # capture the first one, from the non-PTZ camera
+            img1 = self._get_camera_capture(monitor_id)
+            # move the PTZ camera and capture an image from it
             self._ptz_to(ptz_preset)
-            return self._get_camera_capture(PTZ_MONITOR_ID)
-        # else we actually want TWO images...
-        # capture the first one, from the non-PTZ camera
-        img1 = self._get_camera_capture(monitor_id)
-        # move the PTZ camera and capture an image from it
-        self._ptz_to(ptz_preset)
-        img2 = self._get_camera_capture(PTZ_MONITOR_ID)
-        # return the two images combined side-by-side
-        return self._combine_images(img1, img2)
+            img2 = self._get_camera_capture(PTZ_MONITOR_ID)
+            # return the two images combined side-by-side
+            return self._combine_images(img1, img2)
+        except Exception:
+            self._log.critical(
+                'Error getting camera capture for monitor %s '
+                'with ptz_preset=%s', monitor_id, ptz_preset
+            )
+            return None
 
     def _get_camera_capture(self, monitor_id):
         """
