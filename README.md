@@ -12,6 +12,7 @@ __Note:__ This repository is really only provided as an example, and is not real
 * [homeassistant/](homeassistant/) - my HomeAssistant configs
 * [testing/](testing/) - configurations and scripts for testing HomeAssistant and AppDaemon locally using docker-compose
 * [zoneminder/](zoneminder/) - some of my scripts and notes related to my ZoneMinder installation, including event image analysis and notifications
+* RaspberryPi touchscreen-based alarm control panels - see [doorpanels.md](doorpanels.md)
 
 ## Using It and Important Notes
 
