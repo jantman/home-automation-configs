@@ -38,12 +38,11 @@ ALARM_STATE_SELECT_ENTITY = 'input_select.alarmstate'
 HOME = 'Home'
 AWAY = 'Away'
 DISARMED = 'Disarmed'
+AWAY_DELAY = 'Away-Delay'
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
-
-AWAY_SECONDS = 15
 
 
 class DoorPanelHandler(hass.Hass, SaneLoggingApp):
@@ -109,20 +108,10 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
 
     def _handle_leave(self, client_ip):
         self._log.info(
-            'Alarm arming Away in %d seconds from %s',
-            AWAY_SECONDS, client_ip
+            'Requesting AWAY_DELAY from client %s', client_ip
         )
-        self.call_service(
-            'logbook/log',
-            name='Alarm arming Away in %d seconds' % AWAY_SECONDS,
-            message='From %s' % client_ip
-        )
-        self._leave_timer = self.run_in(self._leave_callback, AWAY_SECONDS)
-
-    def _leave_callback(self, kwargs):
-        self._log.info('Firing CUSTOM_ALARM_STATE_SET event state=AWAY')
         self.fire_event(
-            'CUSTOM_ALARM_STATE_SET', state=AWAY
+            'CUSTOM_ALARM_STATE_SET', state=AWAY_DELAY
         )
 
     def _handle_stay(self, client_ip):

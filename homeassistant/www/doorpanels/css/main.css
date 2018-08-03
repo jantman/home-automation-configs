@@ -30,3 +30,7 @@ button:active {
 .mdi-lightbulb-on {
   color: yellow;
 }
+
+.alarm-triggered {
+  background-color: #ff0000 !important;
+}

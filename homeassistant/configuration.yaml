@@ -222,6 +222,12 @@ input_boolean:
   cameras_silent:
     name: Silence ZoneMinder Alerts
     icon: mdi:volume-off
+  no_alarm_delay:
+    name: Disable Away Alarm Delay
+  arming_away:
+    name: Arming Away From Panel
+  trigger_delay:
+    name: Alarm Triggered But Delaying
 
 input_select:
   alarmstate:

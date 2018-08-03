@@ -54,6 +54,20 @@ function handleEvent(e) {
       groupStates[groupName] = e.data.new_state.state;
       handleLightStateChange(groupName, e.data.new_state.state);
     }
+    if(e.data.entity_id == 'input_boolean.arming_away') {
+      if(e.data.new_state.state == 'on') {
+        $('#arming_away').show();
+      } else {
+        $('#arming_away').hide();
+      }
+    }
+    if(e.data.entity_id == 'input_boolean.trigger_delay') {
+      if(e.data.new_state.state == 'on') {
+        $('body').addClass('alarm-triggered');
+      } else {
+        $('body').removeClass('alarm-triggered');
+      }
+    }
   }
 }
 

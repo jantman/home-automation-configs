@@ -93,6 +93,7 @@ ALARM_STATE_SELECT_ENTITY = 'input_select.alarmstate'
 HOME = 'Home'
 AWAY = 'Away'
 DISARMED = 'Disarmed'
+AWAY_DELAY = 'Away-Delay'
 
 #: List of entity IDs that should be turned on for 10 minutes after an alarm.
 LIGHT_ENTITIES = [
@@ -142,6 +143,9 @@ PTZ_CAM_HOST = '192.168.0.61'
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
+
+#: Delay from requesting delayed away arming, until armed
+AWAY_SECONDS = 15
 
 
 def fmt_entity(entity, kwargs):
@@ -234,6 +238,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self.listen_event(
             self._handle_trigger_event, event='CUSTOM_ALARM_TRIGGER'
         )
+        self._leave_timer = None
         self._log.info('Done initializing AlarmHandler')
 
     @property
@@ -427,7 +432,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             return
         state = data.get('state', None)
         prev_state = self.get_state(ALARM_STATE_SELECT_ENTITY)
-        if state not in [HOME, AWAY, DISARMED]:
+        if state not in [HOME, AWAY, DISARMED, AWAY_DELAY]:
             self._log.error(
                 'Got invalid state for CUSTOM_ALARM_STATE_SET event: %s',
                 state
@@ -447,8 +452,35 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self._log.info('Arming AWAY from event')
             self._arm_away(prev_state)
             return
+        if state == AWAY_DELAY:
+            self._log.info('Handle AWAY_DELAY event')
+            self._arm_away_delay(prev_state)
+            return
         self._log.info('Disarming from event')
         self._disarm(prev_state)
+
+    def _arm_away_delay(self, prev_state):
+        self._log.info(
+            'Begin delayed AWAY arming (previous state: %s)', prev_state
+        )
+        open_doors = self._exterior_doors_open()
+        if len(open_doors) > 0:
+            self._log.warning('Cannot arm Away; open doors: %s', open_doors)
+            self._do_notify_pushover(
+                'ARMING FAILURE - Doors Open',
+                'System requested arming to Away state, but the following '
+                'exterior doors are currently open, so the system is '
+                'remaining in %s state: %s' % (prev_state, open_doors),
+                sound='falling'
+            )
+            return
+        self.turn_on('input_boolean.arming_away')
+        self._leave_timer = self.run_in(
+            self._arm_away_delay_callback, AWAY_SECONDS, prev_state=prev_state
+        )
+
+    def _arm_away_delay_callback(self, kwargs):
+        self._arm_away(kwargs['prev_state'])
 
     def _do_alarm_lights(self):
         """
@@ -477,6 +509,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 self.turn_off(e_id)
             # else it was on before, leave it on
         self._log.info('Done reverting light state')
+        self.turn_off('input_boolean.trigger_delay')
 
     def _input_alarmstate_change(self, entity, attribute, old, new, kwargs):
         """Arm or disarm the alarm based on the alarmstate input_select."""
@@ -576,6 +609,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
         self.select_option(ALARM_STATE_SELECT_ENTITY, AWAY)
+        self.turn_off('input_boolean.arming_away')
 
     def _disarm(self, prev_state):
         """Disarm the system."""
@@ -590,6 +624,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
         self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
+        self.turn_off('input_boolean.trigger_delay')
 
     def _exterior_doors_open(self):
         """Return a list of the friendly_name of any open exterior sensors."""
