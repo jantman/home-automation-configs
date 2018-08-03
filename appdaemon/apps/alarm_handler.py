@@ -508,7 +508,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
 
     def _untrigger_alarm(self, _):
         """Un-trigger / reset the alarm"""
-        self._undo_alarm_lights()
+        self._undo_alarm_lights(None)
         if self._untrigger_timer is not None:
             self.cancel_timer(self._untrigger_timer)
         self._untrigger_timer = None
