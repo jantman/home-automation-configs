@@ -69,14 +69,6 @@ INITIAL_STATES = {
         'entity_id': 'binary_sensor.livingroom_motion',
         'state': 'off'
     },
-    'binary_sensor.office_motion': {
-        'attributes': {
-            'device_class': 'motion',
-            'friendly_name': 'Office Motion'
-        },
-        'entity_id': 'binary_sensor.office_motion',
-        'state': 'off'
-    },
     'device_tracker.02157df2c2d6e627': {
         'attributes': {
             'activity': '',

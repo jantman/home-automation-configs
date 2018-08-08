@@ -1,9 +1,5 @@
 - platform: template
   sensors:
-    office_motion:
-      value_template: "{{ states('sensor.officesensor_burglar')|float > 0 }}"
-      friendly_name: "Office Motion"
-      device_class: motion
     livingroom_motion:
       value_template: "{{ states('sensor.lrmotion_burglar')|float > 0 }}"
       friendly_name: "Living Room Motion"

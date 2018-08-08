@@ -12,7 +12,6 @@ motion:
   view: no
   control: hidden
   entities:
-    - binary_sensor.office_motion
     - binary_sensor.ecolink_motion_detector_sensor
     - binary_sensor.livingroom_motion
     - binary_sensor.kitchen_motion

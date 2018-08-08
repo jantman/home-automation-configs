@@ -284,10 +284,6 @@
     - condition: numeric_state
       entity_id: sensor.bedroomsensor_luminance
       below: 5
-    # office luminance must be less than 2 PERCENT (Zooz multi-sensor)
-    - condition: numeric_state
-      entity_id: sensor.officesensor_luminance
-      below: 2
     # living room luminance must be less than 5 PERCENT (Zooz multi-sensor)
     - condition: numeric_state
       entity_id: sensor.lrmotion_luminance
