@@ -48,7 +48,7 @@ class ZmVideoizer(object):
                 lpath = os.path.join(symlink_to, os.path.basename(p))
                 if os.path.exists(lpath):
                     os.unlink(lpath)
-                    os.symlink(p, lpath)
+                os.symlink(p, lpath)
         logger.info('Video generation complete.')
         for p in filepaths:
             print(p)
