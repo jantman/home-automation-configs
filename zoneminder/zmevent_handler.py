@@ -209,7 +209,7 @@ def update_event_name(event, analysis, dry_run=False):
     if len(objects) == 0:
         _set_event_name(
             event.EventId,
-            '%s-NoObject-%s' % (event.Name, '/'.join(zones)),
+            '%s-NoObject-%s' % (event.Name, ','.join(zones)),
             dry_run=dry_run
         )
         return
