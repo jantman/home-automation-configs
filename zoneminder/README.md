@@ -14,6 +14,7 @@
 * [zmevent_object_filter.py](zmevent_object_filter.py) - Base classes instantiated in ``zmevent_config.py`` for filtering out certain object detections.
 * [zmeventnotification.pl](zmeventnotification.pl) - Simple Perl daemon based on https://github.com/pliablepixels/zmeventserver that checks ZoneMinder shared memory for new events every 3 seconds, and runs [zmevent_handler.py](zmevent_handler.py) when they are found.
 * [zmeventnotification.service](zmeventnotification.service) - systemd unit file for [zmeventnotification.pl](zmeventnotification.pl)
+* [zm_videoizer.py](zm_videoizer.py) - A script using MySQL and the ZoneMinder web UI to ensure videos exist for all events in a given timeframe (and optionally from a given monitor)
 
 __NOTE:__ I'm planning a major refactor to [zmevent_handler.py](zmevent_handler.py) and [zmevent_image_analysis.py](zmevent_image_analysis.py) in the near future, to clean them up and also integrate homeassistant.
 
