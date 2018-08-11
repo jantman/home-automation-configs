@@ -66,7 +66,7 @@ class IgnoredObject(object):
         :return: whether or not to ignore the object
         :rtype: bool
         """
-        if label not in self._labels:
+        if self._labels is not None and label not in self._labels:
             # labels specified, but no matches with this detection
             return False
         if self._zone_names is not None:
