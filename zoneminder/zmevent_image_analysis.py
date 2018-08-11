@@ -319,9 +319,9 @@ class YoloAnalyzer(ImageAnalyzer):
             ]
             if len(matched_filters) > 0:
                 # object should be ignored
-                logger.debug(
-                    'Ignoring %s (%.2f) at %d,%d based on filters: %s',
-                    cat, score, x, y, matched_filters
+                logger.info(
+                    '%s: Ignoring %s (%.2f) at %d,%d based on filters: %s',
+                    frame, cat, score, x, y, matched_filters
                 )
                 rect_color = (104, 104, 104)
                 text_color = (111, 247, 93)
