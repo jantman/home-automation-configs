@@ -136,6 +136,12 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
                 data['event']['EventId']
             )
             return
+        if self.detections_in_street(data['object_detections']):
+            self._log.info(
+                'Ignoring ZM_ALARM for Event %s - all objects in Street zones',
+                data['event']['EventId']
+            )
+            return
         # else our alarm isn't disarmed and we have some objects detected
         img = self._primary_detection_for_event(data)
         subject = 'ZoneMinder Alarm on %s - %s' % (
@@ -149,6 +155,14 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
         else:
             self._do_notify_pushover(subject, data, img)
         self._do_notify_email(subject, data)
+
+    def detections_in_street(detections):
+        zones = []
+        for frame in detections:
+            zones.extend([
+                k['zones'].keys() for k in frame['detections']
+            ])
+        return all([x.startswith('Street') for x in zones])
 
     @staticmethod
     def detection_str(img):

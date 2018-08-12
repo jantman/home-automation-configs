@@ -93,19 +93,6 @@ IGNORED_OBJECTS = [
         ['giraffe'],
         bounding_box=(400, 670, 50, 50),
         monitor_num=5
-    ),
-    # Ignore objects in the street
-    IgnoredObject(
-        'Monitor3Street',
-        None,
-        monitor_num=3,
-        zone_names=['Street1', 'Street2', 'Street3']
-    ),
-    IgnoredObject(
-        'Monitor5Street',
-        None,
-        monitor_num=5,
-        zone_names=['Street1', 'Street2']
     )
 ]
 
