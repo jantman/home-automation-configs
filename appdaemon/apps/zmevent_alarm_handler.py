@@ -156,7 +156,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
             self._do_notify_pushover(subject, data, img)
         self._do_notify_email(subject, data)
 
-    def detections_in_street(detections):
+    def detections_in_street(self, detections):
         zones = []
         for frame in detections:
             zones.extend([
