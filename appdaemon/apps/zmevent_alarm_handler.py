@@ -159,9 +159,8 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
     def detections_in_street(self, detections):
         zones = []
         for frame in detections:
-            zones.extend([
-                k['zones'].keys() for k in frame['detections']
-            ])
+            for det in frame['detections']:
+                zones.extend([k for k in det['zones'].keys()])
         return all([x.startswith('Street') for x in zones])
 
     @staticmethod
