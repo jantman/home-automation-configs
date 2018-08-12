@@ -39,7 +39,7 @@ class IgnoredObject(object):
           a float from 0 to 1.
         :type min_score: float
         """
-        assert isinstance(labels, type([]))
+        assert isinstance(labels, type([])) or labels is None
         self.name = name
         self._labels = labels
         self._monitor_num = monitor_num
