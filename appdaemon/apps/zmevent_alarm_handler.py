@@ -39,6 +39,7 @@ keys are defined in ``AlarmHandler._get_hass_secrets()``.
 
 import logging
 import os
+import re
 import requests
 import appdaemon.plugins.hass.hassapi as hass
 import smtplib
@@ -136,9 +137,9 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
                 data['event']['EventId']
             )
             return
-        if self.detections_in_street(data['object_detections']):
+        if self.motion_in_street(data['event']['Notes']):
             self._log.info(
-                'Ignoring ZM_ALARM for Event %s - all objects in Street zones',
+                'Ignoring ZM_ALARM for Event %s - all motion in Street zones',
                 data['event']['EventId']
             )
             return
@@ -156,12 +157,13 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
             self._do_notify_pushover(subject, data, img)
         self._do_notify_email(subject, data)
 
-    def detections_in_street(self, detections):
-        zones = []
-        for frame in detections:
-            for det in frame['detections']:
-                zones.extend([k for k in det['zones'].keys()])
-        return all([x.startswith('Street') for x in zones])
+    def motion_in_street(self, notes):
+        m = re.match(r'^Motion: (.+)', notes)
+        if not m:
+            return False
+        parts = m.group(1).split()
+        zones = [p.strip().strip(',') for p in parts]
+        return all([z.startswith('Street') for z in zones])
 
     @staticmethod
     def detection_str(img):
