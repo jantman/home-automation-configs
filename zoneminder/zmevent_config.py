@@ -43,8 +43,7 @@ IGNORED_OBJECTS = [
     IgnoredObject(
         'FrontPorchLeftRailing',
         ['bench', 'chair', 'zebra'],
-        monitor_num=3,
-        bounding_box=(470, 430, 300, 300)
+        monitor_num=3
     ),
     # my car when parked
     IgnoredObject(
