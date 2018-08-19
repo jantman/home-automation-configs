@@ -34,6 +34,23 @@ config:
 
 recorder:
 
+statsd:
+  host: 192.168.0.24
+  log_attributes: true
+  value_mapping:
+    on: 1
+    open: 1
+    off: 0
+    closed: 0
+    cooling: 1
+    heating: 2
+    idle: 0
+    home: 1
+    away: 0
+    Disarmed: 0
+    Home: 1
+    Away: 2
+
 http:
   # Secrets are defined in the file secrets.yaml
   # api_password: !secret http_password
