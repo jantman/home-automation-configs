@@ -17,6 +17,10 @@ from zmevent_config import (
 
 logger = logging.getLogger(__name__)
 
+#: The maximum number of first/best frame pairs to analyze from contiguous
+#: alarm frame sets, in each Event.
+MAX_ANALYSIS_COUNT = 5
+
 
 class Monitor(object):
     """Class to represent a Monitor from ZoneMinder's database."""
@@ -369,30 +373,52 @@ class ZMEvent(object):
         Find all contiguous runs of alarm frames; return a dict containing the
         first and best frame of each contiguous run.
         """
-        result = {}
+        # frame_tuples will be a list of 3-tuples of:
+        #    (total_score, first Frame, best Frame)
+        # for each contiguous run of alarm frames
+        frame_tuples = []
         contiguous_frames = []
+        total_score = 0
         in_contig = False
         for fid in sorted(self.AllFrames.keys()):
             f = self.AllFrames[fid]
             if f.Score == 0 and not in_contig:
                 continue
             if f.Score == 0 and in_contig:
-                # end run of contiguous frames
-                result[
-                    contiguous_frames[0].FrameId
-                ] = contiguous_frames[0]
+                # end run of contiguous frames; add first and best to result
+                total_score += f.Score
                 tmp = sorted(
                     contiguous_frames, key=lambda x: x.Score
                 )[-1]
-                result[tmp.FrameId] = tmp
+                frame_tuples.append((
+                    total_score,
+                    contiguous_frames[0],  # first frame
+                    tmp,  # best frame
+                ))
+                # reset state variables
                 contiguous_frames = []
                 in_contig = False
+                total_score = 0
                 continue
-            # frame has a score; it's an alarm frame
+            # frame has a score; it's an alarm frame; add to contiguous
             contiguous_frames.append(f)
+            total_score += f.Score
             in_contig = True
             # because of the post-event buffer, the last frames should always be
             # non-alarm
+        # sort result by total score, descending, and take only the top N
+        sorted_res = sorted(
+            frame_tuples, key=lambda tup: tup[0]
+        )[:MAX_ANALYSIS_COUNT]
+        logger.info(
+            'Found %d contiguous series of alarm frames in Event; analyzing '
+            'the first and best frames from the %d with the highest score: %s',
+            len(frame_tuples), MAX_ANALYSIS_COUNT, sorted_res
+        )
+        result = {}
+        for _, first_frame, best_frame in sorted_res:
+            result[first_frame.FrameId] = first_frame
+            result[best_frame.FrameId] = best_frame
         return result
 
     @property
