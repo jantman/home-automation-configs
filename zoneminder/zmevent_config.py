@@ -45,8 +45,8 @@ def is_person_rectangle(i, label, x, y, w, h, zones, score):
     """
     if (
         150 < x < 250 and
-        475 < y < 550 and
-        h > 990 and
+        475 < y < 570 and
+        h > 900 and
         350 < w < 460 and
         label == 'person'
     ):
