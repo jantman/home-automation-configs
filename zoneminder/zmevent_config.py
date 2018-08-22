@@ -37,6 +37,23 @@ CONFIG = {
     'HASS_API_URL': None,  # usually should be: http://localhost:8123/api
 }
 
+
+def is_person_rectangle(i, label, x, y, w, h, zones, score):
+    """
+    ``i`` is an IgnoredObject instance. This is a custom method to match the
+    weird false "person" detection in the trees on CAM4.
+    """
+    if (
+        150 < x < 250 and
+        475 < y < 550 and
+        h > 990 and
+        350 < w < 460 and
+        label == 'person'
+    ):
+        return True
+    return False
+
+
 #: IgnoredObject instances to filter objects out from detection results
 IGNORED_OBJECTS = [
     # False detection for porch railing
@@ -92,6 +109,11 @@ IGNORED_OBJECTS = [
         ['giraffe'],
         bounding_box=(400, 670, 50, 50),
         monitor_num=5
+    ),
+    IgnoredObject(
+        'CAM4person', ['person'],
+        monitor_num=5,
+        callable=is_person_rectangle
     )
 ]
 

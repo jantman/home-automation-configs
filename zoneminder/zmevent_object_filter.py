@@ -8,7 +8,7 @@ class IgnoredObject(object):
 
     def __init__(
         self, name, labels, monitor_num=None, bounding_box=None,
-        zone_names=None, min_score=None
+        zone_names=None, min_score=None, callable=None
     ):
         """
         Initialize an IgnoredObject instance. When object detection is run on
@@ -38,6 +38,9 @@ class IgnoredObject(object):
           conditions and have a score below this will be ignored. Specified as
           a float from 0 to 1.
         :type min_score: float
+        :param callable: a custom callable to execute; if this returns True,
+          ignore the Frame. This will be passed one argument, a reference to
+          an instance of this class as well as the label, x, y, zones, and score
         """
         assert isinstance(labels, type([])) or labels is None
         self.name = name
@@ -46,8 +49,9 @@ class IgnoredObject(object):
         self._bounding_box = bounding_box
         self._zone_names = zone_names
         self._min_score = min_score
+        self._callable = callable
 
-    def should_ignore(self, label, x, y, zones, score):
+    def should_ignore(self, label, x, y, w, h, zones, score):
         """
         Return True if this object should be ignored based on the parameters of
         this filter, False otherwise.
@@ -58,6 +62,10 @@ class IgnoredObject(object):
         :type x: int
         :param y: the Y coordinate of the center of the object
         :type y: int
+        :param w: the width of the bounding box around the object
+        :type w: int
+        :param h: the height of the bounding box around the object
+        :type h: int
         :param zones: list of zone names the object bounding box is in
         :type zones: list
         :param score: the score/confidence of the detection, as a decimal
@@ -89,4 +97,9 @@ class IgnoredObject(object):
         if self._min_score is not None and score >= self._min_score:
             return False
         # all conditions matched; ignore
+        if (
+            self._callable is not None and
+            not self._callable(self, label, x, y, w, h, zones, score)
+        ):
+            return False
         return True
