@@ -33,6 +33,7 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp):
         self._log.info("Initializing ZWaveChecker...")
         self.run_daily(self._check_zwave, RUN_AT_TIME)
         self._log.info('Done initializing ZWaveChecker')
+        self.listen_event(self._check_zwave, event='ZWAVE_CHECKER')
 
     def _check_zwave(self, *args, **kwargs):
         problems = []
