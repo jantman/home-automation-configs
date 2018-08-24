@@ -5,7 +5,7 @@ Semi-companion to zmevent_handler.py.
 1. Deletes all records from ANALYSIS_TABLE_NAME in ZoneMinder's MySQL DB that
    don't have matching records in the Event table (i.e. deleted events).
 2. Queries the DB directly for all non-archived events older than a given number
-   of days (default 14) and then uses the ZM API to delete them.
+   of days (default 30) and then uses the ZM API to delete them.
 """
 
 import sys
@@ -43,7 +43,7 @@ class ZmEventArchiver(object):
         )
         logger.debug('Connected to MySQL')
 
-    def run(self, keep_days=7):
+    def run(self, keep_days=30):
         self._purge_analysis_table()
         event_ids = self._find_events(keep_days)
         self._delete_events(event_ids)
@@ -106,9 +106,9 @@ def parse_args(argv):
                    default=False,
                    help='verbose output')
     p.add_argument('-k', '--keep-days', dest='keep_days', action='store',
-                   type=int, default=14,
+                   type=int, default=30,
                    help='number of days of non-archived events to keep '
-                        '(default 14)')
+                        '(default 30)')
     p.add_argument('-u', '--url', dest='base_url', action='store', type=str,
                    default='http://localhost/zm/api/',
                    help='ZM API base url; default: http://localhost/zm/api/')
