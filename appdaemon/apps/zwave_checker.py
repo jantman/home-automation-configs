@@ -13,7 +13,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from sane_app_logging import SaneLoggingApp
 
 #: Threshold below which battery level will trigger an alert.
-BATTERY_THRESHOLD = 99
+BATTERY_THRESHOLD = 50
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
