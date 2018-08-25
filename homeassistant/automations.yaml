@@ -131,7 +131,27 @@
     data:
       entity_id:
         - light.linear_lb60z1_dimmable_led_light_bulb_level_3
-        - white_value: 127
+      white_value: 127
+- id: PorchLightOnDimWhenSunsetAndAway
+  alias: Turn Porch Light On Dim When Sunset and Away
+  trigger:
+      platform: state
+      entity_id: device_tracker.02157df2c2d6e627
+      to: 'away'
+  condition:
+    # it must be dark out
+    - condition: or  # 'when dark' condition: either after sunset or before sunrise
+      conditions:
+        - condition: sun
+          after: sunset
+        - condition: sun
+          before: sunrise
+  action:
+    service: light.turn_on
+    data:
+      entity_id:
+        - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+      white_value: 127
 - id: PorchLightsOffAtSunrise
   alias: Turn Porch Lights Off At Sunrise
   trigger:
@@ -152,7 +172,7 @@
   trigger:
       platform: numeric_state
       entity_id: proximity.home
-      below: 500 # meters
+      below: 1000 # meters
   condition:
     condition: or  # 'when dark' condition: either after sunset or before sunrise
     conditions:
@@ -165,12 +185,12 @@
       data:
         entity_id:
           - light.zipato_bulb_2_level
-          - white_value: 255
+        white_value: 255
     - service: light.turn_on
       data:
         entity_id:
           - light.linear_lb60z1_dimmable_led_light_bulb_level_3
-          - white_value: 255
+        white_value: 255
 ################################################################################
 # Living Room Light                                                            #
 ################################################################################
