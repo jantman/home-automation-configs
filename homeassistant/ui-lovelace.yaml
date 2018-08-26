@@ -79,6 +79,11 @@ views:
                 top: 80%
                 left: 35%
             - type: state-icon
+              entity: binary_sensor.office_motion # office
+              style:
+                top: 82%
+                left: 75%
+            - type: state-icon
               entity: binary_sensor.bedroom_motion # bedroom
               style:
                 top: 50%
@@ -121,6 +126,11 @@ views:
                 top: 94%
                 left: 65%
             - type: state-label
+              entity: sensor.officesensor_temperature
+              style:
+                top: 94%
+                left: 77%
+            - type: state-label
               entity: sensor.kitchensensor_temperature
               style:
                 top: 48%
@@ -155,6 +165,7 @@ views:
             - zwave.linear_lb60z1_dimmable_led_light_bulb_2
             - zwave.linear_lb60z1_dimmable_led_light_bulb_3
             - zwave.lrmotion
+            - zwave.officesensor
             - zwave.zipato_bulb_2
       # CENTER COLUMN
       - type: vertical-stack
