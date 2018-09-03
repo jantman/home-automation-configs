@@ -183,12 +183,6 @@ views:
         - type: picture-entity
           entity: switch.cam2_state
           camera_image: camera.cam2
-        - type: picture-entity
-          entity: switch.cam1_state
-          camera_image: camera.cam1
-      # RIGHT COLUMN
-      - type: vertical-stack
-        cards:
         - type: entities
           title: Climate
           entities:
@@ -196,9 +190,15 @@ views:
             - sensor.thermostat_operation_mode
             - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
             - climate.2gig_technologies_ct101_thermostat_iris_heating_1
+      # RIGHT COLUMN
+      - type: vertical-stack
+        cards:
         - type: picture-entity
           entity: switch.cam4_state
           camera_image: camera.cam4
+        - type: picture-entity
+          entity: switch.cam1_state
+          camera_image: camera.cam1
         - type: weather-forecast
           entity: weather.dark_sky
         - type: entities
