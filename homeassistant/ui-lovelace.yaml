@@ -2,6 +2,8 @@
 name: Non-Shitty UI
 views:
   - name: Main
+    title: Main
+    id: main
     theme: this-doesnt-work
     cards:
       # LEFT COLUMN
@@ -217,6 +219,8 @@ views:
             - switch.cam4_state
       # END RIGHT COLUMN - NO MORE COLUMNS!
   - name: FireTV
+    title: FireTV
+    id: firetv
     theme: this-doesnt-work
     cards:
       # LEFT COLUMN
