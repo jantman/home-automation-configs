@@ -300,6 +300,13 @@
           after: sunset
         - condition: sun
           before: sunrise
+    # it must be after 7pm or before 5am
+    - condition: or
+      conditions:
+        - condition: time
+          after: '19:00:00'
+        - condition: time
+          before: '05:00:00'
     # bedroom luminance must be less than 5 PERCENT (Zooz multi-sensor)
     - condition: numeric_state
       entity_id: sensor.bedroomsensor_luminance
