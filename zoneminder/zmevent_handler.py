@@ -28,7 +28,7 @@ in this git repo.
 import sys
 import os
 import logging
-from logging.handlers import SysLogHandler
+from systemd.journal import JournalHandler
 import argparse
 import json
 import time
@@ -134,11 +134,8 @@ def setup_logging(args):
     logger = logging.getLogger()
     if args.foreground:
         return
-    # if not running in foreground, log to syslog also
-    sh = SysLogHandler()
-    sh.ident = 'zmevent_handler.py'
-    sh.setFormatter(logging.Formatter(kwargs['format']))
-    logger.addHandler(sh)
+    # if not running in foreground, log to journald also
+    logger.addHandler(JournalHandler())
 
 
 def send_to_hass(json_str, event_id):
