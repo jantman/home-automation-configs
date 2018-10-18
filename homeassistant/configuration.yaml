@@ -256,3 +256,68 @@ input_select:
 
 climate:
   platform: zwave
+
+alexa:
+  smart_home:
+    filter:
+      include_entities:
+        # Bedroom Motion
+        - binary_sensor.bedroom_motion
+        # BedroomSensor Sensor
+        - binary_sensor.bedroomsensor_sensor
+        # FrontDoor
+        - binary_sensor.ecolink_doorwindow_sensor_sensor
+        # Crawlspace
+        - binary_sensor.ecolink_doorwindow_sensor_sensor_2
+        # Gate
+        - binary_sensor.ecolink_doorwindow_sensor_sensor_3
+        # KitchenDoor
+        - binary_sensor.ecolink_doorwindow_sensor_sensor_4
+        # Back Bedroom Motion
+        - binary_sensor.ecolink_motion_detector_sensor
+        # Kitchen Motion
+        - binary_sensor.kitchen_motion
+        # KitchenSensor Sensor
+        - binary_sensor.kitchensensor_sensor
+        # Living Room Motion
+        - binary_sensor.livingroom_motion
+        # LivingRoom Sensor
+        - binary_sensor.lrmotion_sensor
+        # Office Motion
+        - binary_sensor.office_motion
+        # OfficeSensor Sensor
+        - binary_sensor.officesensor_sensor
+        # Thermostat - Cooling
+        - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
+        # Thermostat - Heating
+        - climate.2gig_technologies_ct101_thermostat_iris_heating_1
+        # GalaxyS6
+        - device_tracker.02157df2c2d6e627
+        # Kitchen Lights
+        - group.kitchenlights
+        # Lights
+        - group.lights
+        # Living Room Lights
+        - group.lrlights
+        # Porch Lights
+        - group.porchlights
+        # Thermostat Current
+        - sensor.2gig_technologies_ct101_thermostat_iris_temperature
+        # BedroomSensor Temperature
+        - sensor.bedroomsensor_temperature
+        # KitchenSensor Temperature
+        - sensor.kitchensensor_temperature
+        # LivingRoom Temperature
+        - sensor.lrmotion_temperature
+        # OfficeSensor Temperature
+        - sensor.officesensor_temperature
+        # Bedroom Temperature
+        - sensor.pi2graphite_1wire_bedroom
+        # Office Temperature
+        - sensor.pi2graphite_1wire_office
+        # Thermostat Fan
+        - sensor.thermostat_fan_state
+        # Thermostat Operation
+        - sensor.thermostat_operation_mode
+        # LivingRoomLight Switch
+        - switch.livingroomlight_switch
