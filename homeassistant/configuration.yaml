@@ -259,6 +259,16 @@ climate:
 
 alexa:
   smart_home:
+    entity_config:
+      group.porchlights:
+        display_categories: LIGHT
+      group.lrlights:
+        display_categories: LIGHT
+      group.kitchenlights:
+        display_categories: LIGHT
+      group.lights:
+        name: 'All Lights'
+        display_categories: LIGHT
     filter:
       include_entities:
         # Bedroom Motion
