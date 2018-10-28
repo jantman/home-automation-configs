@@ -130,9 +130,7 @@ CAMERA_IMAGE_ENTITIES = {
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
 #: turn off when camera is in HOME or DISARMED.
-AWAY_CAMERA_ENTITIES = [
-    'switch.cam1_state'
-]
+AWAY_CAMERA_ENTITIES = []
 
 #: The ID of the ZoneMinder monitor with PTZ support, for the above.
 PTZ_MONITOR_ID = 2
