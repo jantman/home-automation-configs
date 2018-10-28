@@ -178,6 +178,7 @@ views:
           entities:
             - input_select.alarmstate
             - input_boolean.cameras_silent
+            - switch.linear_wa105dbz1_main_operated_siren_switch
             - input_boolean.no_alarm_delay
             - group.lights
         - type: picture-entity
