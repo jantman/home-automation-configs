@@ -249,6 +249,8 @@ input_boolean:
     name: Arming Away From Panel
   trigger_delay:
     name: Alarm Triggered But Delaying
+  enable_randomlights:
+    name: Enable RandomLights
 
 input_select:
   alarmstate:

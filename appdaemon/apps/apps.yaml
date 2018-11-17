@@ -16,3 +16,7 @@ doorpanels:
   module: doorpanels
   class: DoorPanelHandler
   global_dependencies: sane_app_logging
+randomlights:
+  module: randomlights
+  class: RandomLights
+  global_dependencies: sane_app_logging
