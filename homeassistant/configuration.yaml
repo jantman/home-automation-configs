@@ -269,6 +269,10 @@ alexa:
       group.lights:
         name: 'All Lights'
         display_categories: LIGHT
+      light.ge_45606_2way_dimmer_switch_level:
+        name: 'Bedroom Light'
+      light.ge_45606_2way_dimmer_switch_level_2:
+        name: 'Office Light'
     filter:
       include_entities:
         # Bedroom Motion
@@ -303,6 +307,10 @@ alexa:
         - climate.2gig_technologies_ct101_thermostat_iris_heating_1
         # GalaxyS6
         - device_tracker.02157df2c2d6e627
+        # Bedroom Light
+        - light.ge_45606_2way_dimmer_switch_level
+        # Office Light
+        - light.ge_45606_2way_dimmer_switch_level_2
         # Kitchen Lights
         - group.kitchenlights
         # Lights

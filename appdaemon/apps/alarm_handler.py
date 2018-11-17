@@ -103,7 +103,11 @@ LIGHT_ENTITIES = [
     # Porch
     'light.linear_lb60z1_dimmable_led_light_bulb_level_3',
     # TV
-    'switch.livingroomlight_switch'
+    'switch.livingroomlight_switch',
+    # Bedroom
+    'light.ge_45606_2way_dimmer_switch_level',
+    # Office
+    'light.ge_45606_2way_dimmer_switch_level_2'
 ]
 
 #: List of RGB light entities that should react to an alarm. Right now they

@@ -43,6 +43,20 @@ views:
               style:
                 top: 95%
                 left: 25%
+            - type: state-icon
+              # bedroom light
+              tap_action: toggle
+              entity: light.ge_45606_2way_dimmer_switch_level
+              style:
+                top: 60%
+                left: 66%
+            - type: state-icon
+              # office light
+              tap_action: toggle
+              entity: light.ge_45606_2way_dimmer_switch_level_2
+              style:
+                top: 80%
+                left: 66%
             # DOORS
             - type: state-icon
               entity: binary_sensor.ecolink_doorwindow_sensor_sensor_2 # crawlspace
@@ -161,6 +175,8 @@ views:
             - zwave.ecolink_doorwindow_sensor_3
             - zwave.ecolink_doorwindow_sensor_4
             - zwave.ecolink_motion_detector
+            - zwave.ge_45606_2way_dimmer_switch
+            - zwave.ge_45606_2way_dimmer_switch_2
             - zwave.inovelli_unknown_type2400_id2400
             - zwave.kitchensensor
             - zwave.linear_lb60z1_dimmable_led_light_bulb
@@ -191,6 +207,21 @@ views:
             - sensor.thermostat_operation_mode
             - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
             - climate.2gig_technologies_ct101_thermostat_iris_heating_1
+        - type: entities
+          title: Lights
+          entities:
+            # kitchen
+            - light.linear_lb60z1_dimmable_led_light_bulb_level
+            - light.linear_lb60z1_dimmable_led_light_bulb_level_2
+            # porch
+            - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+            - light.zipato_bulb_2_level
+            # Living Room
+            - switch.livingroomlight_switch
+            # Bedroom
+            - light.ge_45606_2way_dimmer_switch_level
+            # Office
+            - light.ge_45606_2way_dimmer_switch_level_2
       # RIGHT COLUMN
       - type: vertical-stack
         cards:

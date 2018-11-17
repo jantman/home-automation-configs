@@ -24,6 +24,10 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
     - service: homeassistant.turn_off
       entity_id: light.zipato_bulb_2_level
+    - service: homeassistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level
+    - service: HomeAssistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
 - alias: Turn Lights Off During Day When Away
   trigger:
       platform: sun
@@ -44,6 +48,10 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
     - service: homeassistant.turn_off
       entity_id: light.zipato_bulb_2_level
+    - service: homeassistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level
+    - service: HomeAssistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
 # Kitchen Lights                                                               #
 ################################################################################
@@ -248,9 +256,9 @@
 # "first morning" motion trigger
 - alias: First Morning Bedroom Light
   trigger:
-    platform: numeric_state
-    entity_id: sensor.bedroomsensor_luminance
-    above: 5
+    platform: state
+    entity_id: light.ge_45606_2way_dimmer_switch_level
+    to: 'on'
   # only complete the automation if we're still waiting for the first motion
   condition:
     - condition: state
@@ -270,6 +278,8 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
     - service: homeassistant.turn_on
       entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
     - service: input_select.select_option
       data:
         entity_id: input_select.alarmstate
@@ -307,14 +317,14 @@
           after: '19:00:00'
         - condition: time
           before: '05:00:00'
-    # bedroom luminance must be less than 5 PERCENT (Zooz multi-sensor)
-    - condition: numeric_state
-      entity_id: sensor.bedroomsensor_luminance
-      below: 5
-    # office luminance must be less than 2 PERCENT (Zooz multi-sensor)
-    - condition: numeric_state
-      entity_id: sensor.officesensor_luminance
-      below: 2
+    # bedroom light must be off
+    - condition: state
+      entity_id: light.ge_45606_2way_dimmer_switch_level
+      state: 'off'
+    # office light must be off
+    - condition: state
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      state: 'off'
     # living room luminance must be less than 5 PERCENT (Zooz multi-sensor)
     - condition: numeric_state
       entity_id: sensor.lrmotion_luminance
