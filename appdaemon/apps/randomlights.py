@@ -59,7 +59,6 @@ class RandomLights(hass.Hass, SaneLoggingApp):
         if self._timer is not None:
             self._log.debug('Canceling existing timer')
             self.cancel_timer(self._timer)
-        newminute = randint(0, 59)
         newtime = self.datetime() + datetime.timedelta(
             minutes=randint(45, 75)
         )
@@ -88,11 +87,11 @@ class RandomLights(hass.Hass, SaneLoggingApp):
                 self._log.info('Turn %s off in %ss', ename, delay)
             self.run_in(
                 self.light_callback, delay,
-                action=action, entity=ename
+                turn_on=action, entity_id=ename
             )
 
     def light_callback(self, kwargs):
-        eid = kwargs['entity']
+        eid = kwargs['entity_id']
         if kwargs['turn_on']:
             self._log.info('Turning ON: %s', eid)
             self.turn_on(eid)
