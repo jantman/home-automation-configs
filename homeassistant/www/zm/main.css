@@ -1,21 +1,6 @@
-#container {
-  width: 100%;
-  height: 100%;
-}
-
-.row {
+table {
   width: 100%;
   height: 50%;
-}
-
-.three {
-  width: 33%;
-  float: left;
-}
-
-.four {
-  width: 25%;
-  float: left;
 }
 
 img {
