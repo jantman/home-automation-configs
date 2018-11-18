@@ -60,10 +60,11 @@ class RandomLights(hass.Hass, SaneLoggingApp):
             self._log.debug('Canceling existing timer')
             self.cancel_timer(self._timer)
         newminute = randint(0, 59)
-        self._log.info('Next iteration will be at %d after the hour', newminute)
-        self._timer = self.run_hourly(
-            self.timer_callback, datetime.time(0, newminute, 0)
+        newtime = self.datetime() + datetime.timedelta(
+            minutes=randint(45, 75)
         )
+        self._log.info('Next iteration will be at: %s', newtime)
+        self._timer = self.run_at(self.timer_callback, newtime)
 
     def timer_callback(self, _):
         self._log.info('Timer callback fired.')
