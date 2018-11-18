@@ -48,6 +48,8 @@ class RandomLights(hass.Hass, SaneLoggingApp):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing RandomLights...")
         self._timer = None
+        self.set_timer()
+        self._log.info('Done initializing RandomLights.')
 
     def set_timer(self):
         """
