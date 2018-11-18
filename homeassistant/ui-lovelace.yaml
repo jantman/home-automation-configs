@@ -218,6 +218,9 @@ views:
         - type: picture-entity
           entity: switch.porch_state
           camera_image: camera.porch
+        - type: picture-entity
+          entity: switch.bedrm_state
+          camera_image: camera.bedrm
         - type: entities
           title: Climate
           entities:
@@ -225,9 +228,6 @@ views:
             - sensor.thermostat_operation_mode
             - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
             - climate.2gig_technologies_ct101_thermostat_iris_heating_1
-        - type: picture-entity
-          entity: switch.bedrm_state
-          camera_image: camera.bedrm
         - type: entities
           title: Lights
           entities:
@@ -252,11 +252,11 @@ views:
         - type: picture-entity
           entity: switch.lrkitchen_state
           camera_image: camera.lrkitchen
-        - type: weather-forecast
-          entity: weather.dark_sky
         - type: picture-entity
           entity: switch.office_state
           camera_image: camera.office
+        - type: weather-forecast
+          entity: weather.dark_sky
         - type: entities
           show_header_toggle: false
           title: Cameras
