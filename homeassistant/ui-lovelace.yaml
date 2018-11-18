@@ -215,6 +215,7 @@ views:
             - switch.linear_wa105dbz1_main_operated_siren_switch
             - input_boolean.no_alarm_delay
             - group.lights
+            - input_boolean.enable_randomlights
         - type: picture-entity
           entity: switch.porch_state
           camera_image: camera.porch
