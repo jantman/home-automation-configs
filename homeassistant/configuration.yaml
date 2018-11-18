@@ -95,10 +95,6 @@ logbook:
       - sensor.bedroomsensor_power_management
       - sensor.bedroomsensor_sourcenodeid
       - sensor.bedroomsensor_system
-      - sensor.cam1_events
-      - sensor.cam2_events
-      - sensor.cam3_events
-      - sensor.cam4_events
       - sensor.ecolink_doorwindow_sensor_access_control
       - sensor.ecolink_doorwindow_sensor_access_control_2
       - sensor.ecolink_doorwindow_sensor_access_control_3
@@ -153,6 +149,13 @@ logbook:
       - sensor.officesensor_sourcenodeid
       - sensor.officesensor_system
       - weather.dark_sky
+      # ZoneMinder cameras
+      - sensor.back_events
+      - sensor.bedrm_events
+      - sensor.lrkitchen_events
+      - sensor.office_events
+      - sensor.porch_events
+      - sensor.side_events
 
 # Enables a map showing the location of tracked devices
 map:

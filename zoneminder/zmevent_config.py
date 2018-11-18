@@ -41,7 +41,7 @@ CONFIG = {
 def is_person_rectangle(i, label, x, y, w, h, zones, score):
     """
     ``i`` is an IgnoredObject instance. This is a custom method to match the
-    weird false "person" detection in the trees on CAM4.
+    weird false "person" detection in the trees on SIDE.
     """
     if (
         150 < x < 250 and
@@ -111,7 +111,7 @@ IGNORED_OBJECTS = [
         monitor_num=5
     ),
     IgnoredObject(
-        'CAM4person', ['person'],
+        'SIDEperson', ['person'],
         monitor_num=5,
         callable=is_person_rectangle
     )
