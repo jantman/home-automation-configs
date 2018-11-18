@@ -251,6 +251,8 @@ input_boolean:
     name: Alarm Triggered But Delaying
   enable_randomlights:
     name: Enable RandomLights
+  enable_motion:
+    name: Enable Motion Alarm
 
 input_select:
   alarmstate:

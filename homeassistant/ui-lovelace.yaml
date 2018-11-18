@@ -216,6 +216,7 @@ views:
             - input_boolean.no_alarm_delay
             - group.lights
             - input_boolean.enable_randomlights
+            - input_boolean.enable_motion
         - type: picture-entity
           entity: switch.porch_state
           camera_image: camera.porch
