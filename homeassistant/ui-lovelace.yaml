@@ -255,4 +255,7 @@ views:
             - sensor.side_events
             - sensor.side_status
             - switch.side_state
+            - sensor.hall_events
+            - sensor.hall_status
+            - switch.hall_state
       # END RIGHT COLUMN - NO MORE COLUMNS!

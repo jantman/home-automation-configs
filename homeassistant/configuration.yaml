@@ -156,6 +156,7 @@ logbook:
       - sensor.office_events
       - sensor.porch_events
       - sensor.side_events
+      - sensor.hall_events
 
 # Enables a map showing the location of tracked devices
 map:
