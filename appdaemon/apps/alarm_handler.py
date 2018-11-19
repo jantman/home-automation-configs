@@ -79,7 +79,8 @@ EXTERIOR_SENSOR_REs = [
 #: List of regular expressions to match the binary_sensor entities for my
 #: "interor" zone, i.e. things that alarm only when I'm Away.
 INTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$')
+    re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$'),
+    re.compile(r'^binary_sensor\..*_motion$')
 ]
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
@@ -94,6 +95,9 @@ HOME = 'Home'
 AWAY = 'Away'
 DISARMED = 'Disarmed'
 AWAY_DELAY = 'Away-Delay'
+
+#: Entity ID for input_boolean that enables alarming on interior sensors
+INTERIOR_ENABLE_ENTITY = 'input_boolean.enable_motion'
 
 #: List of entity IDs that should be turned on for 10 minutes after an alarm.
 LIGHT_ENTITIES = [
@@ -129,7 +133,10 @@ CAMERA_IMAGE_ENTITIES = {
     'binary_sensor.ecolink_doorwindow_sensor_sensor_2': (5, None),  # crawlspace
     'binary_sensor.ecolink_doorwindow_sensor_sensor_3': (5, None),  # gate
     'binary_sensor.ecolink_doorwindow_sensor_sensor_4': (4, 2),  # kitchen
-    'binary_sensor.ecolink_doorwindow_sensor_sensor': (3, 1)  # front door
+    'binary_sensor.ecolink_doorwindow_sensor_sensor': (3, 1),  # front door
+    'binary_sensor.ecolink_motion_detector_sensor': (8, 3),  # back room
+    'binary_sensor.office_motion': (6, None),  # office
+    'binary_sensor.bedroom_motion': (7, None),  # bedroom
 }
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
@@ -328,6 +335,13 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
             self._log.info(
                 'Alarm state %s; disregarding interior state change '
                 '(%s %s from %s to %s)', a_state,
+                fmt_entity(entity, kwargs), attribute, old, new
+            )
+            return
+        if self.get_state(INTERIOR_ENABLE_ENTITY) == 'off':
+            self._log.info(
+                '%s is off; Ignoring interior state change ',
+                '(%s %s from %s to %s)', INTERIOR_ENABLE_ENTITY,
                 fmt_entity(entity, kwargs), attribute, old, new
             )
             return
