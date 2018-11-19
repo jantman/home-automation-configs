@@ -523,7 +523,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 trigger_args['image'] = b64encode(image)
             self._trigger_delay_timer = self.run_in(
                 self._trigger_alarm_delay_callback, AWAY_TRIGGER_DELAY_SECONDS,
-                trigger_args
+                **trigger_args
             )
             return
         # remove any trigger delay
