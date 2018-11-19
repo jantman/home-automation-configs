@@ -502,11 +502,18 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         self, subject='Alarm Triggered', message='alarm triggered', image=None
     ):
         """Trigger the alarm"""
+        self._log.debug(
+            'Called _trigger_alarm; subject="%s" message="%s" %s',
+            subject, message, 'with image' if image is not None else 'no image'
+        )
         if (
             self.alarm_state == AWAY and
             self.get_state('input_boolean.no_alarm_delay') == 'off' and
             self._trigger_delay_timer is None
         ):
+            self._log.debug(
+                'Delaying alarm trigger by %ss', AWAY_TRIGGER_DELAY_SECONDS
+            )
             self.turn_on('input_boolean.trigger_delay')
             self._trigger_delay_timer = self.run_in(
                 self._trigger_alarm, AWAY_TRIGGER_DELAY_SECONDS,
