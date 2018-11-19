@@ -60,6 +60,7 @@ from requests.auth import HTTPDigestAuth
 from PIL import Image
 from io import BytesIO
 from random import randint
+from base64 import b64decode, b64encode
 import appdaemon.plugins.hass.hassapi as hass
 
 from yaml import load as load_yaml
@@ -515,9 +516,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 'Delaying alarm trigger by %ss', AWAY_TRIGGER_DELAY_SECONDS
             )
             self.turn_on('input_boolean.trigger_delay')
+            trigger_args = {
+                'subject': subject, 'message': message, 'image': image
+            }
+            if image is not None:
+                trigger_args['image'] = b64encode(image)
             self._trigger_delay_timer = self.run_in(
-                self._trigger_alarm, AWAY_TRIGGER_DELAY_SECONDS,
-                subject=subject, message=message, image=image
+                self._trigger_alarm_delay_callback, AWAY_TRIGGER_DELAY_SECONDS,
+                trigger_args
             )
             return
         # remove any trigger delay
@@ -539,6 +545,15 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         )
         self.turn_off('input_boolean.trigger_delay')
         self._untrigger_timer = self.run_in(self._untrigger_alarm, undo_delay)
+
+    def _trigger_alarm_delay_callback(self, kwargs):
+        img = kwargs['image']
+        if img is not None:
+            img = b64decode(img)
+        self._trigger_alarm(
+            subject=kwargs['subject'], message=kwargs['message'],
+            image=img
+        )
 
     def _untrigger_alarm(self, _):
         """Un-trigger / reset the alarm"""
