@@ -128,26 +128,39 @@ RGB_LIGHT_ENTITIES = [
 #: both the first element (Monitor ID) and PTZ_MONITOR_ID panned to the PTZ
 #: preset will be included, side by side in one image.
 CAMERA_IMAGE_ENTITIES = {
-    'binary_sensor.kitchen_motion': (2, 2),
-    'binary_sensor.livingroom_motion': (2, 1),
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_2': (5, None),  # crawlspace
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_3': (5, None),  # gate
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_4': (4, 2),  # kitchen
-    'binary_sensor.ecolink_doorwindow_sensor_sensor': (3, 1),  # front door
-    'binary_sensor.ecolink_motion_detector_sensor': (8, 3),  # back room
-    'binary_sensor.office_motion': (6, None),  # office
-    'binary_sensor.bedroom_motion': (7, None),  # bedroom
+    'binary_sensor.kitchen_motion': {'monitor_id': 2, 'ptz_preset': 2},
+    'binary_sensor.livingroom_motion': {'monitor_id': 2, 'ptz_preset': 1},
+    # crawlspace
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_2': {'monitor_id': 5},
+    # gate
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_3': {'monitor_id': 5},
+    # kitchen
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_4': {
+        'monitor_id': 2, 'ptz_preset': 2, 'second_monitor_id': 4
+    },
+    # front door
+    'binary_sensor.ecolink_doorwindow_sensor_sensor': {
+        'monitor_id': 2, 'ptz_preset': 1, 'second_monitor_id': 3
+    },
+    # back room
+    'binary_sensor.ecolink_motion_detector_sensor': {
+        'monitor_id': 8, 'ptz_preset': 3
+    },
+    # office
+    'binary_sensor.office_motion': {'monitor_id': 6},
+    # bedroom
+    'binary_sensor.bedroom_motion': {'monitor_id': 7}
 }
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
 #: turn off when camera is in HOME or DISARMED.
 AWAY_CAMERA_ENTITIES = []
 
-#: The ID of the ZoneMinder monitor with PTZ support, for the above.
-PTZ_MONITOR_ID = 2
-
-#: The hostname or IP address of the Amcrest PTZ camera.
-PTZ_CAM_HOST = '192.168.0.61'
+#: Dictionary of monitor_id to hostname/IP for Amcrest PTZ cameras.
+PTZ_CAM_HOSTS = {
+    2: '192.168.99.110',
+    8: '192.168.99.160'
+}
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
@@ -357,8 +370,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # get the image from it to include in our notification.
         image = None
         if entity in CAMERA_IMAGE_ENTITIES.keys():
-            mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
-            image = self._image_for_camera(mon_id, ptz_preset=preset)
+            image = self._image_for_camera(**CAMERA_IMAGE_ENTITIES[entity])
         self._trigger_alarm(
             subject='ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
             message='System is in state %s; %s %s changed from %s to %s'
@@ -394,8 +406,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # get the image from it to include in our notification.
         image = None
         if entity in CAMERA_IMAGE_ENTITIES.keys():
-            mon_id, preset = CAMERA_IMAGE_ENTITIES[entity]
-            image = self._image_for_camera(mon_id, ptz_preset=preset)
+            image = self._image_for_camera(**CAMERA_IMAGE_ENTITIES[entity])
         self._trigger_alarm(
             subject='ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
             message='System is in state %s; %s %s changed from %s to %s'
@@ -681,39 +692,38 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                 opened.append(friendly_name)
         return opened
 
-    def _image_for_camera(self, monitor_id, ptz_preset=None):
+    def _image_for_camera(
+        self, monitor_id=None, ptz_preset=None, second_monitor_id=None
+    ):
         """
         Retrieve an image for the specified camera(s).
 
+        - If ``second_monitor_id`` is not None, it is a non-PTZ monitor.
+          Snapshot that monitor, than move ``monitor_id`` to ``ptz_preset`` and
+          snapshot it, and return the combined image from both.
         - If ``ptz_preset`` is not specified, return the return value of
           :py:meth:`~._get_camera_capture` for ``monitor_id``.
         - If ``ptz_preset`` is specified and ``monitor_id`` is
-          ``PTZ_MONITOR_ID``, call :py:meth:`~._ptz_to` to move the camera and
-          then return the return value of :py:meth:`~._get_camera_capture` for
-          ``monitor_id``.
-        - If ``ptz_preset`` is specified and ``monitor_id`` is NOT
-          ``PTZ_MONITOR_ID``, then capture an image for ``monitor_id``, move the
-          camera, capture an image for ``PTZ_MONITOR_ID``, and return the JPEG
-          byte array of the two images merged into one, side-by-side.
+          a key in ``PTZ_CAM_HOSTS``, call :py:meth:`~._ptz_to` to move the
+          camera and then return the return value of
+          :py:meth:`~._get_camera_capture` for ``monitor_id``.
         """
         try:
-            if ptz_preset is None:
-                return self._get_camera_capture(monitor_id)
-            if monitor_id == PTZ_MONITOR_ID:
-                self._ptz_to(ptz_preset)
-                return self._get_camera_capture(PTZ_MONITOR_ID)
-            # else we actually want TWO images...
-            # capture the first one, from the non-PTZ camera
-            img1 = self._get_camera_capture(monitor_id)
-            # move the PTZ camera and capture an image from it
-            self._ptz_to(ptz_preset)
-            img2 = self._get_camera_capture(PTZ_MONITOR_ID)
-            # return the two images combined side-by-side
-            return self._combine_images(img1, img2)
+            if second_monitor_id is not None:
+                # capture the first one, from the non-PTZ camera
+                img1 = self._get_camera_capture(second_monitor_id)
+                # move the PTZ camera and capture an image from it
+                self._ptz_to(monitor_id, ptz_preset)
+                img2 = self._get_camera_capture(monitor_id)
+                # return the two images combined side-by-side
+                return self._combine_images(img1, img2)
+            if ptz_preset is not None:
+                self._ptz_to(monitor_id, ptz_preset)
+            return self._get_camera_capture(monitor_id)
         except Exception:
             self._log.critical(
                 'Error getting camera capture for monitor %s '
-                'with ptz_preset=%s', monitor_id, ptz_preset
+                'with ptz_preset=%s', monitor_id, ptz_preset, exc_info=True
             )
             return None
 
@@ -748,14 +758,16 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         new_im.save(b, format='JPEG')
         return b.getvalue()
 
-    def _ptz_to(self, preset_number):
+    def _ptz_to(self, monitor_id, preset_number):
         """
-        Move PTZ_CAM_HOST Amcrest camera to the specified PTZ preset number.
+        Move PTZ_CAM_HOST[monitor_id] Amcrest camera to the specified PTZ
+        preset number.
         """
         # build the URL to call
+        cam_host = PTZ_CAM_HOSTS[monitor_id]
         url = 'http://%s/cgi-bin/ptz.cgi?' \
               'action=start&channel=0&code=GotoPreset&arg1=0&' \
-              'arg2=%s&arg3=0' % (PTZ_CAM_HOST, preset_number)
+              'arg2=%s&arg3=0' % (cam_host, preset_number)
         self._log.info('PTZ to %d: %s', preset_number, url)
         da = HTTPDigestAuth(
             self._hass_secrets['amcrest_username'],
@@ -767,7 +779,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         r.raise_for_status()
         self._log.debug('PTZ response: %s', r.text)
         # build the URL to confirm PTZ move/status
-        conf_url = 'http://%s/cgi-bin/ptz.cgi?action=getStatus' % PTZ_CAM_HOST
+        conf_url = 'http://%s/cgi-bin/ptz.cgi?action=getStatus' % cam_host
         self._log.info('PTZ status check: %s', conf_url)
         # request the confirmation URL. This seems to not return until the
         # movement is complete.
