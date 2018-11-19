@@ -77,8 +77,9 @@ class RandomLights(hass.Hass, SaneLoggingApp):
         # figure out which lights to turn on
         on_lights = sample(LIGHT_ENTITIES, randint(1, len(LIGHT_ENTITIES)))
         self._log.info('Lights to turn on: %s', on_lights)
+        delay = 0
         for ename in LIGHT_ENTITIES:
-            delay = randint(1, 120)
+            delay += randint(0, 30)
             if ename in on_lights:
                 action = True
                 self._log.info('Turn %s on in %ss', ename, delay)
