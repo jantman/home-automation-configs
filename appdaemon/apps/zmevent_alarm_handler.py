@@ -52,6 +52,9 @@ from pushover_notifier import PushoverNotifier
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
 
+#: List of monitor names to ignore when the alarm state is HOME
+HOME_IGNORE_MONITORS = ['LRKitchen', 'OFFICE', 'BEDRM', 'HALL']
+
 
 class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     """
@@ -88,15 +91,26 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         event type: ZM_ALARM
         data: dict from ``zmevent_handler.py``
         """
+        alarm_state = self.alarm_state
         self._log.debug('Got %s event data=%s', event_name, data)
         if event_name != 'ZM_ALARM':
             self._log.error(
                 'Got event of improper type: %s', event_name
             )
-        if self.alarm_state == DISARMED:
+        if alarm_state == DISARMED:
             self._log.info(
                 'Ignoring ZM_ALARM for Event %s - alarm disarmed',
                 data['event']['EventId']
+            )
+            return
+        if (
+            alarm_state == HOME and
+            data['event']['Monitor']['Name'] in HOME_IGNORE_MONITORS
+        ):
+            self._log.info(
+                'Ignoring ZM_ALARM for Event %s on Monitor %s; alarm is in '
+                'HOME state and monitor in HOME_IGNORE_MONITORS.',
+                data['event']['EventId'], data['event']['Monitor']['Name']
             )
             return
         if max([len(x['detections']) for x in data['object_detections']]) == 0:
