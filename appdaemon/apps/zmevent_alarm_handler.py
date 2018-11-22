@@ -37,25 +37,16 @@ keys are defined in ``AlarmHandler._get_hass_secrets()``.
   - Send Email notification with all analyzed frames
 """
 
-import logging
 import os
 import re
-import requests
 import appdaemon.plugins.hass.hassapi as hass
-import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
-from yaml import load as load_yaml
 
 from sane_app_logging import SaneLoggingApp
 from alarm_handler import ALARM_STATE_SELECT_ENTITY, HOME, AWAY, DISARMED
 from pushover_notifier import PushoverNotifier
-
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
