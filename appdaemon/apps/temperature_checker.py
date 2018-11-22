@@ -41,10 +41,13 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 continue
             uom = e.get('attributes', {}).get('unit_of_measurement', {})
             ename = e['entity_id']
-            val = e.get('state', 0.0)
             if uom != '°F':
                 self._log.debug('Skipping entity: %s', ename)
                 continue
+            try:
+                val = float(e.get('state', 0.0))
+            except Exception:
+                val = 0.0
             self._log.debug('Checking entity=%s state=%s', ename, val)
             if val < MIN_THRESHOLD or val > MAX_THRESHOLD:
                 self._log.info('Found problem: entity=%s state=%s', ename, val)
