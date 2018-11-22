@@ -188,7 +188,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         addr = self._hass_secrets['gmail_username']
         index_url = '%sindex.php' % self._hass_secrets['zm_url_base']
         msg = EmailNotifier(subject, data, addr, index_url).build_message()
-        self._do_notify_email(addr, msg)
+        self._do_notify_email(msg)
 
 
 class EmailNotifier(object):

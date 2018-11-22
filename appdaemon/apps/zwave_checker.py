@@ -9,8 +9,10 @@ NOTIFY_SERVICE.
 import logging
 from datetime import time
 import appdaemon.plugins.hass.hassapi as hass
+from email.message import EmailMessage
 
 from sane_app_logging import SaneLoggingApp
+from pushover_notifier import PushoverNotifier
 
 #: Threshold below which battery level will trigger an alert.
 BATTERY_THRESHOLD = 50
@@ -26,11 +28,12 @@ NOTIFY_SERVICE = 'notify/gmail'
 LOG_DEBUG = False
 
 
-class ZwaveChecker(hass.Hass, SaneLoggingApp):
+class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def initialize(self):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing ZWaveChecker...")
+        self._hass_secrets = self._get_hass_secrets()
         self.run_daily(self._check_zwave, RUN_AT_TIME)
         self._log.info('Done initializing ZWaveChecker')
         self.listen_event(self._check_zwave, event='ZWAVE_CHECKER')
@@ -72,3 +75,12 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp):
             title='ZwaveChecker Problems',
             message='\n'.join(problems)
         )
+        self._do_notify_pushover(
+            'ZWaveChecker Problems', '; '.join(problems), sound='falling'
+        )
+        msg = EmailMessage()
+        msg.set_content('ZWaveChecker Problems:\n\n%s' % '\n'.join(problems))
+        msg['Subject'] = 'ZWaveChecker Problems'
+        msg['From'] = self._hass_secrets['gmail_username']
+        msg['To'] = self._hass_secrets['gmail_username']
+        self._do_notify_email(msg)

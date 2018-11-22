@@ -10,7 +10,9 @@ alarm_handler:
 zwave_checker:
   module: zwave_checker
   class: ZwaveChecker
-  global_dependencies: sane_app_logging
+  global_dependencies:
+    - sane_app_logging
+    - pushover_notifier
 zmevent_alarm_handler:
   module: zmevent_alarm_handler
   class: ZMEventAlarmHandler

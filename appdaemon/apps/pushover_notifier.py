@@ -85,7 +85,8 @@ class PushoverNotifier(object):
             raise RuntimeError('Error response from Pushover: %s', r.text)
         self._log.info('Pushover Notification Success: %s', r.text)
 
-    def _do_notify_email(self, addr, message):
+    def _do_notify_email(self, message):
+        addr = self._hass_secrets['gmail_username']
         self._log.debug('Connecting to SMTP on smtp.gmail.com:587')
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.ehlo()
