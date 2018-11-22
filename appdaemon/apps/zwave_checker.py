@@ -9,7 +9,6 @@ NOTIFY_SERVICE.
 import logging
 from datetime import time
 import appdaemon.plugins.hass.hassapi as hass
-from email.message import EmailMessage
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
@@ -78,9 +77,3 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._do_notify_pushover(
             'ZWaveChecker Problems', '; '.join(problems), sound='falling'
         )
-        msg = EmailMessage()
-        msg.set_content('ZWaveChecker Problems:\n\n%s' % '\n'.join(problems))
-        msg['Subject'] = 'ZWaveChecker Problems'
-        msg['From'] = self._hass_secrets['gmail_username']
-        msg['To'] = self._hass_secrets['gmail_username']
-        self._do_notify_email(msg)
