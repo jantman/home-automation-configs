@@ -253,8 +253,6 @@ input_boolean:
     name: Enable RandomLights
   enable_motion:
     name: Enable Motion Alarm
-  enable_interior_cameras:
-    name: Enable Interior Cameras
 
 input_select:
   alarmstate:
