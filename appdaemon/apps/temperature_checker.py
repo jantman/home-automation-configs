@@ -52,8 +52,9 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             if val < MIN_THRESHOLD or val > MAX_THRESHOLD:
                 self._log.info('Found problem: entity=%s state=%s', ename, val)
                 problems.append(
-                    '%s: state of %s is outside threshold of %s to %s',
-                    ename, val, MIN_THRESHOLD, MAX_THRESHOLD
+                    '%s: state of %s is outside threshold of %s to %s' % (
+                        ename, val, MIN_THRESHOLD, MAX_THRESHOLD
+                    )
                 )
         if len(problems) < 1:
             self._log.info('No problems found.')
