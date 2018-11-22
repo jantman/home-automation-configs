@@ -27,3 +27,9 @@ randomlights:
   module: randomlights
   class: RandomLights
   global_dependencies: sane_app_logging
+temperature_checker:
+  module: temperature_checker
+  class: TemperatureChecker
+  global_dependencies:
+    - sane_app_logging
+    - pushover_notifier
