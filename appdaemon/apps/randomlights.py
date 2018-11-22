@@ -63,6 +63,10 @@ class RandomLights(hass.Hass, SaneLoggingApp):
             minutes=randint(45, 75)
         )
         self._log.info('Next iteration will be at: %s', newtime)
+        self.call_service(
+            'logbook/log', name='RandomLights',
+            message='Next run at: %s' % newtime
+        )
         self._timer = self.run_at(self.timer_callback, newtime)
 
     def timer_callback(self, _):
@@ -77,6 +81,10 @@ class RandomLights(hass.Hass, SaneLoggingApp):
         # figure out which lights to turn on
         on_lights = sample(LIGHT_ENTITIES, randint(1, len(LIGHT_ENTITIES)))
         self._log.info('Lights to turn on: %s', on_lights)
+        self.call_service(
+            'logbook/log', name='RandomLights',
+            message='Lights to turn ON: %s' % on_lights
+        )
         delay = 0
         for ename in LIGHT_ENTITIES:
             delay += randint(0, 30)
