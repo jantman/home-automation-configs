@@ -212,6 +212,7 @@ views:
           entities:
             - input_select.alarmstate
             - input_boolean.cameras_silent
+            - input_boolean.enable_interior_cameras
             - switch.linear_wa105dbz1_main_operated_siren_switch
             - input_boolean.no_alarm_delay
             - group.lights
