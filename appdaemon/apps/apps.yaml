@@ -33,3 +33,8 @@ temperature_checker:
   global_dependencies:
     - sane_app_logging
     - pushover_notifier
+zwave_refresher:
+  module: zwave_refresher
+  class: ZwaveRefresher
+  global_dependencies:
+    - sane_app_logging
