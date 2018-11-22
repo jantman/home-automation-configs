@@ -30,7 +30,7 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing TemperatureChecker...")
         self._hass_secrets = self._get_hass_secrets()
-        self.run_hourly(self._check_temperatures)
+        self.run_hourly(self._check_temperatures, time(0, 0, 0))
         self._log.info('Done initializing TemperatureChecker')
         self.listen_event(self._check_temperatures, event='TEMPERATURE_CHECKER')
 
