@@ -43,7 +43,7 @@ class ZwaveRefresher(hass.Hass, SaneLoggingApp):
         self._log.info('Done. Entities will refresh within %d seconds', delay)
 
     def _refresh_node(self, kwargs):
-        node_name = kwargs['name']
-        node_id = kwargs['id']
+        node_name = kwargs['node_name']
+        node_id = kwargs['node_id']
         self._log.debug('Refreshing ZWave Node %s (%s)', node_id, node_name)
         self.call_service('zwave.refresh_node', node_id=node_id)
