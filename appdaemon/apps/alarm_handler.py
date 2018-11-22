@@ -61,6 +61,9 @@ from io import BytesIO
 from random import randint
 from base64 import b64decode, b64encode
 import appdaemon.plugins.hass.hassapi as hass
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
@@ -511,6 +514,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             subject, message, image=image, sound='alien'
         )
         self._do_alarm_lights()
+        self._notify_email(subject, message, image=image)
         # revert the lights somewhere from 10 to 20 minutes later
         undo_delay = randint(600, 1200)
         self._log.info(
@@ -782,3 +786,22 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         # ensure HTTP 2xx
         r.raise_for_status()
         self._log.debug('PTZ response: %s', r.text)
+
+    def _notify_email(self, subject, message, image=None):
+        """
+        Build the email message; return a string email message.
+        """
+        msg = MIMEMultipart()
+        msg['Subject'] = subject
+        msg['From'] = self._hass_secrets['gmail_username']
+        msg['To'] = self._hass_secrets['gmail_username']
+        html = '<html><head></head><body>\n'
+        html += '<p>Alarm has been triggered:</p>\n'
+        html += '<p>%s</p>\n' % message
+        html += '</body></html>\n'
+        msg.attach(MIMEText(html, 'html'))
+        if image is not None:
+            msg.attach(
+                MIMEImage(image, name='frame.jpg')
+            )
+        self._do_notify_email(msg.as_string())
