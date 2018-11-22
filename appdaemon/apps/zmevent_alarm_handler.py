@@ -50,6 +50,7 @@ from yaml import load as load_yaml
 
 from sane_app_logging import SaneLoggingApp
 from alarm_handler import ALARM_STATE_SELECT_ENTITY, HOME, AWAY, DISARMED
+from pushover_notifier import PushoverNotifier
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -61,7 +62,7 @@ except ImportError:
 LOG_DEBUG = False
 
 
-class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
+class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     """
     ZoneMinder Alarm Handler AppDaemon app.
 
@@ -88,30 +89,6 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
     def alarm_state(self):
         """Return the string state of the alarm_state input select."""
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
-
-    def _get_hass_secrets(self):
-        """
-        Return the dictionary contents of HASS ``secrets.yaml``.
-        """
-        # get HASS configuration from its API
-        apiconf = self.get_hass_config()
-        # formulate the absolute path to HASS secrets.yaml
-        conf_path = os.path.join(apiconf['config_dir'], 'secrets.yaml')
-        self._log.debug('Reading hass secrets from: %s', conf_path)
-        # load the YAML
-        with open(conf_path, 'r') as fh:
-            conf = load_yaml(fh, Loader=Loader)
-        self._log.debug('Loaded secrets.')
-        # verify that the secrets we need are present
-        assert 'pushover_api_key' in conf
-        assert 'pushover_user_key' in conf
-        assert 'amcrest_username' in conf
-        assert 'amcrest_password' in conf
-        assert 'gmail_username' in conf
-        assert 'gmail_password' in conf
-        assert 'zm_url_base' in conf
-        # return the full dict
-        return conf
 
     def _handle_alarm_event(self, event_name, data, _):
         """
@@ -154,8 +131,8 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
                 'input_boolean.cameras_silent is on'
             )
         else:
-            self._do_notify_pushover(subject, data, img)
-        self._do_notify_email(subject, data)
+            self._notify_pushover(subject, data, img)
+        self._notify_email(subject, data)
 
     def motion_in_street(self, notes):
         m = re.match(r'^Motion: (.+)', notes)
@@ -189,7 +166,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
             data['object_detections'], key=lambda x: len(x['detections'])
         )[-1]
 
-    def _do_notify_pushover(self, subject, data, primary_image):
+    def _notify_pushover(self, subject, data, primary_image):
         """Build Pushover API request arguments and call _send_pushover"""
         message = '%s - %.2f seconds, %d alarm frames; Scores: total=%d ' \
                   'avg=%d max=%d' % (
@@ -201,63 +178,17 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp):
             self._hass_secrets['zm_url_base'],
             data['event']['EventId']
         )
-        d = {
-            'data': {
-                'token': self._hass_secrets['pushover_api_key'],
-                'user': self._hass_secrets['pushover_user_key'],
-                'title': subject,
-                'message': message,
-                'url': url,
-                'retry': 300,  # 5 minutes
-                'sound': 'siren'
-            },
-            'files': {}
-        }
         image = primary_image['output_path']
-        self._log.info(
-            'Sending Pushover notification with image: %s (image: %s)', d,
-            image
+        self._do_notify_pushover(
+            subject, message, sound='siren', image=open(image, 'rb'),
+            image_name=os.path.basename(image), url=url
         )
-        d['files']['attachment'] = (
-            os.path.basename(image), open(image, 'rb'), 'image/jpeg'
-        )
-        self._send_pushover(d)
 
-    def _send_pushover(self, params):
-        """
-        Send the actual Pushover notification.
-
-        We do this directly with ``requests`` because python-pushover still
-        doesn't have support for images or some other API options.
-        """
-        url = 'https://api.pushover.net/1/messages.json'
-        self._log.debug('Sending Pushover notification')
-        r = requests.post(url, **params)
-        self._log.debug(
-            'Pushover POST response HTTP %s: %s', r.status_code, r.text
-        )
-        r.raise_for_status()
-        if r.json()['status'] != 1:
-            raise RuntimeError('Error response from Pushover: %s', r.text)
-        self._log.info('Pushover Notification Success: %s', r.text)
-
-    def _do_notify_email(self, subject, data):
+    def _notify_email(self, subject, data):
         addr = self._hass_secrets['gmail_username']
         index_url = '%sindex.php' % self._hass_secrets['zm_url_base']
         msg = EmailNotifier(subject, data, addr, index_url).build_message()
-        self._log.debug('Connecting to SMTP on smtp.gmail.com:587')
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.ehlo()
-        s.starttls()
-        s.ehlo()
-        s.login(
-            self._hass_secrets['gmail_username'],
-            self._hass_secrets['gmail_password']
-        )
-        self._log.info('Sending mail From=%s To=%s', addr, addr)
-        s.sendmail(addr, addr, msg)
-        self._log.info('EMail sent.')
-        s.quit()
+        self._do_notify_email(addr, msg)
 
 
 class EmailNotifier(object):

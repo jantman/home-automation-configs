@@ -54,7 +54,6 @@ more general/configurable.
 
 import re
 import logging
-import os
 import requests
 from requests.auth import HTTPDigestAuth
 from PIL import Image
@@ -63,13 +62,8 @@ from random import randint
 from base64 import b64decode, b64encode
 import appdaemon.plugins.hass.hassapi as hass
 
-from yaml import load as load_yaml
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
-
 from sane_app_logging import SaneLoggingApp
+from pushover_notifier import PushoverNotifier
 
 #: List of regular expressions to match the binary_sensor entities for my
 #: "exterior" zone, i.e. things that alarm when I'm either Home or Away
@@ -192,7 +186,7 @@ def fmt_entity(entity, kwargs):
     return entity
 
 
-class AlarmHandler(hass.Hass, SaneLoggingApp):
+class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     """
     AlarmHandler AppDaemon app.
 
@@ -314,27 +308,6 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
                     break
         self._log.debug('Entities to listen to: %s', listen_entities)
         return listen_entities
-
-    def _get_hass_secrets(self):
-        """
-        Return the dictionary contents of HASS ``secrets.yaml``.
-        """
-        # get HASS configuration from its API
-        apiconf = self.get_hass_config()
-        # formulate the absolute path to HASS secrets.yaml
-        conf_path = os.path.join(apiconf['config_dir'], 'secrets.yaml')
-        self._log.debug('Reading hass secrets from: %s', conf_path)
-        # load the YAML
-        with open(conf_path, 'r') as fh:
-            conf = load_yaml(fh, Loader=Loader)
-        self._log.debug('Loaded secrets.')
-        # verify that the secrets we need are present
-        assert 'pushover_api_key' in conf
-        assert 'pushover_user_key' in conf
-        assert 'amcrest_username' in conf
-        assert 'amcrest_password' in conf
-        # return the full dict
-        return conf
 
     def _handle_state_interior(self, entity, attribute, old, new, kwargs):
         """Handle change to interior sensors, i.e. motion sensors."""
@@ -809,46 +782,3 @@ class AlarmHandler(hass.Hass, SaneLoggingApp):
         # ensure HTTP 2xx
         r.raise_for_status()
         self._log.debug('PTZ response: %s', r.text)
-
-    def _do_notify_pushover(self, title, message, sound=None, image=None):
-        """Build Pushover API request arguments and call _send_pushover"""
-        d = {
-            'data': {
-                'token': self._hass_secrets['pushover_api_key'],
-                'user': self._hass_secrets['pushover_user_key'],
-                'title': title,
-                'message': message,
-                'url': 'https://redirect.jasonantman.com/hass',
-                'retry': 300  # 5 minutes
-            },
-            'files': {}
-        }
-        if sound is not None:
-            d['data']['sound'] = sound
-        if image is None:
-            self._log.info('Sending Pushover notification: %s', d)
-        else:
-            self._log.info('Sending Pushover notification with image: %s', d)
-            d['files']['attachment'] = ('frame.jpg', image, 'image/jpeg')
-        try:
-            self._send_pushover(d)
-        except Exception:
-            self._log.critical('send_pushover raised exception', exc_info=True)
-
-    def _send_pushover(self, params):
-        """
-        Send the actual Pushover notification.
-
-        We do this directly with ``requests`` because python-pushover still
-        doesn't have support for images or some other API options.
-        """
-        url = 'https://api.pushover.net/1/messages.json'
-        self._log.debug('Sending Pushover notification')
-        r = requests.post(url, **params)
-        self._log.debug(
-            'Pushover POST response HTTP %s: %s', r.status_code, r.text
-        )
-        r.raise_for_status()
-        if r.json()['status'] != 1:
-            raise RuntimeError('Error response from Pushover: %s', r.text)
-        self._log.info('Pushover Notification Success: %s', r.text)

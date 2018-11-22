@@ -1,9 +1,12 @@
 global_modules:
   - sane_app_logging
+  - pushover_notifier
 alarm_handler:
   module: alarm_handler
   class: AlarmHandler
-  global_dependencies: sane_app_logging
+  global_dependencies:
+    - sane_app_logging
+    - pushover_notifier
 zwave_checker:
   module: zwave_checker
   class: ZwaveChecker
@@ -11,7 +14,9 @@ zwave_checker:
 zmevent_alarm_handler:
   module: zmevent_alarm_handler
   class: ZMEventAlarmHandler
-  global_dependencies: sane_app_logging
+  global_dependencies:
+    - sane_app_logging
+    - pushover_notifier
 doorpanels:
   module: doorpanels
   class: DoorPanelHandler
