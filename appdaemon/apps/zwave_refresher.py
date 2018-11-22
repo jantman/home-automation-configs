@@ -9,6 +9,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from sane_app_logging import SaneLoggingApp
 
 RUN_INTERVAL = 300  # seconds
+INTER_ENTITY_DELAY = 15  # seconds
 
 REFRESH_NODES = {
     'zwave.ge_45606_2way_dimmer_switch': 19,
@@ -38,7 +39,7 @@ class ZwaveRefresher(hass.Hass, SaneLoggingApp):
         self._log.info('Refreshing problematic Z-Wave entities...')
         delay = 0
         for ename, eid in REFRESH_NODES.items():
-            delay += 5
+            delay += INTER_ENTITY_DELAY
             self.run_in(self._refresh_node, delay, node_id=eid, node_name=ename)
         self._log.info('Done. Entities will refresh within %d seconds', delay)
 
