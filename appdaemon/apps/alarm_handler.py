@@ -330,7 +330,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         if self.get_state(INTERIOR_ENABLE_ENTITY) == 'off':
             self._log.info(
-                '%s is off; Ignoring interior state change ',
+                '%s is off; Ignoring interior state change '
                 '(%s %s from %s to %s)', INTERIOR_ENABLE_ENTITY,
                 fmt_entity(entity, kwargs), attribute, old, new
             )
