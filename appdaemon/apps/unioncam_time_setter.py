@@ -63,7 +63,7 @@ class UnionCamTimeSetter(hass.Hass, SaneLoggingApp):
         self._log.info("Initializing UnionCamTimeSetter...")
         self.run_hourly(self._set_times, datetime.time(0, 12, 0))
         self._log.info('Done initializing UnionCamTimeSetter')
-        self.listen_event(self._refresh_zwave, event='UNIONCAM_TIME_SETTER')
+        self.listen_event(self._set_times, event='UNIONCAM_TIME_SETTER')
 
     def _set_times(self, *args, **kwargs):
         tz = get_timezone_string()
