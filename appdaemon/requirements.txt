@@ -39,6 +39,7 @@ requests-toolbelt==0.8.0
 Shapely==1.6.4.post2
 six==1.11.0
 sseclient==0.0.19
+tzlocal==1.5.1
 urllib3==1.23
 voluptuous==0.11.1
 websocket-client==0.48.0

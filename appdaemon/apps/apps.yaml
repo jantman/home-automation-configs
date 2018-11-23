@@ -38,3 +38,8 @@ zwave_refresher:
   class: ZwaveRefresher
   global_dependencies:
     - sane_app_logging
+unioncam_time_setter:
+  module: unioncam_time_setter
+  class: UnionCamTimeSetter
+  global_dependencies:
+    - sane_app_logging
