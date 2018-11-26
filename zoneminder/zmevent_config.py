@@ -114,6 +114,10 @@ IGNORED_OBJECTS = [
         'SIDEperson', ['person'],
         monitor_num=5,
         callable=is_person_rectangle
+    ),
+    IgnoredObject(
+        'OFFICEJunk', ['traffic light'],
+        monitor_num=6
     )
 ]
 
