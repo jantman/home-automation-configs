@@ -118,6 +118,10 @@ IGNORED_OBJECTS = [
     IgnoredObject(
         'OFFICEJunk', ['traffic light'],
         monitor_num=6
+    ),
+    IgnoredObject(
+        'BEDRMJunk', ['bed', 'oven'],
+        monitor_num=7
     )
 ]
 
