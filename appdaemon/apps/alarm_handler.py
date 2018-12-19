@@ -664,6 +664,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     def _disarm(self, prev_state):
         """Disarm the system."""
         self._log.info('Disarming system (previous state: %s)', prev_state)
+        # remove any trigger delay
+        if self._trigger_delay_timer is not None:
+            self.cancel_timer(self._trigger_delay_timer)
+            self._trigger_delay_timer = None
+        # cancel any current alarm
+        if self._untrigger_timer is not None:
+            self._untrigger_alarm(None)
+        self.turn_off('input_boolean.trigger_delay')
         self._do_notify_pushover(
             'System Disarmed',
             'System has been disarmed.'
@@ -674,14 +682,6 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         # turn off the camera-silencing input when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
         self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
-        # remove any trigger delay
-        if self._trigger_delay_timer is not None:
-            self.cancel_timer(self._trigger_delay_timer)
-            self._trigger_delay_timer = None
-        # cancel any current alarm
-        if self._untrigger_timer is not None:
-            self._untrigger_alarm(None)
-        self.turn_off('input_boolean.trigger_delay')
 
     def _exterior_doors_open(self):
         """Return a list of the friendly_name of any open exterior sensors."""
