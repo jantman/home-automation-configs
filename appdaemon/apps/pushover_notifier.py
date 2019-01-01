@@ -62,10 +62,31 @@ class PushoverNotifier(object):
         else:
             self._log.info('Sending Pushover notification with image: %s', d)
             d['files']['attachment'] = (image_name, image, 'image/jpeg')
-        try:
-            self._send_pushover(d)
-        except Exception:
-            self._log.critical('send_pushover raised exception', exc_info=True)
+        for i in range(0, 2):
+            try:
+                self._send_pushover(d)
+                return
+            except Exception:
+                self._log.critical(
+                    'send_pushover raised exception', exc_info=True
+                )
+        if self._hass_secrets.get('proxies', {}) == {}:
+            self._log.critical(
+                'send_pushover failed on all attempts and proxies is empty!'
+            )
+            return
+        # try sending through proxy
+        if 'files' in d:
+            del d['files']
+        d['proxies'] = self._hass_secrets['proxies']
+        for i in range(0, 2):
+            try:
+                self._send_pushover(d)
+                return
+            except Exception:
+                self._log.critical(
+                    'send_pushover via proxy raised exception', exc_info=True
+                )
 
     def _send_pushover(self, params):
         """
@@ -75,7 +96,13 @@ class PushoverNotifier(object):
         doesn't have support for images or some other API options.
         """
         url = 'https://api.pushover.net/1/messages.json'
-        self._log.debug('Sending Pushover notification')
+        if 'proxies' in params:
+            self._log.debug(
+                'Sending Pushover notification with proxies=%s',
+                params['proxies']
+            )
+        else:
+            self._log.debug('Sending Pushover notification')
         r = requests.post(url, **params)
         self._log.debug(
             'Pushover POST response HTTP %s: %s', r.status_code, r.text
