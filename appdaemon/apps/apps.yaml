@@ -43,3 +43,8 @@ unioncam_time_setter:
   class: UnionCamTimeSetter
   global_dependencies:
     - sane_app_logging
+activitywatch_device_tracker:
+  module: activitywatch_device_tracker
+  class: ActivityWatchDeviceTracker
+  global_dependencies:
+    - sane_app_logging
