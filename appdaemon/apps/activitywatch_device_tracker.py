@@ -44,6 +44,7 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         self._log.info("Initializing ActivityWatchDeviceTracker...")
         self._base_url = 'http://%s:%d/api/0/' % (AW_HOST, AW_PORT)
         self._bucket_id = 'aw-watcher-hass-device'
+        self._create_bucket()
         c_state = self.get_state(DEVICE_TRACKER_ENTITY)
         self.start_dt, self.current_state = self._load_state(c_state)
         if self.current_state != c_state:
