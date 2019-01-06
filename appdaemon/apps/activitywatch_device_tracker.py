@@ -112,17 +112,23 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         r.raise_for_status()
 
     def state_change(self, entity, attribute, old, new, kwargs):
-        old = old.lower()
         new = new.lower()
         self._log.debug(
             'state_change callback; entity=%s attribute=%s '
-            'old=%s new=%s kwargs=%s', entity, attribute, old, new, kwargs
+            'old=%s new=%s kwargs=%s; current_state=%s',
+            entity, attribute, old, new, kwargs, self.current_state
         )
         if old == new:
             self._log.debug(
                 'Ignoring device tracker state unchanged (%s)', old
             )
             return
-        self.send_event(new, self.start_dt)
+        if self.current_state == new:
+            self._log.debug(
+                'Ignoring device tracker state unchanged from cache (%s)',
+                self.current_state
+            )
+            return
+        self.send_event(self.current_state, self.start_dt)
         self.start_dt = datetime.utcnow()
         self.current_state = new
