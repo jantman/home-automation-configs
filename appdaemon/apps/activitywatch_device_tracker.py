@@ -50,6 +50,7 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         self._timer = self.run_minutely(
             self._timer_callback, time(0, 0, 12)
         )
+        self.send_heartbeat(self.current_state)
         self._log.info('Done initializing ActivityWatchDeviceTracker.')
 
     def _create_bucket(self):
