@@ -31,7 +31,7 @@ STATE_PATH = os.path.realpath(
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
-LOG_DEBUG = False
+LOG_DEBUG = True
 
 
 class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
