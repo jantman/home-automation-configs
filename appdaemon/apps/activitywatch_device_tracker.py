@@ -73,7 +73,7 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         self.send_heartbeat(self.current_state)
 
     def send_heartbeat(self, state):
-        url = self._base_url + 'buckets/%s/heartbeat?pulsetime=62' \
+        url = self._base_url + 'buckets/%s/heartbeat?pulsetime=70' \
                                '' % self._bucket_id
         headers = {"Content-type": "application/json", "charset": "utf-8"}
         data = {
