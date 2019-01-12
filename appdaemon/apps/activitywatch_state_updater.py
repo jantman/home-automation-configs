@@ -1,8 +1,8 @@
 """
-ActivityWatch device-tracker
+ActivityWatch state updater
 
-Maintain a bucket in ActivityWatch <https://activitywatch.net/> for a device
-tracker location.
+Maintain a bucket in ActivityWatch <https://activitywatch.net/> and update it
+when state changes.
 """
 
 import appdaemon.plugins.hass.hassapi as hass
@@ -14,20 +14,17 @@ import socket
 
 from sane_app_logging import SaneLoggingApp
 
-#: Entity ID for the Device Tracker
-DEVICE_TRACKER_ENTITY = 'device_tracker.02157df2c2d6e627'
+#: Entity IDs to update state for, and their AW buckets
+ENTITY_IDS_TO_BUCKETS = {
+    'device_tracker.02157df2c2d6e627': 'aw-watcher-hass-device',
+    'sensor.desk_standing': 'aw-watcher-hass-desk-standing'
+}
 
 #: The host that ActivityWatch is running on
 AW_HOST = '192.168.0.24'
 
 #: The port that ActivityWatch is running on
 AW_PORT = 5600
-
-#: Absolute path to a file on disk where we save state, so events persist
-#: across AppDaemon restarts.
-STATE_PATH = os.path.realpath(
-    os.path.expanduser('~/.activitywatch_device_tracker')
-)
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
@@ -43,21 +40,22 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing ActivityWatchDeviceTracker...")
         self._base_url = 'http://%s:%d/api/0/' % (AW_HOST, AW_PORT)
-        self._bucket_id = 'aw-watcher-hass-device'
-        self._create_bucket()
-        self.current_state = self.get_state(DEVICE_TRACKER_ENTITY)
-        self.listen_state(self.state_change, DEVICE_TRACKER_ENTITY)
+        self.current_states = {}
+        for entity_id, bucket_id in ENTITY_IDS_TO_BUCKETS.items():
+            self._create_bucket(bucket_id)
+            self.current_states[entity_id] = self.get_state(entity_id)
+            self.listen_state(self.state_change, entity_id)
+            self.send_heartbeat(bucket_id, self.current_states[entity_id])
         self._timer = self.run_minutely(
             self._timer_callback, time(0, 0, 12)
         )
-        self.send_heartbeat(self.current_state)
         self._log.info('Done initializing ActivityWatchDeviceTracker.')
 
-    def _create_bucket(self):
-        url = self._base_url + 'buckets/%s' % self._bucket_id
+    def _create_bucket(self, bucket_id):
+        url = self._base_url + 'buckets/%s' % bucket_id
         headers = {"Content-type": "application/json", "charset": "utf-8"}
         data = {
-            'client': 'aw-watcher-hass-device',
+            'client': 'aw-watcher-hass',
             'hostname': socket.gethostname(),
             'type': 'currentwindow'
         }
@@ -69,12 +67,12 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
         r.raise_for_status()
 
     def _timer_callback(self, _):
-        self.current_state = self.get_state(DEVICE_TRACKER_ENTITY)
-        self.send_heartbeat(self.current_state)
+        for entity_id, bucket_id in ENTITY_IDS_TO_BUCKETS.items():
+            self.current_states[entity_id] = self.get_state(entity_id)
+            self.send_heartbeat(bucket_id, self.current_states[entity_id])
 
-    def send_heartbeat(self, state):
-        url = self._base_url + 'buckets/%s/heartbeat?pulsetime=70' \
-                               '' % self._bucket_id
+    def send_heartbeat(self, bucket_id, state):
+        url = self._base_url + 'buckets/%s/heartbeat?pulsetime=70' % bucket_id
         headers = {"Content-type": "application/json", "charset": "utf-8"}
         data = {
             'id': None,
@@ -99,6 +97,10 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
             'old=%s new=%s kwargs=%s; current_state=%s',
             entity, attribute, old, new, kwargs, self.current_state
         )
+        if entity not in ENTITY_IDS_TO_BUCKETS:
+            self._log.error(
+                'ERROR: State update for unknown entity: %s', entity
+            )
         if old == new:
             self._log.debug(
                 'Ignoring device tracker state unchanged (%s)', old
@@ -110,5 +112,5 @@ class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
                 self.current_state
             )
             return
-        self.send_heartbeat(new)
-        self.current_state = new
+        self.send_heartbeat(ENTITY_IDS_TO_BUCKETS[entity], new)
+        self.current_states[entity] = new
