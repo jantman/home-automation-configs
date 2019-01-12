@@ -95,7 +95,7 @@ class ActivityWatchStateUpdater(hass.Hass, SaneLoggingApp):
         self._log.debug(
             'state_change callback; entity=%s attribute=%s '
             'old=%s new=%s kwargs=%s; current_state=%s',
-            entity, attribute, old, new, kwargs, self.current_state
+            entity, attribute, old, new, kwargs, self.current_states[entity]
         )
         if entity not in ENTITY_IDS_TO_BUCKETS:
             self._log.error(
@@ -106,10 +106,10 @@ class ActivityWatchStateUpdater(hass.Hass, SaneLoggingApp):
                 'Ignoring device tracker state unchanged (%s)', old
             )
             return
-        if self.current_state == new:
+        if self.current_states[entity] == new:
             self._log.debug(
                 'Ignoring device tracker state unchanged from cache (%s)',
-                self.current_state
+                self.current_states[entity]
             )
             return
         self.send_heartbeat(ENTITY_IDS_TO_BUCKETS[entity], new)
