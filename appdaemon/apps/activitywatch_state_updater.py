@@ -31,9 +31,9 @@ AW_PORT = 5600
 LOG_DEBUG = True
 
 
-class ActivityWatchDeviceTracker(hass.Hass, SaneLoggingApp):
+class ActivityWatchStateUpdater(hass.Hass, SaneLoggingApp):
     """
-    ActivityWatch device tracker
+    ActivityWatch state updater
     """
 
     def initialize(self):
