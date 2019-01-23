@@ -152,7 +152,12 @@ CAMERA_IMAGE_ENTITIES = {
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
 #: turn off when camera is in HOME or DISARMED.
-AWAY_CAMERA_ENTITIES = []
+AWAY_CAMERA_ENTITIES = [
+    'switch.bedrm_state',
+    'switch.hall_state',
+    'switch.lrkitchen_state',
+    'switch.office_state'
+]
 
 #: Dictionary of monitor_id to hostname/IP for Amcrest PTZ cameras.
 PTZ_CAM_HOSTS = {
