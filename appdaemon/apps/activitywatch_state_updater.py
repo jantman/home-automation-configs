@@ -61,7 +61,8 @@ class ActivityWatchStateUpdater(hass.Hass, SaneLoggingApp):
         }
         self._log.debug('POST to %s: %s', url, data)
         r = requests.post(
-            url, data=bytes(json.dumps(data), "utf8"), headers=headers
+            url, data=bytes(json.dumps(data), "utf8"), headers=headers,
+            timeout=1.0
         )
         self._log.debug('Response %s: %s', r.status_code, r.text)
         r.raise_for_status()
@@ -85,7 +86,8 @@ class ActivityWatchStateUpdater(hass.Hass, SaneLoggingApp):
         }
         self._log.debug('POST to %s: %s', url, data)
         r = requests.post(
-            url, data=bytes(json.dumps(data), "utf8"), headers=headers
+            url, data=bytes(json.dumps(data), "utf8"), headers=headers,
+            timeout=1.0
         )
         self._log.debug('Response %s: %s', r.status_code, r.text)
         r.raise_for_status()
