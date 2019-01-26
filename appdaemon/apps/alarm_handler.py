@@ -64,6 +64,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
+from pathlib import Path
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
@@ -632,6 +633,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'secure.', sound='gamelan'
         )
         self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+        Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
         # turn off the camera-silencing input when alarm state changes
@@ -659,6 +661,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'secure.', sound='gamelan'
         )
         self._log.info('Turning on cameras: %s', AWAY_CAMERA_ENTITIES)
+        Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_on(cam_entity)
         # turn off the camera-silencing input when alarm state changes
@@ -682,6 +685,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'System has been disarmed.'
         )
         self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+        Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
         # turn off the camera-silencing input when alarm state changes
