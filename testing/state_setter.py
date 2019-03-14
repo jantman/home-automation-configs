@@ -77,13 +77,13 @@ INITIAL_STATES = {
         'entity_id': 'binary_sensor.office_motion',
         'state': 'off'
     },
-    'device_tracker.02157df2c2d6e627': {
+    'device_tracker.rf8m22eq54n': {
         'attributes': {
             'activity': '',
             'altitude': 0.0,
             'battery': 99.0,
             'direction': 0.0,
-            'friendly_name': 'GalaxyS6',
+            'friendly_name': 'GalaxyS10',
             'gps_accuracy': 20,
             'latitude': 33.7537428,
             'longitude': -84.2456995,
@@ -91,7 +91,7 @@ INITIAL_STATES = {
             'source_type': 'gps',
             'speed': 0.0
         },
-        'entity_id': 'device_tracker.02157df2c2d6e627',
+        'entity_id': 'device_tracker.rf8m22eq54n',
         'state': 'home'
     },
     'input_select.alarmstate': {
@@ -164,7 +164,7 @@ INITIAL_STATES = {
         'attributes': {
             'dir_of_travel': 'arrived',
             'friendly_name': 'home',
-            'nearest': 'GalaxyS6',
+            'nearest': 'GalaxyS10',
             'unit_of_measurement': 'm'
         },
         'entity_id': 'proximity.home',

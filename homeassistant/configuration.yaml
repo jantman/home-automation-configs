@@ -217,7 +217,7 @@ proximity:
     ignored_zones:
       - work
     devices:
-      - device_tracker.02157df2c2d6e627
+      - device_tracker.rf8m22eq54n
     unit_of_measurement: m
 
 notify:
@@ -313,8 +313,8 @@ alexa:
         - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
         # Thermostat - Heating
         - climate.2gig_technologies_ct101_thermostat_iris_heating_1
-        # GalaxyS6
-        - device_tracker.02157df2c2d6e627
+        # GalaxyS10
+        - device_tracker.rf8m22eq54n
         # Bedroom Light
         - light.ge_45606_2way_dimmer_switch_level
         # Office Light

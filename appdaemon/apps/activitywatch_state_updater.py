@@ -16,7 +16,7 @@ from sane_app_logging import SaneLoggingApp
 
 #: Entity IDs to update state for, and their AW buckets
 ENTITY_IDS_TO_BUCKETS = {
-    'device_tracker.02157df2c2d6e627': 'aw-watcher-hass-device',
+    'device_tracker.rf8m22eq54n': 'aw-watcher-hass-device',
     'sensor.desk_standing': 'aw-watcher-hass-desk-standing'
 }
 

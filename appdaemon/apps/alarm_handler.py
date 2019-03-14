@@ -84,7 +84,7 @@ INTERIOR_SENSOR_REs = [
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
 #: presence or proximity.
-DEVICE_TRACKER_ENTITY = 'device_tracker.02157df2c2d6e627'
+DEVICE_TRACKER_ENTITY = 'device_tracker.rf8m22eq54n'
 
 #: Entity ID for the input_select that controls the alarm state. This should
 #: have three options for the three possible alarm states: Home, Away, and
