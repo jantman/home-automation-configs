@@ -101,7 +101,11 @@ function handleAlarmButton(name) {
     console.log('Got "disarm" alarm button.');
     hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
   } else if (name == 'enterCode') {
-    console.log('Sending Code: %s', currentCode);
+    if (currentCode.trim() == "") {
+      console.log('Not sending empty code.');
+      return;
+    }
+    console.log('Sending Code: "%s"', currentCode);
     hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
     clearTimeout(inputTimeout);
     currentCode = '';
