@@ -177,6 +177,15 @@ AWAY_SECONDS = 15
 #: wait for disarming before triggering the alarm.
 AWAY_TRIGGER_DELAY_SECONDS = 10
 
+#: List of entity IDs which, when triggered in AWAY with
+#: input_boolean.no_alarm_delay is "off", will cause a delayed trigger of the
+#: alarm. Entities not in this list will not delay (i.e. alarm will trigger
+#: immediately).
+AWAY_DELAY_ENTITIES = [
+    # front door
+    'binary_sensor.ecolink_doorwindow_sensor_sensor',
+    'binary_sensor.livingroom_motion',
+]
 
 def fmt_entity(entity, kwargs):
     """
@@ -360,7 +369,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             ' (Interior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image
+            image=image, entity=entity
         )
 
     def _handle_state_exterior(self, entity, attribute, old, new, kwargs):
@@ -396,7 +405,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             ' (Exterior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image
+            image=image, entity=entity
         )
 
     def _handle_trigger_event(self, event_name, data, _):
@@ -482,7 +491,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._arm_away(kwargs['prev_state'])
 
     def _trigger_alarm(
-        self, subject='Alarm Triggered', message='alarm triggered', image=None
+        self, subject='Alarm Triggered', message='alarm triggered', image=None,
+        entity=None
     ):
         """Trigger the alarm"""
         self._log.debug(
@@ -492,14 +502,16 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         if (
             self.alarm_state == AWAY and
             self.get_state('input_boolean.no_alarm_delay') == 'off' and
-            self._trigger_delay_timer is None
+            self._trigger_delay_timer is None and
+            entity in AWAY_DELAY_ENTITIES
         ):
             self._log.debug(
                 'Delaying alarm trigger by %ss', AWAY_TRIGGER_DELAY_SECONDS
             )
             self.turn_on('input_boolean.trigger_delay')
             trigger_args = {
-                'subject': subject, 'message': message, 'image': image
+                'subject': subject, 'message': message, 'image': image,
+                'entity': entity
             }
             if image is not None:
                 trigger_args['image'] = b64encode(image)
@@ -535,7 +547,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             img = b64decode(img)
         self._trigger_alarm(
             subject=kwargs['subject'], message=kwargs['message'],
-            image=img
+            image=img, entity=kwargs['entity']
         )
 
     def _untrigger_alarm(self, _):
