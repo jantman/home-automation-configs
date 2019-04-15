@@ -155,7 +155,7 @@ CAMERA_IMAGE_ENTITIES = {
 #: turn off when camera is in HOME or DISARMED.
 AWAY_CAMERA_ENTITIES = [
     'switch.bedrm_state',
-    # 'switch.hall_state',
+    'switch.hall_state',
     'switch.lrkitchen_state',
     'switch.office_state'
 ]
