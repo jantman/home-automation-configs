@@ -131,6 +131,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             data['event']['Monitor']['Name'], self.detection_str(img)
         )
         input_name = 'silence_monitor_' + data['event']['Monitor']['Name']
+        input_name = input_name.lower()
         try:
             input_state = self.get_state(input_name)
         except Exception:
