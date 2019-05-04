@@ -130,10 +130,19 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         subject = 'ZoneMinder Alarm on %s - %s' % (
             data['event']['Monitor']['Name'], self.detection_str(img)
         )
+        input_name = 'silence_monitor_' + data['event']['Monitor']['Name']
+        try:
+            input_state = self.get_state(input_name)
+        except Exception:
+            input_state = 'off'
         if self.get_state('input_boolean.cameras_silent') == 'on':
             self._log.warning(
                 'Suppressing pushover notification - '
                 'input_boolean.cameras_silent is on'
+            )
+        elif input_state == 'on':
+            self._log.warning(
+                'Suppressing pushover notification - %s is on', input_name
             )
         else:
             self._notify_pushover(subject, data, img)

@@ -648,8 +648,11 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
-        # turn off the camera-silencing input when alarm state changes
+        # turn off the camera-silencing inputs when alarm state changes
         self.turn_off('input_boolean.cameras_silent')
+        self.turn_off('input_boolean.silence_monitor_PORCH')
+        self.turn_off('input_boolean.silence_monitor_BACK')
+        self.turn_off('input_boolean.silence_monitor_SIDE')
         self.select_option(ALARM_STATE_SELECT_ENTITY, HOME)
 
     def _arm_away(self, prev_state):

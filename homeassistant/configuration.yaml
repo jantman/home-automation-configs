@@ -253,6 +253,12 @@ input_boolean:
     name: Enable RandomLights
   enable_motion:
     name: Enable Motion Alarm
+  silence_monitor_PORCH:
+    name: Silence PORCH ZM Alarms
+  silence_monitor_BACK:
+    name: Silence BACK ZM Alarms
+  silence_monitor_SIDE:
+    name: Silence SIDE ZM Alarms
 
 input_select:
   alarmstate:

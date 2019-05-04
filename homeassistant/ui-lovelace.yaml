@@ -245,6 +245,14 @@ views:
             - light.ge_45606_2way_dimmer_switch_level
             # Office
             - light.ge_45606_2way_dimmer_switch_level_2
+        - type: entities
+          show_header_toggle: false
+          title: Camera Controls
+          entities:
+            - input_boolean.cameras_silent
+            - input_boolean.silence_monitor_PORCH
+            - input_boolean.silence_monitor_BACK
+            - input_boolean.silence_monitor_SIDE
       # RIGHT COLUMN
       - type: vertical-stack
         cards:
