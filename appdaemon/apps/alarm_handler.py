@@ -731,6 +731,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
           camera and then return the return value of
           :py:meth:`~._get_camera_capture` for ``monitor_id``.
         """
+        # Trigger manual alarms on monitors for 30s, after a short delay
+        self._trigger_zm_alarm({'monitor_id': monitor_id})
+        self.run_in(self._untrigger_zm_alarm, 30, monitor_id=monitor_id)
+        if second_monitor_id is not None:
+            self._trigger_zm_alarm({'monitor_id': second_monitor_id})
+            self.run_in(
+                self._untrigger_zm_alarm, 30, monitor_id=second_monitor_id
+            )
         try:
             if second_monitor_id is not None:
                 # capture the first one, from the non-PTZ camera
@@ -749,6 +757,30 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'with ptz_preset=%s', monitor_id, ptz_preset, exc_info=True
             )
             return None
+
+    def _trigger_zm_alarm(self, kwargs):
+        """
+        Trigger a manual alarm on a ZM monitor.
+        """
+        monitor_id = kwargs['monitor_id']
+        self._log.info('Trigger ZM alarm on monitor: %s', monitor_id)
+        url = 'http://localhost/zm/api/monitors/alarm' \
+              '/id:%s/command:on.json' % monitor_id
+        self._log.debug('GET %s', url)
+        r = requests.get(url)
+        self._log.debug('Got HTTP %d: %s', r.status_code, r.text)
+
+    def _untrigger_zm_alarm(self, kwargs):
+        """
+        Untrigger a manual alarm on a ZM monitor.
+        """
+        monitor_id = kwargs['monitor_id']
+        self._log.info('Untrigger ZM alarm on monitor: %s', monitor_id)
+        url = 'http://localhost/zm/api/monitors/alarm' \
+              '/id:%s/command:off.json' % monitor_id
+        self._log.debug('GET %s', url)
+        r = requests.get(url)
+        self._log.debug('Got HTTP %d: %s', r.status_code, r.text)
 
     def _get_camera_capture(self, monitor_id):
         """
