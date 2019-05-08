@@ -103,6 +103,13 @@ IGNORED_OBJECTS = [
         bounding_box=(1540, 335, 50, 50),
         monitor_num=3
     ),
+    # it also gets confused about a bush in my yard
+    IgnoredObject(
+        'FrontShrub',
+        ['sheep', 'cow'],
+        bounding_box=(1300, 150, 100, 100),
+        monitor_num=3
+    ),
     # yolo3-tiny often sees this OTHER tree as a giraffe...
     IgnoredObject(
         'SideTree',
