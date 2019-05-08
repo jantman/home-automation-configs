@@ -73,7 +73,7 @@ IGNORED_OBJECTS = [
     # grill in back yard
     IgnoredObject(
         'Grill',
-        ['surfboard', 'suitcase', 'umbrella'],
+        ['surfboard', 'suitcase', 'umbrella', 'kite'],
         monitor_num=4,
         bounding_box=(1070, 575, 100, 100)
     ),
