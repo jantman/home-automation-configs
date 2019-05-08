@@ -73,7 +73,7 @@ IGNORED_OBJECTS = [
     # grill in back yard
     IgnoredObject(
         'Grill',
-        ['surfboard', 'suitcase', 'umbrella', 'kite'],
+        ['surfboard', 'suitcase', 'umbrella', 'kite', 'backpack'],
         monitor_num=4,
         bounding_box=(1070, 575, 100, 100)
     ),
@@ -110,11 +110,10 @@ IGNORED_OBJECTS = [
         bounding_box=(1300, 150, 100, 100),
         monitor_num=3
     ),
-    # yolo3-tiny often sees this OTHER tree as a giraffe...
+    # ignore all the giraffes on the side of the house...
     IgnoredObject(
-        'SideTree',
+        'SideGiraffes',
         ['giraffe'],
-        bounding_box=(400, 670, 50, 50),
         monitor_num=5
     ),
     IgnoredObject(
