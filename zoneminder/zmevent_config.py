@@ -62,13 +62,13 @@ IGNORED_OBJECTS = [
         ['bench', 'chair', 'zebra'],
         monitor_num=3
     ),
-    # my car when parked
+    # garage
     IgnoredObject(
-        'MyCarParked',
+        'GarageBack',
         # yolo3-tiny often categorizes my car as an umbrella
-        ['car', 'suitcase', 'truck', 'umbrella'],
+        ['car', 'suitcase', 'truck', 'umbrella', 'stop sign'],
         monitor_num=3,
-        bounding_box=(1550, 700, 300, 300)
+        bounding_box=(1447, 574, 500, 500)
     ),
     # grill in back yard
     IgnoredObject(
