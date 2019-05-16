@@ -64,9 +64,9 @@ IGNORED_OBJECTS = [
     ),
     # garage
     IgnoredObject(
-        'GarageBack',
-        # yolo3-tiny often categorizes my car as an umbrella
-        ['car', 'suitcase', 'truck', 'umbrella', 'stop sign'],
+        'Garage',
+        # yolo3-tiny often sees shadows on my garage as strange things...
+        ['suitcase', 'umbrella', 'stop sign', 'elephant'],
         monitor_num=3,
         bounding_box=(1447, 574, 500, 500)
     ),
