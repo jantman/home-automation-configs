@@ -123,6 +123,11 @@ logbook:
       - sensor.ecolink_motion_detector_burglar
       - sensor.ecolink_motion_detector_power_management
       - sensor.ecolink_motion_detector_sourcenodeid
+      - sensor.ecolink_motion_detector_2_alarm_level
+      - sensor.ecolink_motion_detector_2_alarm_type
+      - sensor.ecolink_motion_detector_2_burglar
+      - sensor.ecolink_motion_detector_2_power_management
+      - sensor.ecolink_motion_detector_2_sourcenodeid
       - sensor.kitchensensor_alarm_level
       - sensor.kitchensensor_alarm_type
       - sensor.kitchensensor_appliance
@@ -302,6 +307,8 @@ alexa:
         - binary_sensor.ecolink_doorwindow_sensor_sensor_4
         # Back Bedroom Motion
         - binary_sensor.ecolink_motion_detector_sensor
+        # garage motion
+        - zwave.ecolink_motion_detector_2
         # Kitchen Motion
         - binary_sensor.kitchen_motion
         # KitchenSensor Sensor
