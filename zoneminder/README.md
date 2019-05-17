@@ -21,3 +21,9 @@ __NOTE:__ I'm planning a major refactor to [zmevent_handler.py](zmevent_handler.
 ## Installation and Dependencies
 
 [zmevent_image_analysis.py](zmevent_image_analysis.py) uses the [Pillow PIL fork](https://pillow.readthedocs.io) for some simple image analysis and the [yolo34py](https://github.com/madhawav/YOLO3-4-Py) wrapper around [darknet yolo3](https://pjreddie.com/darknet/yolo/) for object detection. On my system, running this on a 1920x1080 image on the CPU takes about 10-12 seconds. Running on even a modest GPU takes about 1/10 of that. Note that for me (Debian 9), the ``yolo34py-gpu`` package on PyPI did not work out of the box. I needed to download and compile darknet, and then ``pip install yolo34py-gpu`` with the ``DARKNET_HOME`` environment variable set to where I setup darknet.
+
+## Other References
+
+You may also be interested in seeing the ["DIY / Home Automation / Security" category of my blog](http://blog.jasonantman.com/categories/diy-home-automation-security/index.html) as well as the [camera](https://blog.jasonantman.com/tags/camera/index.html), [security](https://blog.jasonantman.com/tags/security/index.html), and [homeassistant](https://blog.jasonantman.com/tags/homeassistant/index.html) tags on my blog. These all provide some higher-level overview, instructional, and narrative information about what's contained here. The current high-level overview post is [Home Automation and Security System Overview](https://blog.jasonantman.com/2018/08/home-automation-and-security-system-overview/).
+
+Information on how I initially set up and configure new Amcrest cameras is in a blog post, [Amcrest IP Camera First Impressions - Jason Antman's Blog](https://blog.jasonantman.com/2018/05/amcrest-ip-camera-first-impressions/).
