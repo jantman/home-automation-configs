@@ -26,4 +26,49 @@ __NOTE:__ I'm planning a major refactor to [zmevent_handler.py](zmevent_handler.
 
 You may also be interested in seeing the ["DIY / Home Automation / Security" category of my blog](http://blog.jasonantman.com/categories/diy-home-automation-security/index.html) as well as the [camera](https://blog.jasonantman.com/tags/camera/index.html), [security](https://blog.jasonantman.com/tags/security/index.html), and [homeassistant](https://blog.jasonantman.com/tags/homeassistant/index.html) tags on my blog. These all provide some higher-level overview, instructional, and narrative information about what's contained here. The current high-level overview post is [Home Automation and Security System Overview](https://blog.jasonantman.com/2018/08/home-automation-and-security-system-overview/).
 
-Information on how I initially set up and configure new Amcrest cameras is in a blog post, [Amcrest IP Camera First Impressions - Jason Antman's Blog](https://blog.jasonantman.com/2018/05/amcrest-ip-camera-first-impressions/).
+## Amcrest Camera Setup
+
+My current process for provisioning new Amcrest cameras is described below. Note that since I wrote my [Amcrest IP Camera First Impressions](https://blog.jasonantman.com/2018/05/amcrest-ip-camera-first-impressions/) blog post, I've moved to a Ubiquiti AP that supports multiple SSIDs and VLANs, and I now have all of my cameras and other IoT devices on an isolated SSID/VLAN that blocks all Internet access.
+
+### ["ProHD" IP2M-841B](https://amcrest.com/amcrest-1080p-wifi-video-security-ip-camera-pt.html) Interior PTZ Camera
+
+I haven't done one of these in a while, but the process should essentially be the same as below.
+
+### [IP2M-852](https://amcrest.com/amcrest-prohd-outdoor-1080p-poe-ip-security-bullet-camera-ip67-weatherproof-1080p-1920tvl-ip2m-852ew-white.html) Exterior 1080p Camera
+
+I now have three of these; two are the IP2M-852W models which have WiFi and wired Ethernet and 12V power. It turns out that these are all placed at the fringes of my WiFi coverage area, so I ended up having to run wired Ethernet to them... which is a pain because they also require separate 12VDC power. My third and newest is the IP2M-852EW model which uses PoE. All the ones I get in the future will be PoE powered and using wired Ethernet, and I really wish I'd just gotten the wired ones to begin with.
+
+1. Get the wired MAC address of the camera from the label on it. If there isn't a label, plug in to my laptop with a crossover cable and Wireshark running; power on the camera and record the wired Ethernet MAC address for the camera. Then power off the camera.
+2. On my [VyOS](http://www.vyos.io/) router, assign the camera's wired MAC a static IP in the IoT subnet and local DNS.
+3. Plug the camera in to my switch and power it on. Wait a few minutes and then access the builtin HTTP web interface at the IP I assigned.
+4. Log in with the default username/password (admin/admin) and change the password.
+5. Browse through the "setup" portion of the UI and record some of the current/default settings and information:
+   1. "Information" -> "Version" - record all versions
+   2. "Camera" -> "Video"
+      * Video tab
+        * Set main stream to H.264H 1080P, 10 FPS, CBR, bit rate 4096, watermark to camera hostname
+        * Set sub stream to MJPEG, VGA, 10 FPS, bit rate 1024
+      * Overlay tab
+        * Set Channel Title to the name of the camera (ZM input)
+        * Set Logo Overlay to disabled
+   3. "Camera" -> "Audio" (on ProHD) - record stream information
+   4. "Network" -> "TCP/IP" - change hostname; record wireless MAC; disable P2P
+   5. "Network" -> "Connection" - record all ports; ensure ONVIF authentication is enabled
+   6. "Network" -> ("DDNS", "IP Filter", "SMTP", "UPnP") - ensure all are disabled
+   7. "Network" -> "SNMP" (if present) - enable v1
+   8. "Network" -> ("Bonjour", "Multicast", "802.1x", "QoS", "HTTPs") - ensure all are disabled
+   9. "System" -> "General" -> "Date & Time" - enable NTP
+   10. "System" -> "Export" - export a configuration file and save it.
+   11. "Event" - disable all of them for now
+6. Place the new camera and wire it (if needed).
+7. Add the new camera to various configurations of mine:
+  * My nightly ``network_backups.sh`` script to backup the configuration and information about the camera
+  * My ``simple_monitoring.py`` script
+  * [/appdaemon/apps/alarm_handler.py](/appdaemon/apps/alarm_handler.py) ``AWAY_CAMERA_ENTITIES`` and ``CAMERA_IMAGE_ENTITIES``
+  * If needed, [/appdaemon/apps/zmevent_alarm_handler.py](/appdaemon/apps/zmevent_alarm_handler.py) ``HOME_IGNORE_MONITORS``
+  * [/homeassistant/configuration.yaml](/homeassistant/configuration.yaml) ``logbook -> exclude -> entities`` and a ``silence_monitor_ZM-MONITOR-NAME`` input boolean
+  * [/homeassistant/ui-lovelace.yaml](/homeassistant/ui-lovelace.yaml) - entries similar to the other monitors
+8. Add as a monitor in ZM and configure similarly to the others; set up zones and motion detection.
+9. Once motion detection starts running and alerting, add ``IgnoredObject`` instances to [/zoneminder/zmevent_config.py](/zoneminder/zmevent_config.py) ``IGNORED_OBJECTS`` as needed.
+
+After that, I added the wireless MAC address for the camera to my access point's ACL and then set up a static IP, local DNS, and outbound traffic reject the same way I did for the wired MAC. I then configured the WiFi connection in the camera's Setup UI, ensured it connected to the network properly, and unplugged the wired Ethernet.
