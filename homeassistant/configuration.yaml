@@ -19,11 +19,10 @@ zone:
     latitude: 33.9282418
     radius: 300
     icon: mdi:office-building
-  # I want 50m radius for "Home", not the default 100m
   - name: Home
     latitude: 33.753790
     longitude: -84.245627
-    radius: 50
+    radius: 100
     icon: mdi:house
 
 # Enables the frontend
