@@ -72,7 +72,8 @@ from pushover_notifier import PushoverNotifier
 #: List of regular expressions to match the binary_sensor entities for my
 #: "exterior" zone, i.e. things that alarm when I'm either Home or Away
 EXTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$')
+    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$'),
+    re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
 ]
 
 #: List of regular expressions to match the binary_sensor entities for my
@@ -148,7 +149,9 @@ CAMERA_IMAGE_ENTITIES = {
     # office
     'binary_sensor.office_motion': {'monitor_id': 6},
     # bedroom
-    'binary_sensor.bedroom_motion': {'monitor_id': 7}
+    'binary_sensor.bedroom_motion': {'monitor_id': 7},
+    # garage
+    'binary_sensor.garagemotion_sensor': {'monitor_id': 3}
 }
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
@@ -185,6 +188,7 @@ AWAY_DELAY_ENTITIES = [
     # front door
     'binary_sensor.ecolink_doorwindow_sensor_sensor',
     'binary_sensor.livingroom_motion',
+    'binary_sensor.garagemotion_sensor',
 ]
 
 def fmt_entity(entity, kwargs):
