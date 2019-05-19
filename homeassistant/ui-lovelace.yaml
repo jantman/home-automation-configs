@@ -29,13 +29,13 @@ views:
               tap_action: toggle
               entity: light.zipato_bulb_2_level # Porch bulb
               style:
-                top: 89%
+                top: 84%
                 left: 7%
             - type: state-icon
               tap_action: toggle
               entity: light.linear_lb60z1_dimmable_led_light_bulb_level_3 # Porch bulb 2
               style:
-                top: 89%
+                top: 84%
                 left: 2%
             - type: state-icon
               tap_action: toggle
@@ -130,6 +130,11 @@ views:
               style:
                 top: 73%
                 left: 5%
+            - type: state-icon
+              entity: camera.garage
+              style:
+                top: 96%
+                left: 10%
             - type: state-icon
               entity: camera.side
               style:
@@ -232,6 +237,9 @@ views:
           entity: switch.porch_state
           camera_image: camera.porch
         - type: picture-entity
+          entity: switch.garage_state
+          camera_image: camera.garage
+        - type: picture-entity
           entity: switch.bedrm_state
           camera_image: camera.bedrm
         - type: entities
@@ -262,6 +270,7 @@ views:
           entities:
             - input_boolean.cameras_silent
             - input_boolean.silence_monitor_porch
+            - input_boolean.silence_monitor_garage
             - input_boolean.silence_monitor_back
             - input_boolean.silence_monitor_side
       # RIGHT COLUMN
@@ -297,6 +306,9 @@ views:
             - sensor.porch_events
             - sensor.porch_status
             - switch.porch_state
+            - sensor.garage_events
+            - sensor.garage_status
+            - switch.garage_state
             - sensor.side_events
             - sensor.side_status
             - switch.side_state

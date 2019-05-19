@@ -151,7 +151,9 @@ CAMERA_IMAGE_ENTITIES = {
     # bedroom
     'binary_sensor.bedroom_motion': {'monitor_id': 7},
     # garage
-    'binary_sensor.garagemotion_sensor': {'monitor_id': 3}
+    'binary_sensor.garagemotion_sensor': {
+        'monitor_id': 3, 'second_monitor_id': 9
+    }
 }
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and

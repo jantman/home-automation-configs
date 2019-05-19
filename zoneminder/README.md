@@ -63,7 +63,6 @@ I now have three of these; two are the IP2M-852W models which have WiFi and wire
 6. Place the new camera and wire it (if needed).
 7. Add the new camera to various configurations of mine:
   * My nightly ``network_backups.sh`` script to backup the configuration and information about the camera
-  * My ``simple_monitoring.py`` script
   * [/appdaemon/apps/alarm_handler.py](/appdaemon/apps/alarm_handler.py) ``AWAY_CAMERA_ENTITIES`` and ``CAMERA_IMAGE_ENTITIES``
   * If needed, [/appdaemon/apps/zmevent_alarm_handler.py](/appdaemon/apps/zmevent_alarm_handler.py) ``HOME_IGNORE_MONITORS``
   * [/homeassistant/configuration.yaml](/homeassistant/configuration.yaml) ``logbook -> exclude -> entities`` and a ``silence_monitor_ZM-MONITOR-NAME`` input boolean

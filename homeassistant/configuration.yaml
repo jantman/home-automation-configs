@@ -161,6 +161,7 @@ logbook:
       - sensor.porch_events
       - sensor.side_events
       - sensor.hall_events
+      - sensor.garage_events
 
 # Enables a map showing the location of tracked devices
 map:
@@ -263,6 +264,8 @@ input_boolean:
     name: Silence BACK ZM Alarms
   silence_monitor_side:
     name: Silence SIDE ZM Alarms
+  silence_monitor_garage:
+    name: Silence GARAGE ZM Alarms
 
 input_select:
   alarmstate:
