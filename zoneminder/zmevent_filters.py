@@ -95,11 +95,29 @@ class IRChangeFilter(EventFilter):
         f1_is_color = self._image_is_color(f1)
         f2_is_color = self._image_is_color(f2)
         if f1_is_color and not f2_is_color:
+            logger.info(
+                'IRChangeFilter matched Color2BW for Event %s: Frame %s is %s '
+                'and Frame %s is %s', self._event.EventId,
+                self._event.FirstFrameId, f1_is_color, self._event.LastFrameId,
+                f2_is_color
+            )
             self._matched = True
             self._reasons.append('Color to BW switch')
             self._suffix = 'Color2BW'
-            return
-        if not f1_is_color and f2_is_color:
+        elif not f1_is_color and f2_is_color:
+            logger.info(
+                'IRChangeFilter matched BW2Color for Event %s: Frame %s is %s '
+                'and Frame %s is %s', self._event.EventId,
+                self._event.FirstFrameId, f1_is_color, self._event.LastFrameId,
+                f2_is_color
+            )
             self._matched = True
             self._reasons.append('BW to color switch')
             self._suffix = 'BW2Color'
+        else:
+            logger.info(
+                'IRChangeFilter found no match for Event %s: Frame %s is %s '
+                'and Frame %s is %s', self._event.EventId,
+                self._event.FirstFrameId, f1_is_color, self._event.LastFrameId,
+                f2_is_color
+            )
