@@ -70,6 +70,12 @@ IGNORED_OBJECTS = [
         monitor_num=3,
         bounding_box=(1447, 574, 500, 500)
     ),
+    # garage camera front street
+    IgnoredObject(
+        'GarageCamFrontStreet',
+        monitor_num=9,
+        zone_names=['Street']
+    ),
     # grill in back yard
     IgnoredObject(
         'Grill',
