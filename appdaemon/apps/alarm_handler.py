@@ -193,6 +193,10 @@ AWAY_DELAY_ENTITIES = [
     'binary_sensor.garagemotion_sensor',
 ]
 
+#: Path of a file to "touch" whenever the alarm changes state.
+TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
+
+
 def fmt_entity(entity, kwargs):
     """
     Format the provided entity for printing. If ``friendly_name`` is in
@@ -292,6 +296,15 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     def alarm_state(self):
         """Return the string state of the alarm_state input select."""
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
+
+    def _update_alarm_state_file(self, state):
+        try:
+            with open(TRANSITION_FILE_PATH, 'w') as fh:
+                fh.write(state)
+        except Exception:
+            logger.error(
+                'Error writing alarm state to state file', exc_info=True
+            )
 
     def _states_to_listen_for(self):
         """
@@ -488,6 +501,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 sound='falling'
             )
             return
+        self._update_alarm_state_file('AWAY_DELAY')
         self.turn_on('input_boolean.arming_away')
         self._leave_timer = self.run_in(
             self._arm_away_delay_callback, AWAY_SECONDS, prev_state=prev_state
@@ -645,6 +659,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             )
             self.select_option(ALARM_STATE_SELECT_ENTITY, prev_state)
             return
+        self._update_alarm_state_file('HOME')
         self._do_notify_pushover(
             'System Armed - Home',
             'System has been armed in "Home" mode. All exterior sensors '
@@ -676,6 +691,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             )
             self.select_option(ALARM_STATE_SELECT_ENTITY, prev_state)
             return
+        self._update_alarm_state_file('AWAY')
         self._do_notify_pushover(
             'System Armed - Away',
             'System has been armed in "Away" mode. All exterior sensors '
@@ -693,6 +709,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     def _disarm(self, prev_state):
         """Disarm the system."""
         self._log.info('Disarming system (previous state: %s)', prev_state)
+        self._update_alarm_state_file('DISARMED')
         # remove any trigger delay
         if self._trigger_delay_timer is not None:
             self.cancel_timer(self._trigger_delay_timer)
