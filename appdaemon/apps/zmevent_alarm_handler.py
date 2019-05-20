@@ -39,6 +39,7 @@ keys are defined in ``AlarmHandler._get_hass_secrets()``.
 
 import os
 import re
+import time
 import appdaemon.plugins.hass.hassapi as hass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -54,6 +55,12 @@ LOG_DEBUG = False
 
 #: List of monitor names to ignore when the alarm state is HOME
 HOME_IGNORE_MONITORS = ['LRKitchen', 'OFFICE', 'BEDRM', 'HALL']
+
+#: Path of a file that's touched every time the alarm changes state.
+TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
+
+#: Hoe many seconds to suppress ZM alarms after alarm state transition
+TRANSITION_DELAY_SECONDS = 75
 
 
 class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
@@ -84,6 +91,40 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """Return the string state of the alarm_state input select."""
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
 
+    @property
+    def _in_transition_period(self):
+        """
+        If we are within ``TRANSITION_DELAY_SECONDS`` seconds of alarm state
+        changing, according to the mtime of ``TRANSITION_FILE_PATH``,
+        suppress the alarm
+        """
+        if not os.path.exists(TRANSITION_FILE_PATH):
+            self._log.debug(
+                'Transition file %s does not exist', TRANSITION_FILE_PATH
+            )
+            return False
+        try:
+            mtime = os.path.mtime(TRANSITION_FILE_PATH)
+        except Exception:
+            self._log.error(
+                'Unable to read transition file mtime: %s',
+                TRANSITION_FILE_PATH, exc_info=True
+            )
+            return False
+        self._log.debug(
+            'Transition file mtime=%s; delay=%s',
+            mtime, TRANSITION_DELAY_SECONDS
+        )
+        if mtime < (time.time() - TRANSITION_DELAY_SECONDS):
+            self._log.debug('Transition file is older than delay.')
+            return False
+        self._log.info(
+            'Transition file (%s) mtime of %s is newer than %s seconds ago; '
+            'suppressing ZM alarm.', TRANSITION_FILE_PATH, mtime,
+            TRANSITION_DELAY_SECONDS
+        )
+        return True
+
     def _handle_alarm_event(self, event_name, data, _):
         """
         Handle the ZM_ALARM event.
@@ -101,6 +142,13 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.info(
                 'Ignoring ZM_ALARM for Event %s - alarm disarmed',
                 data['event']['EventId']
+            )
+            return
+        if self._in_transition_period():
+            self._log.info(
+                'Ignoring ZM_ALARM for Event %s - current time is within %d '
+                'seconds of last alarm state transition.',
+                data['event']['EventId'], TRANSITION_DELAY_SECONDS
             )
             return
         if (
