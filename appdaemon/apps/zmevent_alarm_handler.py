@@ -98,11 +98,6 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         changing, according to the mtime of ``TRANSITION_FILE_PATH``,
         suppress the alarm
         """
-        if not os.path.exists(TRANSITION_FILE_PATH):
-            self._log.debug(
-                'Transition file %s does not exist', TRANSITION_FILE_PATH
-            )
-            return False
         try:
             mtime = os.path.mtime(TRANSITION_FILE_PATH)
         except Exception:
