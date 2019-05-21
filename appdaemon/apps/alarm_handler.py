@@ -54,6 +54,8 @@ more general/configurable.
 
 import re
 import logging
+import time
+import os
 import requests
 from requests.auth import HTTPDigestAuth
 from PIL import Image
@@ -82,6 +84,18 @@ INTERIOR_SENSOR_REs = [
     re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$'),
     re.compile(r'^binary_sensor\..*_motion$')
 ]
+
+#: List of regular expressions to match the binary_sensor entities for any
+#: sensors that should not alarm for ``DELAYED_EXTERIOR_SENSOR_DELAY_SEC``
+#: seconds after arming the alarm, and should not fail arming the alarm if
+#: they are open/triggered when arming is requested.
+DELAYED_EXTERIOR_SENSOR_REs = [
+re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
+]
+
+#: Integer number of seconds for how long to delay triggering off of
+#: ``DELAYED_EXTERIOR_SENSOR_REs`` after arming the alarm.
+DELAYED_EXTERIOR_SENSOR_DELAY_SEC = 360 # 6 minutes
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
 #: presence or proximity.
@@ -290,6 +304,16 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._leave_timer = None
         self._trigger_delay_timer = None
         self._untrigger_timer = None
+        # get the current state time
+        try:
+            self._last_transition_time = os.path.mtime(TRANSITION_FILE_PATH)
+        except Exception:
+            self._log.error(
+                'Unable to read transition file mtime: %s',
+                TRANSITION_FILE_PATH, exc_info=True
+            )
+            self._last_transition_time = 0
+        # end get current state time
         self._log.info('Done initializing AlarmHandler')
 
     @property
@@ -298,13 +322,28 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
 
     def _update_alarm_state_file(self, state):
+        self._last_transition_time = time.time()
         try:
             with open(TRANSITION_FILE_PATH, 'w') as fh:
                 fh.write(state)
         except Exception:
-            logger.error(
+            self._log.error(
                 'Error writing alarm state to state file', exc_info=True
             )
+
+    @property
+    def _in_delayed_exterior_period(self):
+        cutoff = self._last_transition_time + DELAYED_EXTERIOR_SENSOR_DELAY_SEC
+        if time.time() < cutoff:
+            self._log.debug('Currently in delayed exterior period')
+            return True
+        return False
+
+    def _is_delayed_exteriod_entity(self, entity):
+        for e_re in DELAYED_EXTERIOR_SENSOR_REs:
+            if e_re.match(entity):
+                return True
+        return False
 
     def _states_to_listen_for(self):
         """
@@ -402,6 +441,16 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.warning(
                 'Alarm state %s; disregarding interior state '
                 'change (%s %s from %s to %s)', a_state,
+                fmt_entity(entity, kwargs), attribute, old, new
+            )
+            return
+        if (
+            self._in_delayed_exterior_period and
+            self._is_delayed_exteriod_entity(entity)
+        ):
+            self._log.warning(
+                'In DELAYED_EXTERIOR_SENSOR_DELAY_SEC; disregarding exterior '
+                'state change (%s %s from %s to %s).',
                 fmt_entity(entity, kwargs), attribute, old, new
             )
             return
@@ -734,7 +783,15 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """Return a list of the friendly_name of any open exterior sensors."""
         opened = []
         for eid, friendly_name in self._exterior_sensors.items():
-            if self.get_state(eid) == 'on':
+            if self.get_state(eid) != 'on':
+                continue
+            if self._is_delayed_exteriod_entity(eid):
+                self._log.warning(
+                    'Entity %s (%s) is in open state but listed in '
+                    'DELAYED_EXTERIOR_SENSOR_REs; ignoring open state',
+                    eid, friendly_name
+                )
+            else:
                 opened.append(friendly_name)
         return opened
 
