@@ -73,6 +73,7 @@ IGNORED_OBJECTS = [
     # garage camera front street
     IgnoredObject(
         'GarageCamFrontStreet',
+        ['sheep', 'car', 'truck', 'train'],
         monitor_num=9,
         zone_names=['Street']
     ),
