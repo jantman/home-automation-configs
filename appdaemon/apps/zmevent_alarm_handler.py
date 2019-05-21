@@ -99,7 +99,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         suppress the alarm
         """
         try:
-            mtime = os.path.mtime(TRANSITION_FILE_PATH)
+            mtime = os.stat(TRANSITION_FILE_PATH).st_mtime
         except Exception:
             self._log.error(
                 'Unable to read transition file mtime: %s',

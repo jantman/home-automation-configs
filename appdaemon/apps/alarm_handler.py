@@ -306,7 +306,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._untrigger_timer = None
         # get the current state time
         try:
-            self._last_transition_time = os.path.mtime(TRANSITION_FILE_PATH)
+            self._last_transition_time = os.stat(TRANSITION_FILE_PATH).st_mtime
         except Exception:
             self._log.error(
                 'Unable to read transition file mtime: %s',
