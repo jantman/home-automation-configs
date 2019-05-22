@@ -139,7 +139,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 data['event']['EventId']
             )
             return
-        if self._in_transition_period():
+        if self._in_transition_period:
             self._log.info(
                 'Ignoring ZM_ALARM for Event %s - current time is within %d '
                 'seconds of last alarm state transition.',
