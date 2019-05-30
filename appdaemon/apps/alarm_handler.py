@@ -75,7 +75,7 @@ from pushover_notifier import PushoverNotifier
 #: "exterior" zone, i.e. things that alarm when I'm either Home or Away
 EXTERIOR_SENSOR_REs = [
     re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$'),
-    re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
+    re.compile(r'^binary_sensor\.garagemotion_sensor$')
 ]
 
 #: List of regular expressions to match the binary_sensor entities for my
