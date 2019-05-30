@@ -899,14 +899,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                     'Error setting monitor %s to ptz_preset=%s',
                     monitor_id, ptz_preset, exc_info=True
                 )
-         try:
-             return self._get_camera_capture(monitor_id)
-         except Exception:
-             self._log.critical(
-                 'Error getting capture for monitor_id=%s',
-                 monitor_id, exc_info=True
-             )
-             return None
+        try:
+            return self._get_camera_capture(monitor_id)
+        except Exception:
+            self._log.critical(
+                'Error getting capture for monitor_id=%s',
+                monitor_id, exc_info=True
+            )
+            return None
 
     def _trigger_zm_alarm(self, kwargs):
         """
