@@ -819,24 +819,56 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self.run_in(
                 self._untrigger_zm_alarm, 30, monitor_id=second_monitor_id
             )
-        try:
-            if second_monitor_id is not None:
-                # capture the first one, from the non-PTZ camera
+        if second_monitor_id is not None:
+            # capture the first one, from the non-PTZ camera
+            try:
                 img1 = self._get_camera_capture(second_monitor_id)
+            except Exception:
+                img1 = None
+                self._log.critical(
+                    'Error getting camera capture for second_monitor_id %s ',
+                    second_monitor_id, exc_info=True
+                )
+            try:
                 # move the PTZ camera and capture an image from it
                 self._ptz_to(monitor_id, ptz_preset)
+            except Exception:
+                self._log.critical(
+                    'Error setting monitor %s to ptz_preset=%s',
+                    monitor_id, ptz_preset, exc_info=True
+                )
+            try:
                 img2 = self._get_camera_capture(monitor_id)
-                # return the two images combined side-by-side
-                return self._combine_images(img1, img2)
-            if ptz_preset is not None:
+            except Exception:
+                self._log.critical(
+                    'Error getting camera capture for monitor %s ',
+                    monitor_id, ptz_preset, exc_info=True
+                )
+                img2 = None
+            if img1 is None and img2 is not None:
+                return img2
+            elif img2 is None and img1 is not None:
+                return img1
+            elif img2 is None and img1 is None:
+                return None
+            # return the two images combined side-by-side
+            return self._combine_images(img1, img2)
+        if ptz_preset is not None:
+            try:
                 self._ptz_to(monitor_id, ptz_preset)
-            return self._get_camera_capture(monitor_id)
-        except Exception:
-            self._log.critical(
-                'Error getting camera capture for monitor %s '
-                'with ptz_preset=%s', monitor_id, ptz_preset, exc_info=True
-            )
-            return None
+            except Exception:
+                self._log.critical(
+                    'Error setting monitor %s to ptz_preset=%s',
+                    monitor_id, ptz_preset, exc_info=True
+                )
+         try:
+             return self._get_camera_capture(monitor_id)
+         except Exception:
+             self._log.critical(
+                 'Error getting capture for monitor_id=%s',
+                 monitor_id, exc_info=True
+             )
+             return None
 
     def _trigger_zm_alarm(self, kwargs):
         """
