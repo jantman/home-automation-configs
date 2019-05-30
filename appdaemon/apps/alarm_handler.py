@@ -90,7 +90,7 @@ INTERIOR_SENSOR_REs = [
 #: seconds after arming the alarm, and should not fail arming the alarm if
 #: they are open/triggered when arming is requested.
 DELAYED_EXTERIOR_SENSOR_REs = [
-re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
+    re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
 ]
 
 #: Integer number of seconds for how long to delay triggering off of
