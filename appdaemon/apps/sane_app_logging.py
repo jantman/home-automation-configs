@@ -20,7 +20,7 @@ the normal logging methods on ``self._log``.
 To toggle debugging, trigger a HASS event of type LOGWRAPPER_SET_DEBUG
 with data of:
 
-    {'app_class': 'ClassName', 'debug_value': True|False}
+    {"app_class": "ClassName", "debug_value": true|false}
 
 Enabling this will cause all DEBUG log messages in the ClassName app/class to
 actually be logged at INFO level.
