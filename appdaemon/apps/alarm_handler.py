@@ -385,6 +385,23 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._log.debug('Entities to listen to: %s', listen_entities)
         return listen_entities
 
+    def _is_entity_silenced(self, entity_id, friendly_name=None):
+        if friendly_name is None:
+            friendly_name = self.get_state(entity_id, 'friendly_name')
+            self._log.info(
+                'Set friendly_name for %s to %s', entity_id, friendly_name
+            )
+        ib_name = 'input_boolean.silence_' + friendly_name.lower().replace(
+            ' ', '_'
+        )
+        ib_state = self.get_state(ib_name)
+        if ib_state is None:
+            ib_state = False
+        else:
+            ib_state = ib_state != 'off'
+        self._log.info('State of %s is %s', ib_name, ib_state)
+        return ib_state
+
     def _handle_state_interior(self, entity, attribute, old, new, kwargs):
         """Handle change to interior sensors, i.e. motion sensors."""
         self._log.debug(
@@ -405,6 +422,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.info(
                 '%s is off; Ignoring interior state change '
                 '(%s %s from %s to %s)', INTERIOR_ENABLE_ENTITY,
+                fmt_entity(entity, kwargs), attribute, old, new
+            )
+            return
+        if self._is_entity_silenced(
+            entity, friendly_name=kwargs.get('friendly_name', None)
+        ):
+            self._log.info(
+                'Ignoring state change %s %s from %s to %s - entity silenced',
                 fmt_entity(entity, kwargs), attribute, old, new
             )
             return
@@ -451,6 +476,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.warning(
                 'In DELAYED_EXTERIOR_SENSOR_DELAY_SEC; disregarding exterior '
                 'state change (%s %s from %s to %s).',
+                fmt_entity(entity, kwargs), attribute, old, new
+            )
+            return
+        if self._is_entity_silenced(
+            entity, friendly_name=kwargs.get('friendly_name', None)
+        ):
+            self._log.info(
+                'Ignoring state change %s %s from %s to %s - entity silenced',
                 fmt_entity(entity, kwargs), attribute, old, new
             )
             return
@@ -693,6 +726,17 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'attribute=%s old=%s new=%s', attribute, old, new
             )
 
+    def _reset_input_booleans(self):
+        # turn off the camera-silencing inputs when alarm state changes
+        for e in self.get_state('input_boolean').values():
+            if e is None:
+                continue
+            a = e.get('attributes', {})
+            self._log.info(
+                'Turning OFF: %s (%s)', e['entity_id'], a['friendly_name']
+            )
+            self.turn_off(e['entity_id'])
+
     def _arm_home(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Home."""
         self._log.info('Arming in Home mode (previous state: %s)', prev_state)
@@ -718,11 +762,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
-        # turn off the camera-silencing inputs when alarm state changes
-        self.turn_off('input_boolean.cameras_silent')
-        self.turn_off('input_boolean.silence_monitor_PORCH')
-        self.turn_off('input_boolean.silence_monitor_BACK')
-        self.turn_off('input_boolean.silence_monitor_SIDE')
+        self._reset_input_booleans()
         self.select_option(ALARM_STATE_SELECT_ENTITY, HOME)
 
     def _arm_away(self, prev_state):
@@ -750,8 +790,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_on(cam_entity)
-        # turn off the camera-silencing input when alarm state changes
-        self.turn_off('input_boolean.cameras_silent')
+        self._reset_input_booleans()
         self.select_option(ALARM_STATE_SELECT_ENTITY, AWAY)
         self.turn_off('input_boolean.arming_away')
 
@@ -775,8 +814,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Path('/tmp/camera_control.time').touch()
         for cam_entity in AWAY_CAMERA_ENTITIES:
             self.turn_off(cam_entity)
-        # turn off the camera-silencing input when alarm state changes
-        self.turn_off('input_boolean.cameras_silent')
+        self._reset_input_booleans()
         self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
 
     def _exterior_doors_open(self):
