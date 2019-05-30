@@ -931,7 +931,12 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         preset number.
         """
         # build the URL to call
-        cam_host = PTZ_CAM_HOSTS[monitor_id]
+        cam_host = PTZ_CAM_HOSTS.get(monitor_id, None)
+        if cam_host is None:
+            self._log.warning(
+                'PTZ_CAM_HOSTS has no entry for monitor_id=%s', monitor_id
+            )
+            return
         url = 'http://%s/cgi-bin/ptz.cgi?' \
               'action=start&channel=0&code=GotoPreset&arg1=0&' \
               'arg2=%s&arg3=0' % (cam_host, preset_number)
