@@ -168,6 +168,15 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 data['event']['EventId']
             )
             return
+        for f in data.get('filters', []):
+            if f.get('matched', False) is False:
+                continue
+            self._log.info(
+                'Ignoring ZM_ALARM for Event %s based on filter %s: %s',
+                data['event']['EventId'], f.get('filter_name', 'unknown'),
+                f.get('reason', 'unknown')
+            )
+            return
         # else our alarm isn't disarmed and we have some objects detected
         img = self._primary_detection_for_event(data)
         subject = 'ZoneMinder Alarm on %s - %s' % (
