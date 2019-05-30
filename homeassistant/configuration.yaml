@@ -266,6 +266,34 @@ input_boolean:
     name: Silence SIDE ZM Alarms
   silence_monitor_garage:
     name: Silence GARAGE ZM Alarms
+  silence_bedroom_motion:
+    name: Silence Bedroom Motion
+  silence_ecolink_doorwindow_sensor_sensor_3:
+    name: Silence Gate
+  silence_kitchen_motion:
+    name: Silence Kitchen Motion
+  silence_ecolink_doorwindow_sensor_sensor_4:
+    name: Silence KitchenDoor
+  silence_officesensor_sensor:
+    name: Silence OfficeSensor Sensor
+  silence_bedroomsensor_sensor:
+    name: Silence BedroomSensor Sensor
+  silence_ecolink_doorwindow_sensor_sensor_2:
+    name: Silence Crawlspace
+  silence_ecolink_motion_detector_sensor:
+    name: Silence Back Bedroom Motion
+  silence_garagemotion_sensor:
+    name: Silence GarageMotion Sensor
+  silence_livingroom_motion:
+    name: Silence Living Room Motion
+  silence_office_motion:
+    name: Silence Office Motion
+  silence_lrmotion_sensor:
+    name: Silence LivingRoom Sensor
+  silence_kitchensensor_sensor:
+    name: Silence KitchenSensor Sensor
+  silence_ecolink_doorwindow_sensor_sensor:
+    name: Silence FrontDoor
 
 input_select:
   alarmstate:
