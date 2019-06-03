@@ -80,9 +80,16 @@ IGNORED_OBJECTS = [
     # grill in back yard
     IgnoredObject(
         'Grill',
-        ['surfboard', 'suitcase', 'umbrella', 'kite', 'backpack'],
+        ['surfboard', 'suitcase', 'umbrella', 'kite', 'backpack', 'handbag'],
         monitor_num=4,
         bounding_box=(1070, 575, 100, 100)
+    ),
+    # shadows on the storage box in the yard get recognized as weird things...
+    IgnoredObject(
+        'BackStorageBox',
+        ['toilet'],
+        monitor_num=4,
+        bounding_box=(700, 250, 100, 100)
     ),
     # ignore... stuff... inside the house
     IgnoredObject(
@@ -127,6 +134,12 @@ IGNORED_OBJECTS = [
         'SIDEperson', ['person'],
         monitor_num=5,
         callable=is_person_rectangle
+    ),
+    IgnoredObject(
+        'SIDEtrailer',
+        ['pottedplant'],
+        monitor_num=5,
+        bounding_box=(260, 520, 100, 100)
     ),
     IgnoredObject(
         'OFFICEJunk', ['traffic light'],
