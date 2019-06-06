@@ -12,6 +12,7 @@ import sys
 import os
 import logging
 import argparse
+import re
 import json
 from datetime import datetime
 import pymysql
@@ -43,16 +44,25 @@ class ZmEventArchiver(object):
         )
         logger.debug('Connected to MySQL')
 
-    def run(self, keep_days=30):
+    def run(self, keep_days=30, match_re=None, no_match_re=None):
         self._purge_analysis_table()
-        event_ids = self._find_events(keep_days)
+        event_ids = self._find_events(
+            keep_days, match_re=match_re, no_match_re=no_match_re
+        )
         self._delete_events(event_ids)
 
-    def _find_events(self, num_days):
+    def _find_events(self, num_days, match_re=None, no_match_re=None):
+        match_s = ''
+        no_match_s = ''
+        if match_re is not None:
+            match_s = ' and matching /%s/' % match_re.pattern
+        if no_match_re is not None:
+            no_match_s = ' and not matching /%s/' % no_match_re.pattern
         logger.info(
-            'Looking for unarchived events older than %d days', num_days
+            'Looking for unarchived events older than %d days%s%s', num_days,
+            match_s, no_match_s
         )
-        sql = 'SELECT Id from Events WHERE Archived=0 AND ' \
+        sql = 'SELECT Id, Name from Events WHERE Archived=0 AND ' \
               'StartTime < DATE_SUB(NOW(), INTERVAL %d DAY);' % num_days
         events = []
         with self._conn.cursor() as cursor:
@@ -60,6 +70,18 @@ class ZmEventArchiver(object):
             cursor.execute(sql)
             res = cursor.fetchall()
             for r in res:
+                if match_re is not None and not match_re.match(r['Name']):
+                    logger.debug(
+                        'Skipping Event %d "%s" - no match to match-regex',
+                        r['Id'], r['Name']
+                    )
+                    continue
+                if no_match_re is not None and no_match_re.match(r['Name']):
+                    logger.debug(
+                        'Skipping Event %d "%s" - matches no-match-regex',
+                        r['Id'], r['Name']
+                    )
+                    continue
                 events.append(r['Id'])
             self._conn.commit()
         logger.info(
@@ -112,9 +134,21 @@ def parse_args(argv):
     p.add_argument('-u', '--url', dest='base_url', action='store', type=str,
                    default='http://localhost/zm/api/',
                    help='ZM API base url; default: http://localhost/zm/api/')
+    p.add_argument('-P', '--purge-analysis-only', action='store_true',
+                   default=False, dest='purge_only',
+                   help='Only purge analysis table.')
+    p.add_argument('-m', '--match-regex', dest='match_regex', action='store',
+                   default=None, type=str,
+                   help='Only purge events with names matching this regex')
+    p.add_argument('-M', '--no-match-regex', dest='no_match_regex',
+                   action='store', default=None, type=str,
+                   help='Only purge events with names NOT matching this regex')
 
     args = p.parse_args(argv)
-
+    if args.match_regex is not None:
+        args.match_regex = re.compile(args.match_regex)
+    if args.no_match_regex is not None:
+        args.no_match_regex = re.compile(args.no_match_regex)
     return args
 
 
@@ -157,4 +191,10 @@ if __name__ == "__main__":
         set_log_info()
 
     script = ZmEventArchiver(args.base_url, dry_run=args.dry_run)
-    script.run(args.keep_days)
+    if args.purge_only:
+        script._purge_analysis_table()
+    else:
+        script.run(
+            args.keep_days, match_re=args.match_regex,
+            no_match_re=args.no_match_regex
+        )
