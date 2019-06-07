@@ -131,7 +131,7 @@ views:
                 top: 73%
                 left: 5%
             - type: state-icon
-              entity: camera.garage
+              entity: camera.front
               style:
                 top: 96%
                 left: 10%
@@ -237,8 +237,8 @@ views:
           entity: switch.porch_state
           camera_image: camera.porch
         - type: picture-entity
-          entity: switch.garage_state
-          camera_image: camera.garage
+          entity: switch.front_state
+          camera_image: camera.front
         - type: picture-entity
           entity: switch.bedrm_state
           camera_image: camera.bedrm
@@ -270,7 +270,7 @@ views:
           entities:
             - input_boolean.cameras_silent
             - input_boolean.silence_monitor_porch
-            - input_boolean.silence_monitor_garage
+            - input_boolean.silence_monitor_front
             - input_boolean.silence_monitor_back
             - input_boolean.silence_monitor_side
             - input_boolean.silence_bedroom_motion
@@ -320,9 +320,9 @@ views:
             - sensor.porch_events
             - sensor.porch_status
             - switch.porch_state
-            - sensor.garage_events
-            - sensor.garage_status
-            - switch.garage_state
+            - sensor.front_events
+            - sensor.front_status
+            - switch.front_state
             - sensor.side_events
             - sensor.side_status
             - switch.side_state

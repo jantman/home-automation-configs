@@ -62,17 +62,17 @@ IGNORED_OBJECTS = [
         ['bench', 'chair', 'zebra'],
         monitor_num=3
     ),
-    # garage
+    # front
     IgnoredObject(
-        'Garage',
-        # yolo3-tiny often sees shadows on my garage as strange things...
+        'Front',
+        # yolo3-tiny often sees shadows on my front as strange things...
         ['suitcase', 'umbrella', 'stop sign', 'elephant'],
         monitor_num=3,
         bounding_box=(1447, 574, 500, 500)
     ),
-    # garage camera front street
+    # front camera front street
     IgnoredObject(
-        'GarageCamFrontStreet',
+        'FrontCamFrontStreet',
         ['sheep', 'car', 'truck', 'train'],
         monitor_num=9,
         zone_names=['Street']
