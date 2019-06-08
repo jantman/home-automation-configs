@@ -106,7 +106,7 @@ class ZmFrameExporter(object):
             self._outdir,
             '%s_%s_%s' % (
                 evt.StartTime.strftime('%Y%m%d%H%M%S'),
-                evt.Monitor.Name
+                evt.Monitor.Name,
                 evt.EventId
             )
         )
