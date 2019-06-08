@@ -63,7 +63,8 @@ class ZmFrameExporter(object):
                 )
                 continue
             if complete:
-                count += self._copy_complete(evt)
+                self._copy_complete(evt)
+                count += 1
             elif object_names:
                 count += self._copy_with_objects(evt, object_names)
             else:
