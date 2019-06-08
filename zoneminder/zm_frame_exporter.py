@@ -13,7 +13,7 @@ from dateutil.parser import parse
 import requests
 import pymysql
 from tempfile import mkdtemp
-from shutil import copy
+from shutil import copy, copytree
 import json
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -47,7 +47,10 @@ class ZmFrameExporter(object):
         self._outdir = mkdtemp()
         print('Output to: %s' % self._outdir)
 
-    def run(self, start_dt, end_dt, monitor_ids=[], object_names=[]):
+    def run(
+        self, start_dt, end_dt, monitor_ids=[], object_names=[],
+        complete=False
+    ):
         event_ids = self._find_event_ids(start_dt, end_dt)
         logger.info('Found %d Events in specified timeframe', len(event_ids))
         logger.debug('Event IDs: %s', event_ids.keys())
@@ -59,7 +62,9 @@ class ZmFrameExporter(object):
                     'Skipping Event %d for Monitor %s', eid, evt.MonitorId
                 )
                 continue
-            if object_names:
+            if complete:
+                count += self._copy_complete(evt)
+            elif object_names:
                 count += self._copy_with_objects(evt, object_names)
             else:
                 count += 1
@@ -95,6 +100,19 @@ class ZmFrameExporter(object):
         logger.debug('copy %s to %s', src, dest)
         copy(src, dest)
 
+    def _copy_complete(self, evt):
+        src = evt.path
+        dest = os.path.join(
+            self._outdir,
+            '%s_%s_%s' % (
+                evt.StartTime.strftime('%Y%m%d%H%M%S'),
+                evt.Monitor.Name
+                evt.EventId
+            )
+        )
+        logger.debug('Recursively copy %s to %s', src, dest)
+        copytree(src, dest)
+
     def _find_event_ids(self, start_dt, end_dt):
         sql = 'SELECT `Id`,`StartTime`,`Name` FROM `Events` WHERE ' \
               '((`StartTime` >= %s AND `StartTime` <= %s) OR ' \
@@ -125,6 +143,8 @@ def parse_args(argv):
                    help='limit to events with the given object detected. '
                         'Can be specified multiple times.'
                    )
+    p.add_argument('-c', '--complete', dest='complete', action='store_true',
+                   default=False, help='copy complete event directory')
     p.add_argument('START_TIME', action='store', type=str,
                    help='start time (YYYY-MM-DD HH:MM:SS)')
     p.add_argument('END_TIME', action='store', type=str,
