@@ -212,5 +212,5 @@ if __name__ == "__main__":
     )
     script.run(
         start_dt, end_dt, monitor_ids=args.monitor_ids,
-        object_names=args.object_names
+        object_names=args.object_names, complete=args.complete
     )
