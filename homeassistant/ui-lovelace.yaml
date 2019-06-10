@@ -206,7 +206,6 @@ views:
             - zwave.ge_45606_2way_dimmer_switch
             - zwave.ge_45606_2way_dimmer_switch_2
             - zwave.inovelli_unknown_type2400_id2400
-            - zwave.ecolink_motion_detector_2
             - zwave.kitchensensor
             - zwave.linear_lb60z1_dimmable_led_light_bulb
             - zwave.linear_lb60z1_dimmable_led_light_bulb_2
