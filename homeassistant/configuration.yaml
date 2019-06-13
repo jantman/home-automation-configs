@@ -282,6 +282,8 @@ input_boolean:
     name: Silence Crawlspace
   silence_ecolink_motion_detector_sensor:
     name: Silence Back Bedroom Motion
+  silence_garagemotion_sensor:
+    name: Silence GarageMotion Sensor
   silence_livingroom_motion:
     name: Silence Living Room Motion
   silence_office_motion:
@@ -336,6 +338,8 @@ alexa:
         - binary_sensor.ecolink_doorwindow_sensor_sensor_4
         # Back Bedroom Motion
         - binary_sensor.ecolink_motion_detector_sensor
+        # garage motion
+        - zwave.ecolink_motion_detector_2
         # Kitchen Motion
         - binary_sensor.kitchen_motion
         # KitchenSensor Sensor
