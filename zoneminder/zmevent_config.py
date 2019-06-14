@@ -73,16 +73,30 @@ IGNORED_OBJECTS = [
     # front camera front street
     IgnoredObject(
         'FrontCamFrontStreet',
-        ['sheep', 'car', 'truck', 'train'],
+        ['sheep', 'car', 'truck', 'train', 'pottedplant'],
         monitor_num=9,
         zone_names=['Street']
+    ),
+    # front camera SideYardNear
+    IgnoredObject(
+        'FrontCamSideYardNear',
+        ['pottedplant'],
+        monitor_num=9,
+        zone_names=['SideYardNear']
+    ),
+    # garage
+    IgnoredObject(
+        'GarageFrontCam',
+        ['boat'],
+        monitor_num=9,
+        zone_names=['GarageSide']
     ),
     # grill in back yard
     IgnoredObject(
         'Grill',
         ['surfboard', 'suitcase', 'umbrella', 'kite', 'backpack', 'handbag'],
         monitor_num=4,
-        bounding_box=(1070, 575, 100, 100)
+        bounding_box=(840, 560, 100, 100)
     ),
     # shadows on the storage box in the yard get recognized as weird things...
     IgnoredObject(
@@ -120,7 +134,7 @@ IGNORED_OBJECTS = [
     # it also gets confused about a bush in my yard
     IgnoredObject(
         'FrontShrub',
-        ['sheep', 'cow'],
+        ['sheep', 'cow', 'pottedplant'],
         bounding_box=(1300, 150, 100, 100),
         monitor_num=3
     ),
