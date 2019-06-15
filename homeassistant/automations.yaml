@@ -21,6 +21,8 @@
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+    - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
     - service: homeassistant.turn_off
       entity_id: light.zipato_bulb_2_level
@@ -44,6 +46,8 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
     - service: homeassistant.turn_off
@@ -218,6 +222,8 @@
   action:
     - service: homeassistant.turn_on
       entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
 - id: LivingRoomLightOffWhenHomeAndNoMotion
   alias: Turn Living Room Light Off If Home And No Motion For 15 Minutes
   trigger:
@@ -233,6 +239,8 @@
   action:
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_off
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
 ################################################################################
 # BEGIN "first morning" routine                                                #
 # from https://www.home-assistant.io/cookbook/automation_first_light/          #
@@ -278,6 +286,8 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
     - service: homeassistant.turn_on
       entity_id: switch.livingroomlight_switch
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
     - service: input_select.select_option

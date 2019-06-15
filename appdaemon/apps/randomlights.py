@@ -27,7 +27,8 @@ LIGHT_ENTITIES = [
     'group.porchlights',
     'switch.livingroomlight_switch',
     'light.ge_45606_2way_dimmer_switch_level',
-    'light.ge_45606_2way_dimmer_switch_level_2'
+    'light.ge_45606_2way_dimmer_switch_level_2',
+    'light.ge_45606_2way_dimmer_switch_level_3'
 ]
 
 

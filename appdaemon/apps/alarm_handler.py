@@ -122,6 +122,8 @@ LIGHT_ENTITIES = [
     'light.linear_lb60z1_dimmable_led_light_bulb_level_3',
     # TV
     'switch.livingroomlight_switch',
+    # Living Room
+    'light.ge_45606_2way_dimmer_switch_level_3',
     # Bedroom
     'light.ge_45606_2way_dimmer_switch_level',
     # Office

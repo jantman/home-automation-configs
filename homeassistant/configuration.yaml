@@ -325,6 +325,8 @@ alexa:
         name: 'Bedroom Light'
       light.ge_45606_2way_dimmer_switch_level_2:
         name: 'Office Light'
+      light.ge_45606_2way_dimmer_switch_level_3:
+        name: 'Living Room Lights'
     filter:
       include_entities:
         # Bedroom Motion
@@ -393,3 +395,5 @@ alexa:
         - sensor.thermostat_operation_mode
         # LivingRoomLight Switch
         - switch.livingroomlight_switch
+        # Living Room Light
+        - light.ge_45606_2way_dimmer_switch_level_3

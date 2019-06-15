@@ -44,6 +44,12 @@ views:
                 top: 95%
                 left: 25%
             - type: state-icon
+              tap_action: toggle
+              entity: light.ge_45606_2way_dimmer_switch_level_3
+              style:
+                top: 80%
+                left: 25%
+            - type: state-icon
               # bedroom light
               tap_action: toggle
               entity: light.ge_45606_2way_dimmer_switch_level
@@ -265,6 +271,7 @@ views:
             - light.zipato_bulb_2_level
             # Living Room
             - switch.livingroomlight_switch
+            - light.ge_45606_2way_dimmer_switch_level_3
             # Bedroom
             - light.ge_45606_2way_dimmer_switch_level
             # Office
