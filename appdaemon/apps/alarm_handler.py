@@ -166,7 +166,7 @@ CAMERA_IMAGE_ENTITIES = {
     'binary_sensor.bedroom_motion': {'monitor_id': 7},
     # garage
     'binary_sensor.garagemotion_sensor': {
-        'monitor_id': 3, 'second_monitor_id': 9
+        'monitor_id': 9, 'second_monitor_id': 10
     }
 }
 

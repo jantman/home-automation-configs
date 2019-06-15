@@ -162,6 +162,7 @@ logbook:
       - sensor.side_events
       - sensor.hall_events
       - sensor.front_events
+      - sensor.garage_events
 
 # Enables a map showing the location of tracked devices
 map:
@@ -266,6 +267,8 @@ input_boolean:
     name: Silence SIDE ZM Alarms
   silence_monitor_front:
     name: Silence FRONT ZM Alarms
+  silence_monitor_garage:
+    name: Silence GARAGE ZM Alarms
   silence_bedroom_motion:
     name: Silence Bedroom Motion
   silence_ecolink_doorwindow_sensor_sensor_3:

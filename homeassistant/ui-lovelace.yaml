@@ -131,6 +131,11 @@ views:
                 top: 73%
                 left: 5%
             - type: state-icon
+              entity: camera.garage
+              style:
+                top: 63%
+                left: 5%
+            - type: state-icon
               entity: camera.front
               style:
                 top: 96%
@@ -271,6 +276,7 @@ views:
             - input_boolean.cameras_silent
             - input_boolean.silence_monitor_porch
             - input_boolean.silence_monitor_front
+            - input_boolean.silence_monitor_garage
             - input_boolean.silence_monitor_back
             - input_boolean.silence_monitor_side
             - input_boolean.silence_bedroom_motion
@@ -299,6 +305,9 @@ views:
         - type: picture-entity
           entity: switch.office_state
           camera_image: camera.office
+        - type: picture-entity
+          entity: switch.garage_state
+          camera_image: camera.garage
         - type: weather-forecast
           entity: weather.dark_sky
         - type: entities
@@ -323,6 +332,9 @@ views:
             - sensor.front_events
             - sensor.front_status
             - switch.front_state
+            - sensor.garage_events
+            - sensor.garage_status
+            - switch.garage_state
             - sensor.side_events
             - sensor.side_status
             - switch.side_state
