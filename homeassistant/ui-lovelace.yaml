@@ -166,6 +166,16 @@ views:
               style:
                 top: 62%
                 left: 80%
+            - type: state-icon
+              entity: camera.south
+              style:
+                top: 96%
+                left: 45%
+            - type: state-icon
+              entity: camera.north
+              style:
+                top: 96%
+                left: 55%
             # TEMPERATURES
             - type: state-label
               entity: sensor.bedroomsensor_temperature
@@ -317,6 +327,12 @@ views:
           camera_image: camera.garage
         - type: weather-forecast
           entity: weather.dark_sky
+        - type: picture-entity
+          entity: switch.north_state
+          camera_image: camera.north
+        - type: picture-entity
+          entity: switch.south_state
+          camera_image: camera.south
         - type: entities
           show_header_toggle: false
           title: Cameras
@@ -348,4 +364,10 @@ views:
             - sensor.hall_events
             - sensor.hall_status
             - switch.hall_state
+            - sensor.north_events
+            - sensor.north_status
+            - switch.north_state
+            - sensor.south_events
+            - sensor.south_status
+            - switch.south_state
       # END RIGHT COLUMN - NO MORE COLUMNS!
