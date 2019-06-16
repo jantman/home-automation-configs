@@ -60,7 +60,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 # Imports from this directory
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
-    HASS_EVENT_NAME, CONFIG
+    HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS
 )
 from zmevent_image_analysis import YoloAnalyzer, ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -262,6 +262,12 @@ def run(args):
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
+    if event.MonitorId in HASS_IGNORE_MONITOR_IDS:
+        logger.info(
+            'Not sending Event %s for monitor %s to HASS - MonitorId '
+            'in HASS_IGNORE_MONITOR_IDS', event.EventId, event.MonitorId
+        )
+        return
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )

@@ -166,6 +166,12 @@ IGNORED_OBJECTS = [
 ]
 
 
+#: List of Monitor IDs to never send to HASS
+HASS_IGNORE_MONITOR_IDS = [
+    11,
+    12
+]
+
 class DateSafeJsonEncoder(json.JSONEncoder):
     """
     Subclass of :py:class:`json.JSONEncoder` with special logic for some types.
