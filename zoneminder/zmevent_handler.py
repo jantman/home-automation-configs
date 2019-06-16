@@ -178,7 +178,10 @@ def _set_event_name(event_id, name, dry_run=False):
     logger.debug('Event renamed.')
 
 
-def update_event_name(event, analysis, dry_run=False):
+def update_event_name(event, analysis, filters, dry_run=False):
+    for f in filters:
+        if f.matched:
+            event.Name += '-' + f.suffix
     if event.Cause != 'Motion':
         _set_event_name(
             event.EventId, '%s-NotMotion' % event.Name, dry_run=dry_run
@@ -256,7 +259,9 @@ def run(args):
         analyzer = ImageAnalysisWrapper(event, ANALYZERS)
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
-        update_event_name(event, analysis, dry_run=args.dry_run)
+        update_event_name(
+            event, analysis, result['filters'], dry_run=args.dry_run
+        )
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
