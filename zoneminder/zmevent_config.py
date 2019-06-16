@@ -42,12 +42,30 @@ def is_person_rectangle(i, label, x, y, w, h, zones, score):
     """
     ``i`` is an IgnoredObject instance. This is a custom method to match the
     weird false "person" detection in the trees on SIDE.
+    Returns True if object should be ignored.
     """
     if (
         150 < x < 250 and
         475 < y < 570 and
         h > 900 and
         350 < w < 460 and
+        label == 'person'
+    ):
+        return True
+    return False
+
+
+def is_garage_as_person(i, label, x, y, w, h, zones, score):
+    """
+    ``i`` is an IgnoredObject instance. This is a custom method to match the
+    cases where the garage is identified as a person.
+    Returns True if object should be ignored.
+    """
+    if (
+        1400 < x < 1650 and
+        450 < y < 650 and
+        h > 800 and
+        w > 550 and
         label == 'person'
     ):
         return True
@@ -90,6 +108,12 @@ IGNORED_OBJECTS = [
         ['boat'],
         monitor_num=9,
         zone_names=['GarageSide']
+    ),
+    # garage identified as person
+    IgnoredObject(
+        'GARAGEasPerson', ['person'],
+        monitor_num=9,
+        callable=is_garage_as_person
     ),
     # grill in back yard
     IgnoredObject(
