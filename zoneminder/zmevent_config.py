@@ -134,7 +134,8 @@ IGNORED_OBJECTS = [
         'IndoorStuff',
         [
             'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
-            'sink', 'bowl', 'refrigerator', 'laptop', 'chair', 'diningtable'
+            'sink', 'bowl', 'refrigerator', 'laptop', 'chair', 'diningtable',
+            'bottle'
         ],
         monitor_num=2
     ),
@@ -186,6 +187,19 @@ IGNORED_OBJECTS = [
     IgnoredObject(
         'BEDRMJunk', ['bed', 'oven'],
         monitor_num=7
+    ),
+    # Ignore cars off my property...
+    IgnoredObject(
+        'SideStreetCar',
+        ['car', 'truck', 'bus', 'train'],
+        monitor_num=5,
+        zone_names=['Street1']
+    ),
+    IgnoredObject(
+        'BackStreetCar',
+        ['car', 'truck', 'bus', 'train'],
+        monitor_num=4,
+        zone_names=['BackFence']
     )
 ]
 
