@@ -65,6 +65,7 @@ from zmevent_config import (
 from zmevent_image_analysis import YoloAnalyzer, ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
+from zmevent_ir_change import handle_ir_change
 
 #: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
 ANALYZERS = [YoloAnalyzer]
@@ -255,6 +256,18 @@ def run(args):
             f = cls(event)
             f.run()
             result['filters'].append(f)
+            if cls == IRChangeFilter and f.matched:
+                logger.debug(
+                    'Handle IRChangeFilter for Monitor %s Event %s',
+                    event.MonitorId, event.EventId
+                )
+                try:
+                    handle_ir_change(event, f)
+                except Exception:
+                    logger.critical(
+                        'Exception running handle_ir_change on Event %s',
+                        event.EventId, exc_info=True
+                    )
         except Exception:
             logger.critical(
                 'Exception running filter %s on event %s',
