@@ -224,23 +224,6 @@
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
-- id: LivingRoomLightOffWhenHomeAndNoMotion
-  alias: Turn Living Room Light Off If Home And No Motion For 15 Minutes
-  trigger:
-    platform: state
-    entity_id: binary_sensor.livingroom_motion
-    to: 'off'
-    for:
-      minutes: 15
-  condition:
-    - condition: state
-      entity_id: device_tracker.rf8m22eq54n
-      state: 'home'
-  action:
-    - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
-    - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
 ################################################################################
 # BEGIN "first morning" routine                                                #
 # from https://www.home-assistant.io/cookbook/automation_first_light/          #
