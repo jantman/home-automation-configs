@@ -225,6 +225,12 @@ def update_event_name(event, analysis, filters, dry_run=False):
 
 def run(args):
     # populate the event from ZoneMinder DB
+    if args.monitor_id in [11, 12]:
+        logger.warning(
+            'Not running for Event %s on Monitor %s (cause: %s)',
+            args.event_id, args.monitor_id, args.cause
+        )
+        return
     event = ZMEvent(args.event_id, args.monitor_id, args.cause)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
