@@ -1,6 +1,7 @@
 appdaemon:
   threads: 10
   missing_app_warnings: 1
+  production_mode: True
   plugins:
     HASS:
       type: hass
