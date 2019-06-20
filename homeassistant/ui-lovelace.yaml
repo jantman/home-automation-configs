@@ -3,7 +3,7 @@ name: Non-Shitty UI
 views:
   - name: Main
     title: Main
-    id: main
+    path: main
     theme: this-doesnt-work
     cards:
       # LEFT COLUMN
@@ -213,10 +213,8 @@ views:
                 top: 65%
                 left: 40%
         - type: picture-entity
-          entity: switch.side_state
           camera_image: camera.side
         - type: picture-entity
-          entity: switch.hall_state
           camera_image: camera.hall
         - type: entities
           title: Z-Wave
@@ -255,13 +253,10 @@ views:
             - input_boolean.enable_randomlights
             - input_boolean.enable_motion
         - type: picture-entity
-          entity: switch.porch_state
           camera_image: camera.porch
         - type: picture-entity
-          entity: switch.front_state
           camera_image: camera.front
         - type: picture-entity
-          entity: switch.bedrm_state
           camera_image: camera.bedrm
         - type: entities
           title: Climate
@@ -314,24 +309,18 @@ views:
       - type: vertical-stack
         cards:
         - type: picture-entity
-          entity: switch.back_state
           camera_image: camera.back
         - type: picture-entity
-          entity: switch.lrkitchen_state
           camera_image: camera.lrkitchen
         - type: picture-entity
-          entity: switch.office_state
           camera_image: camera.office
         - type: picture-entity
-          entity: switch.garage_state
           camera_image: camera.garage
         - type: weather-forecast
           entity: weather.dark_sky
         - type: picture-entity
-          entity: switch.north_state
           camera_image: camera.north
         - type: picture-entity
-          entity: switch.south_state
           camera_image: camera.south
         - type: entities
           show_header_toggle: false
