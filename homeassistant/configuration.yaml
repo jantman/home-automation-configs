@@ -21,6 +21,9 @@ homeassistant:
       allow_bypass_login: true
     - type: homeassistant
 
+lovelace:
+  mode: yaml
+
 zone:
   - name: Work
     longitude: -84.3514511
