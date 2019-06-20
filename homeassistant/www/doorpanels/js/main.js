@@ -20,24 +20,28 @@ function doorPanelPreInit() {
  */
 function doorPanelInit() {
   $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
-  HAWS.createConnection(hassBaseUrl).then(
-    conn => {
-      hawsConn = conn;
-      conn.subscribeEvents(handleEvent);
-      conn.getStates().then(states => {
-        states.forEach(function(s) {
-          if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
-          if (s.entity_id.startsWith('group.')) {
-            var groupName = s.entity_id.split(".")[1];
-            groupStates[groupName] = s.state;
-            handleLightStateChange(groupName, s.state);
-          }
-        });
-      });
-    },
-    err => {
-      $('#status').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
-      window.setTimeout(doorPanelInit, 10000);
+  HAWS.getAuth({ hassUrl: hassBaseUrl, authCode: apiToken }).then (
+    auth => {
+      HAWS.createConnection(auth).then(
+        conn => {
+          hawsConn = conn;
+          conn.subscribeEvents(handleEvent);
+          conn.getStates().then(states => {
+            states.forEach(function(s) {
+              if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+              if (s.entity_id.startsWith('group.')) {
+                var groupName = s.entity_id.split(".")[1];
+                groupStates[groupName] = s.state;
+                handleLightStateChange(groupName, s.state);
+              }
+            });
+          });
+        },
+        err => {
+          $('#status').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
+          window.setTimeout(doorPanelInit, 10000);
+        }
+      )
     }
   );
 }
