@@ -19,8 +19,8 @@ All configuration is in constants near the top of the file.
 The user it runs as must be able to read that file. The path to the HASS
 configuration directory is read from the HASS API in
 ``AlarmHandler._get_hass_secrets()`` via the ``conf_dir`` key of the return
-value of ``appdaemon.plugins.hass.hassapi.Hass.get_hass_config()`` and then
-``secrets.yaml`` in that file is read and loaded. The expected secrets.yaml
+value of ``appdaemon.plugins.hass.hassapi.Hass.get_plugin_config("hass")`` and
+then ``secrets.yaml`` in that file is read and loaded. The expected secrets.yaml
 keys are defined in ``AlarmHandler._get_hass_secrets()``.
 
 # Highly Custom Bits

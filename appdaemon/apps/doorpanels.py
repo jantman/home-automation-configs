@@ -13,8 +13,8 @@ hash keys are alarm codes and values are string descriptions of them.
 The user it runs as must be able to read that file. The path to the HASS
 configuration directory is read from the HASS API in
 ``_get_hass_secrets()`` via the ``conf_dir`` key of the return
-value of ``appdaemon.plugins.hass.hassapi.Hass.get_hass_config()`` and then
-``secrets.yaml`` in that file is read and loaded. The expected secrets.yaml
+value of ``appdaemon.plugins.hass.hassapi.Hass.get_plugin_config("hass")`` and
+then ``secrets.yaml`` in that file is read and loaded. The expected secrets.yaml
 keys are defined in ``_get_hass_secrets()``.
 
 """
@@ -72,7 +72,7 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         Return the dictionary contents of HASS ``secrets.yaml``.
         """
         # get HASS configuration from its API
-        apiconf = self.get_hass_config()
+        apiconf = self.get_plugin_config("hass")
         # formulate the absolute path to HASS secrets.yaml
         conf_path = os.path.join(apiconf['config_dir'], 'secrets.yaml')
         self._log.debug('Reading hass secrets from: %s', conf_path)
