@@ -201,18 +201,7 @@ zoneminder:
 camera:
   - platform: zoneminder
 
-zwave:
-  usb_path: /dev/ttyACM0
-  network_key: "0x9F, 0x72, 0x4E, 0xD6, 0x21, 0x27, 0x4E, 0x4F, 0x11, 0xEC, 0x49, 0xCD, 0x40, 0x52, 0x12, 0x36"
-  device_config:
-    zwave.2gig_technologies_ct101_thermostat_iris:
-      polling_intensity: 1
-    climate.2gig_technologies_ct101_thermostat_iris_cooling_1:
-      polling_intensity: 1
-    climate.2gig_technologies_ct101_thermostat_iris_heating_1:
-      polling_intensity: 1
-    sensor.2gig_technologies_ct101_thermostat_iris_temperature:
-      polling_intensity: 1
+system_health:
 
 device_tracker:
 
