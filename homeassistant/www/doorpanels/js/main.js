@@ -20,7 +20,7 @@ function doorPanelPreInit() {
  */
 function doorPanelInit() {
   $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
-  HAWS.getAuth({ hassUrl: hassBaseUrl, authCode: apiToken }).then (
+  HAWS.getAuth({ hassUrl: hassBaseUrl }).then (
     auth => {
       HAWS.createConnection(auth).then(
         conn => {
