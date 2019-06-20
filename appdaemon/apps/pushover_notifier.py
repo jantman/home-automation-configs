@@ -21,7 +21,7 @@ class PushoverNotifier(object):
         Return the dictionary contents of HASS ``secrets.yaml``.
         """
         # get HASS configuration from its API
-        apiconf = self.get_plugin_config("hass")
+        apiconf = self.get_plugin_config()
         # formulate the absolute path to HASS secrets.yaml
         conf_path = os.path.join(apiconf['config_dir'], 'secrets.yaml')
         self._log.debug('Reading hass secrets from: %s', conf_path)
