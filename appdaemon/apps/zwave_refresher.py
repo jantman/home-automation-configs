@@ -12,8 +12,6 @@ RUN_INTERVAL = 300  # seconds
 INTER_ENTITY_DELAY = 15  # seconds
 
 REFRESH_NODES = {
-    'zwave.ge_45606_2way_dimmer_switch': 19,
-    'zwave.ge_45606_2way_dimmer_switch_2': 20,
     'zwave.2gig_technologies_ct101_thermostat_iris': 5
 }
 
@@ -47,4 +45,4 @@ class ZwaveRefresher(hass.Hass, SaneLoggingApp):
         node_name = kwargs['node_name']
         node_id = kwargs['node_id']
         self._log.debug('Refreshing ZWave Node %s (%s)', node_id, node_name)
-        self.call_service('zwave/refresh_node', node_id=node_id)
+        self.call_service('zwave.refresh_node', node_id=node_id)
