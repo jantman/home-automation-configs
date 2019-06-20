@@ -12,6 +12,14 @@ homeassistant:
   time_zone: America/New_York
   # Customization file
   customize: !include customize.yaml
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 192.168.0.0/24
+        - 127.0.0.1
+        - ::1
+      allow_bypass_login: true
+    - type: homeassistant
 
 zone:
   - name: Work
@@ -184,15 +192,10 @@ switch:
     command_on: Modect
     command_off: Monitor
 
-# Text to speech
-tts:
-  - platform: google
-
 # Cloud
 # cloud:
 
 group: !include groups.yaml
-automation: !include automations.yaml
 script: !include scripts.yaml
 
 zoneminder:
@@ -384,12 +387,3 @@ alexa:
         - switch.livingroomlight_switch
         # Living Room Light
         - light.ge_45606_2way_dimmer_switch_level_3
-
-auth_providers:
-  - type: trusted_networks
-    trusted_networks:
-      - 192.168.0.0/24
-      - 127.0.0.1
-      - ::1
-    allow_bypass_login: true
-  - type: homeassistant
