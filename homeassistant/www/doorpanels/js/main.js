@@ -12,7 +12,7 @@ var groupStates = {};
 function doorPanelPreInit() {
   hassBaseUrl = getHassWsUrl();
   $('#status').html('Connecting to ' + hassBaseUrl + ' ...');
-  findIP(gotIp);
+  getLocalIP().then((ipAddr) => { gotIp(ipAddr); });
 }
 
 /**
@@ -190,35 +190,63 @@ function gotIp(ip) {
 }
 
 /**
- * Finds the local machine's IP address. We send this in the Event that
- * goes to HASS and is processed by AppDaemon.
+ * Get Local IP Address
  *
- * Source: https://stackoverflow.com/a/32841164/211734
+ * From: <https://gist.github.com/hectorguo/672844c319547498dcb569df583f959d>
+ *
+ * @returns Promise Object
+ *
+ * getLocalIP().then((ipAddr) => {
+ *    console.log(ipAddr); // 192.168.0.122
+ * });
  */
-function findIP(callback) {
-  var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection; //compatibility for firefox and chrome
-  var pc = new myPeerConnection({iceServers: []}),
-    noop = function() {},
-    localIPs = {},
-    ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
-    key;
+function getLocalIP() {
+  return new Promise(function(resolve, reject) {
+    // NOTE: window.RTCPeerConnection is "not a constructor" in FF22/23
+    var RTCPeerConnection = /*window.RTCPeerConnection ||*/ window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
 
-  function ipIterate(ip) {
-    if (!localIPs[ip]) callback(ip);
-    localIPs[ip] = true;
-    // ok, don't get any more...
-    ipIterate = noop;
-  }
-  pc.createDataChannel(""); //create a bogus data channel
-  pc.createOffer(function(sdp) {
-    sdp.sdp.split('\n').forEach(function(line) {
-      if (line.indexOf('candidate') < 0) return;
-      line.match(ipRegex).forEach(ipIterate);
-    });
-    pc.setLocalDescription(sdp, noop, noop);
-  }, noop); // create offer and set local description
-  pc.onicecandidate = function(ice) { //listen for candidate events
-    if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
-    ice.candidate.candidate.match(ipRegex).forEach(ipIterate);
-  };
+    if (!RTCPeerConnection) {
+      reject('Your browser does not support this API');
+    }
+
+    var rtc = new RTCPeerConnection({iceServers:[]});
+    var addrs = {};
+    addrs["0.0.0.0"] = false;
+
+    function grepSDP(sdp) {
+        var hosts = [];
+        var finalIP = '';
+        sdp.split('\r\n').forEach(function (line) { // c.f. http://tools.ietf.org/html/rfc4566#page-39
+            if (~line.indexOf("a=candidate")) {     // http://tools.ietf.org/html/rfc4566#section-5.13
+                var parts = line.split(' '),        // http://tools.ietf.org/html/rfc5245#section-15.1
+                    addr = parts[4],
+                    type = parts[7];
+                if (type === 'host') {
+                    finalIP = addr;
+                }
+            } else if (~line.indexOf("c=")) {       // http://tools.ietf.org/html/rfc4566#section-5.7
+                var parts = line.split(' '),
+                    addr = parts[2];
+                finalIP = addr;
+            }
+        });
+        return finalIP;
+    }
+
+    if (1 || window.mozRTCPeerConnection) {      // FF [and now Chrome!] needs a channel/stream to proceed
+        rtc.createDataChannel('', {reliable:false});
+    };
+
+    rtc.onicecandidate = function (evt) {
+        // convert the candidate to SDP so we can run it through our general parser
+        // see https://twitter.com/lancestout/status/525796175425720320 for details
+        if (evt.candidate) {
+          var addr = grepSDP("a="+evt.candidate.candidate);
+          resolve(addr);
+        }
+    };
+    rtc.createOffer(function (offerDesc) {
+        rtc.setLocalDescription(offerDesc);
+    }, function (e) { console.warn("offer failed", e); });
+  });
 }
