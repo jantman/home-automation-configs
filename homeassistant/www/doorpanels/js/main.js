@@ -1,3 +1,12 @@
+import {
+        getAuth,
+        getUser,
+        callService,
+        createConnection,
+        subscribeEntities,
+        ERR_HASS_HOST_REQUIRED
+      } from "./haws.es.js";
+
 var myIP = null;
 var hawsConn = null;
 var hassBaseUrl = null;
@@ -9,7 +18,7 @@ var groupStates = {};
  * Main entrypoint / pre-initializer. Finds our IP address then calls
  * `doorPanelInit()`.
  */
-function doorPanelPreInit() {
+export function doorPanelPreInit() {
   hassBaseUrl = getHassWsUrl();
   $('#status').html('Connecting to ' + hassBaseUrl + ' ...');
   getLocalIP().then((ipAddr) => { gotIp(ipAddr); });
@@ -20,30 +29,37 @@ function doorPanelPreInit() {
  */
 function doorPanelInit() {
   $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
-  HAWS.getAuth({ hassBaseUrl }).then (
-    auth => {
-      HAWS.createConnection(auth).then(
-        conn => {
-          hawsConn = conn;
-          conn.subscribeEvents(handleEvent);
-          conn.getStates().then(states => {
-            states.forEach(function(s) {
-              if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
-              if (s.entity_id.startsWith('group.')) {
-                var groupName = s.entity_id.split(".")[1];
-                groupStates[groupName] = s.state;
-                handleLightStateChange(groupName, s.state);
-              }
-            });
-          });
-        },
-        err => {
-          $('#status').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
-          window.setTimeout(doorPanelInit, 10000);
-        }
-      )
+
+  (async () => {
+    let auth;
+    try {
+      auth = await getAuth({ authCode: apiToken });
+    } catch (err) {
+      if (err === ERR_HASS_HOST_REQUIRED) {
+        const hassUrl = hassBaseUrl;
+        if (!hassUrl) return;
+        auth = await getAuth({ hassUrl });
+      } else {
+        alert(`Unknown error: ${err}`);
+        return;
+      }
     }
-  );
+    const connection = await createConnection({ auth });
+    hawsConn = connection;
+    connection.subscribeEvents(handleEvent);
+    connection.getStates().then(states => {
+      states.forEach(function(s) {
+        if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+        if (s.entity_id.startsWith('group.')) {
+          var groupName = s.entity_id.split(".")[1];
+          groupStates[groupName] = s.state;
+          handleLightStateChange(groupName, s.state);
+        }
+      });
+    });
+    // To play from the console
+    getUser(connection).then(user => console.log("Logged in as", user));
+  })();
 }
 
 /** Callback on the HAWS connection; called for all events.
@@ -94,7 +110,7 @@ function handleLightStateChange(groupName, newState) {
  *
  * @param name [String] button name - "stay", "leave", "disarm", or "enterCode".
  */
-function handleAlarmButton(name) {
+export function handleAlarmButton(name) {
   if (name == 'stay') {
     console.log('Got "stay" alarm button.');
     hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
@@ -123,7 +139,7 @@ function handleAlarmButton(name) {
  *
  * @param char [String] the code character entered.
  */
-function handleCode(char) {
+export function handleCode(char) {
   console.log('Got alarm code entry: %s; currentCode=%s', char, currentCode);
   clearTimeout(inputTimeout);
   inputTimeout = setTimeout(function() { currentCode = ''; }, 5000);
@@ -135,7 +151,7 @@ function handleCode(char) {
  *
  * @param name [String] light or group name - "porch", "lr" or "kitchen".
  */
-function handleLightButton(name) {
+export function handleLightButton(name) {
   console.log('Got light button: %s', name);
   if(groupStates[name] == 'on') {
     hawsConn.callService('homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
@@ -177,7 +193,7 @@ function handleAlarmState(st_name) {
  * Using the current URL, find the URL for the HASS WebSocket API.
  */
 function getHassWsUrl() {
-  return 'ws://' + window.location.hostname + ':' + window.location.port + '/api/websocket';
+  return 'ws://' + window.location.hostname + ':' + window.location.port;
 }
 
 /**
