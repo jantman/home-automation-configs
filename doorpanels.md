@@ -5,7 +5,8 @@
 As of somewhere in the 0.80-0.94 releases, HASS now requires an API token for use of the websocket API. This is a bit of a pain. As a result, we have to locally place a file in our clone of this repo at ``homeassistant/www/doorpanels/js/local_apitoken.js`` with content like:
 
 ```
-var apiToken = "yourTokenHere";
+export const apiToken = "yourTokenHere";
+export const hassBaseUrl = "http://YourHassHostName:8123";
 ```
 
 ## RaspberryPi Hardware/Software Setup

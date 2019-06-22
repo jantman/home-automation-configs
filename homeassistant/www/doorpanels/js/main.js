@@ -20,15 +20,25 @@ import {
 } from "./local_apitoken.js"
 
 (async () => {
+  $('#status').html('Connecting to ' + hassBaseUrl + '...');
+  console.log('Connecting to ' + hassBaseUrl + '...');
   let auth = new Auth({
     access_token: apiToken,
     // Set expires to very far in the future
     expires: new Date(new Date().getTime() + 1e11),
     hassUrl: hassBaseUrl
   });
-
+  myIP = await getLocalIP();
+  $('#status').html('Connecting to ' + hassBaseUrl + '...<br />my IP: ' + myIP);
+  console.log('Connecting to ' + hassBaseUrl + '...<br />my IP: ' + myIP);
   const connection = await createConnection({ auth });
   hawsConn = connection;
+  getUser(connection).then(
+    user => {
+      $('#status').html('Connected to ' + hassBaseUrl + ' as ' + user + '.<br />my IP: ' + myIP);
+      console.log('Connected to ' + hassBaseUrl + ' as ' + user.name + '.<br />my IP: ' + myIP);
+    }
+  );
   connection.subscribeEvents(handleEvent);
   getStates(connection).then(states => {
     states.forEach(function(s) {
@@ -44,7 +54,6 @@ import {
   // To play from the console
   window.auth = auth;
   window.connection = connection;
-  getUser(connection).then(user => console.log("Logged in as", user));
 })();
 
 /** Callback on the HAWS connection; called for all events.
@@ -98,24 +107,25 @@ function handleLightStateChange(groupName, newState) {
 export function handleAlarmButton(name) {
   if (name == 'stay') {
     console.log('Got "stay" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
+    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
   } else if (name == 'leave') {
     console.log('Got "leave" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'leave', 'client': myIP });
+    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'leave', 'client': myIP });
   } else if (name == 'disarm') {
     console.log('Got "disarm" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
+    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
   } else if (name == 'enterCode') {
     if (currentCode.trim() == "") {
       console.log('Not sending empty code.');
       return;
     }
     console.log('Sending Code: "%s"', currentCode);
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
+    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
     clearTimeout(inputTimeout);
     currentCode = '';
   }
 }
+window.handleAlarmButton = handleAlarmButton;
 
 /**
  * Handle the press of a button on the numeric pad for the alarm code. Appends
@@ -130,6 +140,7 @@ export function handleCode(char) {
   inputTimeout = setTimeout(function() { currentCode = ''; }, 5000);
   currentCode = currentCode + char;
 }
+window.handleCode = handleCode;
 
 /**
  * Handle the click of a light-control button.
@@ -139,11 +150,12 @@ export function handleCode(char) {
 export function handleLightButton(name) {
   console.log('Got light button: %s', name);
   if(groupStates[name] == 'on') {
-    hawsConn.callService('homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
   } else {
-    hawsConn.callService('homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
   }
 }
+window.handleLightButton = handleLightButton;
 
 /**
  * Update the display/UI depending on the current state of the alarm.
@@ -172,15 +184,6 @@ function handleAlarmState(st_name) {
     $('#away-armed').hide();
     $('#status').show();
   }
-}
-
-/**
- * Callback for `findIP()` when this host's IP is found.
- */
-function gotIp(ip) {
-  if (myIP != null) { return null; }
-  myIP = ip;
-  doorPanelInit();
 }
 
 /**
