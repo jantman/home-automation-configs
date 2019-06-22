@@ -1,66 +1,51 @@
-import {
-        getAuth,
-        getUser,
-        callService,
-        createConnection,
-        subscribeEntities,
-        ERR_HASS_HOST_REQUIRED
-      } from "./haws.es.js";
-
 var myIP = null;
 var hawsConn = null;
-var hassBaseUrl = null;
 var currentCode = '';
 var inputTimeout = null;
 var groupStates = {};
 
-/**
- * Main entrypoint / pre-initializer. Finds our IP address then calls
- * `doorPanelInit()`.
- */
-export function doorPanelPreInit() {
-  hassBaseUrl = getHassWsUrl();
-  $('#status').html('Connecting to ' + hassBaseUrl + ' ...');
-  getLocalIP().then((ipAddr) => { gotIp(ipAddr); });
-}
+import {
+  Auth,
+  callService,
+  createConnection,
+  subscribeEntities,
+  getStates,
+  getUser,
+  ERR_HASS_HOST_REQUIRED
+} from "./haws.es.js";
 
-/**
- * Main initialization function, called after `gotIp()` found our IP address.
- */
-function doorPanelInit() {
-  $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
+import {
+  apiToken,
+  hassBaseUrl
+} from "./local_apitoken.js"
 
-  (async () => {
-    let auth;
-    try {
-      auth = await getAuth({ authCode: apiToken });
-    } catch (err) {
-      if (err === ERR_HASS_HOST_REQUIRED) {
-        const hassUrl = hassBaseUrl;
-        if (!hassUrl) return;
-        auth = await getAuth({ hassUrl });
-      } else {
-        alert(`Unknown error: ${err}`);
-        return;
+(async () => {
+  let auth = new Auth({
+    access_token: apiToken,
+    // Set expires to very far in the future
+    expires: new Date(new Date().getTime() + 1e11),
+    hassUrl: hassBaseUrl
+  });
+
+  const connection = await createConnection({ auth });
+  hawsConn = connection;
+  connection.subscribeEvents(handleEvent);
+  getStates(connection).then(states => {
+    states.forEach(function(s) {
+      if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+      if (s.entity_id.startsWith('group.')) {
+        var groupName = s.entity_id.split(".")[1];
+        groupStates[groupName] = s.state;
+        handleLightStateChange(groupName, s.state);
       }
-    }
-    const connection = await createConnection({ auth });
-    hawsConn = connection;
-    connection.subscribeEvents(handleEvent);
-    connection.getStates().then(states => {
-      states.forEach(function(s) {
-        if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
-        if (s.entity_id.startsWith('group.')) {
-          var groupName = s.entity_id.split(".")[1];
-          groupStates[groupName] = s.state;
-          handleLightStateChange(groupName, s.state);
-        }
-      });
     });
-    // To play from the console
-    getUser(connection).then(user => console.log("Logged in as", user));
-  })();
-}
+  });
+
+  // To play from the console
+  window.auth = auth;
+  window.connection = connection;
+  getUser(connection).then(user => console.log("Logged in as", user));
+})();
 
 /** Callback on the HAWS connection; called for all events.
  *
@@ -187,13 +172,6 @@ function handleAlarmState(st_name) {
     $('#away-armed').hide();
     $('#status').show();
   }
-}
-
-/**
- * Using the current URL, find the URL for the HASS WebSocket API.
- */
-function getHassWsUrl() {
-  return 'ws://' + window.location.hostname + ':' + window.location.port + '/api/websocket';
 }
 
 /**
