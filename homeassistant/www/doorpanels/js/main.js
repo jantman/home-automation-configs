@@ -193,7 +193,7 @@ function handleAlarmState(st_name) {
  * Using the current URL, find the URL for the HASS WebSocket API.
  */
 function getHassWsUrl() {
-  return 'ws://' + window.location.hostname + ':' + window.location.port;
+  return 'ws://' + window.location.hostname + ':' + window.location.port + '/api/websocket';
 }
 
 /**
