@@ -107,20 +107,20 @@ function handleLightStateChange(groupName, newState) {
 export function handleAlarmButton(name) {
   if (name == 'stay') {
     console.log('Got "stay" alarm button.');
-    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
+    sendEvent({ 'type': 'stay', 'client': myIP });
   } else if (name == 'leave') {
     console.log('Got "leave" alarm button.');
-    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'leave', 'client': myIP });
+    sendEvent({ 'type': 'leave', 'client': myIP });
   } else if (name == 'disarm') {
     console.log('Got "disarm" alarm button.');
-    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
+    sendEvent({ 'type': 'disarm', 'client': myIP });
   } else if (name == 'enterCode') {
     if (currentCode.trim() == "") {
       console.log('Not sending empty code.');
       return;
     }
     console.log('Sending Code: "%s"', currentCode);
-    callService(hawsConn, 'CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
+    sendEvent({ 'type': 'enterCode', 'code': currentCode, 'client': myIP });
     clearTimeout(inputTimeout);
     currentCode = '';
   }
@@ -156,6 +156,27 @@ export function handleLightButton(name) {
   }
 }
 window.handleLightButton = handleLightButton;
+
+/**
+ * Send a custom Event to HASS
+ *
+ * @param data [Object] data to send with the event
+ */
+function sendEvent(data) {
+  console.log('Send Event: ' + JSON.stringify(data));
+  $.ajax(
+    {
+      url: hassBaseUrl + '/api/events/CUSTOM-DOORPANELS',
+      data: data,
+      headers: {
+        'Authorization': 'Bearer ' + apiToken
+      },
+      method: 'POST',
+      success: function(result){ console.log('sendEvent response: ' + JSON.stringify(result)); },
+      error: function(xhr, status, error) { console.log('sendEvent status=' + status + ' error: ' + error); }
+    }
+  );
+}
 
 /**
  * Update the display/UI depending on the current state of the alarm.

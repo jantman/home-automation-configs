@@ -2,7 +2,7 @@
 Door Panel handler app.
 
 Companion to homeassistant/www/doorpanels, providing most of the logic in
-response to calls of the "doorpanels" service in the "CUSTOM" domain.
+response to ``CUSTOM-DOORPANELS`` events.
 
 Alarm disarming codes are read from a "alarm_codes" hash in secrets.yaml where
 hash keys are alarm codes and values are string descriptions of them.
@@ -63,7 +63,7 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         self._log.info("Initializing DoorPanelHandler...")
         self._hass_secrets = self._get_hass_secrets()
         self.listen_event(
-            self._handle_event, event='call_service'
+            self._handle_event, event='CUSTOM-DOORPANELS'
         )
         self._leave_timer = None
 
@@ -91,11 +91,7 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
 
     def _handle_event(self, event_name, data, _):
-        if data.get('domain', '') != 'custom':
-            return
-        if data.get('service', '') != 'doorpanels':
-            return
-        self._log.debug('Got service call: %s', data['service_data'])
+        self._log.debug('Got event %s - %s', event_name, data)
         client = data['service_data'].get('client', 'unknown')
         if data['service_data']['type'] == 'leave':
             return self._handle_leave(client)
