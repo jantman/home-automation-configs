@@ -14,51 +14,59 @@ views:
           elements:
             # BULBS
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.linear_lb60z1_dimmable_led_light_bulb_level # Kitchen bulb
               style:
                 top: 56%
                 left: 27%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.linear_lb60z1_dimmable_led_light_bulb_level_2 # Kitchen bulb 2
               style:
                 top: 47%
                 left: 27%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.zipato_bulb_2_level # Porch bulb
               style:
                 top: 84%
                 left: 7%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.linear_lb60z1_dimmable_led_light_bulb_level_3 # Porch bulb 2
               style:
                 top: 84%
                 left: 2%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: switch.livingroomlight_switch
               style:
                 top: 95%
                 left: 25%
             - type: state-icon
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.ge_45606_2way_dimmer_switch_level_3
               style:
                 top: 80%
                 left: 25%
             - type: state-icon
               # bedroom light
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.ge_45606_2way_dimmer_switch_level
               style:
                 top: 60%
                 left: 66%
             - type: state-icon
               # office light
-              tap_action: toggle
+              tap_action:
+                action: toggle
               entity: light.ge_45606_2way_dimmer_switch_level_2
               style:
                 top: 80%
@@ -215,6 +223,8 @@ views:
         - type: picture-entity
           entity: switch.side_state
           camera_image: camera.side
+          state_filter:
+
         - type: picture-entity
           entity: switch.hall_state
           camera_image: camera.hall
@@ -263,13 +273,9 @@ views:
         - type: picture-entity
           entity: switch.bedrm_state
           camera_image: camera.bedrm
-        - type: entities
-          title: Climate
-          entities:
-            - sensor.thermostat_fan_state
-            - sensor.thermostat_operation_mode
-            - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
-            - climate.2gig_technologies_ct101_thermostat_iris_heating_1
+        - type: thermostat
+          name: Climate
+          entity: climate.2gig_technologies_ct101_thermostat_iris_cooling_1
         - type: entities
           title: Lights
           entities:

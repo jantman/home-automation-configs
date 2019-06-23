@@ -12,6 +12,17 @@ homeassistant:
   time_zone: America/New_York
   # Customization file
   customize: !include customize.yaml
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 192.168.0.0/24
+        - 127.0.0.1
+        - ::1
+      allow_bypass_login: true
+    - type: homeassistant
+
+lovelace:
+  mode: yaml
 
 zone:
   - name: Work
@@ -184,46 +195,28 @@ switch:
     command_on: Modect
     command_off: Monitor
 
-# Text to speech
-tts:
-  - platform: google
-
 # Cloud
 # cloud:
 
 group: !include groups.yaml
-automation: !include automations.yaml
 script: !include scripts.yaml
 
 zoneminder:
-  host: localhost
+  - host: localhost
 
 camera:
   - platform: zoneminder
 
-zwave:
-  usb_path: /dev/ttyACM0
-  network_key: "0x9F, 0x72, 0x4E, 0xD6, 0x21, 0x27, 0x4E, 0x4F, 0x11, 0xEC, 0x49, 0xCD, 0x40, 0x52, 0x12, 0x36"
-  device_config:
-    zwave.2gig_technologies_ct101_thermostat_iris:
-      polling_intensity: 1
-    climate.2gig_technologies_ct101_thermostat_iris_cooling_1:
-      polling_intensity: 1
-    climate.2gig_technologies_ct101_thermostat_iris_heating_1:
-      polling_intensity: 1
-    sensor.2gig_technologies_ct101_thermostat_iris_temperature:
-      polling_intensity: 1
+system_health:
 
 device_tracker:
-  - platform: gpslogger
-    password: !secret gpstracker_password
 
 proximity:
   home:
     ignored_zones:
       - work
     devices:
-      - device_tracker.rf8m22eq54n
+      - device_tracker.rf8m22eq54n_2
     unit_of_measurement: m
 
 notify:
@@ -362,7 +355,7 @@ alexa:
         # Thermostat - Heating
         - climate.2gig_technologies_ct101_thermostat_iris_heating_1
         # GalaxyS10
-        - device_tracker.rf8m22eq54n
+        - device_tracker.rf8m22eq54n_2
         # Bedroom Light
         - light.ge_45606_2way_dimmer_switch_level
         # Office Light

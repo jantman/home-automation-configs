@@ -1,46 +1,60 @@
 var myIP = null;
 var hawsConn = null;
-var hassBaseUrl = null;
 var currentCode = '';
 var inputTimeout = null;
 var groupStates = {};
 
-/**
- * Main entrypoint / pre-initializer. Finds our IP address then calls
- * `doorPanelInit()`.
- */
-function doorPanelPreInit() {
-  hassBaseUrl = getHassWsUrl();
-  $('#status').html('Connecting to ' + hassBaseUrl + ' ...');
-  findIP(gotIp);
-}
+import {
+  Auth,
+  callService,
+  createConnection,
+  subscribeEntities,
+  getStates,
+  getUser,
+  ERR_HASS_HOST_REQUIRED
+} from "./haws.es.js";
 
-/**
- * Main initialization function, called after `gotIp()` found our IP address.
- */
-function doorPanelInit() {
-  $('#status').html('Connecting to ' + hassBaseUrl + ' ...<br />my IP: ' + myIP);
-  HAWS.createConnection(hassBaseUrl).then(
-    conn => {
-      hawsConn = conn;
-      conn.subscribeEvents(handleEvent);
-      conn.getStates().then(states => {
-        states.forEach(function(s) {
-          if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
-          if (s.entity_id.startsWith('group.')) {
-            var groupName = s.entity_id.split(".")[1];
-            groupStates[groupName] = s.state;
-            handleLightStateChange(groupName, s.state);
-          }
-        });
-      });
-    },
-    err => {
-      $('#status').html('Connection to ' + hassBaseUrl + ' failed; retry in 10s.<br />my IP: ' + myIP);
-      window.setTimeout(doorPanelInit, 10000);
+import {
+  apiToken,
+  hassBaseUrl
+} from "./local_apitoken.js"
+
+(async () => {
+  $('#status').html('Connecting to ' + hassBaseUrl + '...');
+  console.log('Connecting to ' + hassBaseUrl + '...');
+  let auth = new Auth({
+    access_token: apiToken,
+    // Set expires to very far in the future
+    expires: new Date(new Date().getTime() + 1e11),
+    hassUrl: hassBaseUrl
+  });
+  myIP = await getLocalIP();
+  $('#status').html('Connecting to ' + hassBaseUrl + '...<br />my IP: ' + myIP);
+  console.log('Connecting to ' + hassBaseUrl + '...<br />my IP: ' + myIP);
+  const connection = await createConnection({ auth });
+  hawsConn = connection;
+  getUser(connection).then(
+    user => {
+      $('#status').html('Connected to ' + hassBaseUrl + ' as ' + user + '.<br />my IP: ' + myIP);
+      console.log('Connected to ' + hassBaseUrl + ' as ' + user.name + '.<br />my IP: ' + myIP);
     }
   );
-}
+  connection.subscribeEvents(handleEvent);
+  getStates(connection).then(states => {
+    states.forEach(function(s) {
+      if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+      if (s.entity_id.startsWith('group.')) {
+        var groupName = s.entity_id.split(".")[1];
+        groupStates[groupName] = s.state;
+        handleLightStateChange(groupName, s.state);
+      }
+    });
+  });
+
+  // To play from the console
+  window.auth = auth;
+  window.connection = connection;
+})();
 
 /** Callback on the HAWS connection; called for all events.
  *
@@ -90,27 +104,28 @@ function handleLightStateChange(groupName, newState) {
  *
  * @param name [String] button name - "stay", "leave", "disarm", or "enterCode".
  */
-function handleAlarmButton(name) {
+export function handleAlarmButton(name) {
   if (name == 'stay') {
     console.log('Got "stay" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'stay', 'client': myIP });
+    sendEvent({ 'type': 'stay', 'client': myIP });
   } else if (name == 'leave') {
     console.log('Got "leave" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'leave', 'client': myIP });
+    sendEvent({ 'type': 'leave', 'client': myIP });
   } else if (name == 'disarm') {
     console.log('Got "disarm" alarm button.');
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'disarm', 'client': myIP });
+    sendEvent({ 'type': 'disarm', 'client': myIP });
   } else if (name == 'enterCode') {
     if (currentCode.trim() == "") {
       console.log('Not sending empty code.');
       return;
     }
     console.log('Sending Code: "%s"', currentCode);
-    hawsConn.callService('CUSTOM', 'doorpanels', { 'type': 'enterCode', 'code': currentCode, 'client': myIP });
+    sendEvent({ 'type': 'enterCode', 'code': currentCode, 'client': myIP });
     clearTimeout(inputTimeout);
     currentCode = '';
   }
 }
+window.handleAlarmButton = handleAlarmButton;
 
 /**
  * Handle the press of a button on the numeric pad for the alarm code. Appends
@@ -119,25 +134,49 @@ function handleAlarmButton(name) {
  *
  * @param char [String] the code character entered.
  */
-function handleCode(char) {
+export function handleCode(char) {
   console.log('Got alarm code entry: %s; currentCode=%s', char, currentCode);
   clearTimeout(inputTimeout);
   inputTimeout = setTimeout(function() { currentCode = ''; }, 5000);
   currentCode = currentCode + char;
 }
+window.handleCode = handleCode;
 
 /**
  * Handle the click of a light-control button.
  *
  * @param name [String] light or group name - "porch", "lr" or "kitchen".
  */
-function handleLightButton(name) {
+export function handleLightButton(name) {
   console.log('Got light button: %s', name);
   if(groupStates[name] == 'on') {
-    hawsConn.callService('homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
   } else {
-    hawsConn.callService('homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
   }
+}
+window.handleLightButton = handleLightButton;
+
+/**
+ * Send a custom Event to HASS
+ *
+ * @param data [Object] data to send with the event
+ */
+function sendEvent(data) {
+  console.log('Send Event: ' + JSON.stringify(data));
+  $.ajax(
+    {
+      url: hassBaseUrl + '/api/events/CUSTOM-DOORPANELS',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + apiToken
+      },
+      method: 'POST',
+      success: function(result){ console.log('sendEvent response: ' + JSON.stringify(result)); },
+      error: function(xhr, status, error) { console.log('sendEvent status=' + status + ' error: ' + error); }
+    }
+  );
 }
 
 /**
@@ -170,51 +209,63 @@ function handleAlarmState(st_name) {
 }
 
 /**
- * Using the current URL, find the URL for the HASS WebSocket API.
- */
-function getHassWsUrl() {
-  return 'ws://' + window.location.hostname + ':' + window.location.port + '/api/websocket';
-}
-
-/**
- * Callback for `findIP()` when this host's IP is found.
- */
-function gotIp(ip) {
-  if (myIP != null) { return null; }
-  myIP = ip;
-  doorPanelInit();
-}
-
-/**
- * Finds the local machine's IP address. We send this in the Event that
- * goes to HASS and is processed by AppDaemon.
+ * Get Local IP Address
  *
- * Source: https://stackoverflow.com/a/32841164/211734
+ * From: <https://gist.github.com/hectorguo/672844c319547498dcb569df583f959d>
+ *
+ * @returns Promise Object
+ *
+ * getLocalIP().then((ipAddr) => {
+ *    console.log(ipAddr); // 192.168.0.122
+ * });
  */
-function findIP(callback) {
-  var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection; //compatibility for firefox and chrome
-  var pc = new myPeerConnection({iceServers: []}),
-    noop = function() {},
-    localIPs = {},
-    ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
-    key;
+function getLocalIP() {
+  return new Promise(function(resolve, reject) {
+    // NOTE: window.RTCPeerConnection is "not a constructor" in FF22/23
+    var RTCPeerConnection = /*window.RTCPeerConnection ||*/ window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
 
-  function ipIterate(ip) {
-    if (!localIPs[ip]) callback(ip);
-    localIPs[ip] = true;
-    // ok, don't get any more...
-    ipIterate = noop;
-  }
-  pc.createDataChannel(""); //create a bogus data channel
-  pc.createOffer(function(sdp) {
-    sdp.sdp.split('\n').forEach(function(line) {
-      if (line.indexOf('candidate') < 0) return;
-      line.match(ipRegex).forEach(ipIterate);
-    });
-    pc.setLocalDescription(sdp, noop, noop);
-  }, noop); // create offer and set local description
-  pc.onicecandidate = function(ice) { //listen for candidate events
-    if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
-    ice.candidate.candidate.match(ipRegex).forEach(ipIterate);
-  };
+    if (!RTCPeerConnection) {
+      reject('Your browser does not support this API');
+    }
+
+    var rtc = new RTCPeerConnection({iceServers:[]});
+    var addrs = {};
+    addrs["0.0.0.0"] = false;
+
+    function grepSDP(sdp) {
+        var hosts = [];
+        var finalIP = '';
+        sdp.split('\r\n').forEach(function (line) { // c.f. http://tools.ietf.org/html/rfc4566#page-39
+            if (~line.indexOf("a=candidate")) {     // http://tools.ietf.org/html/rfc4566#section-5.13
+                var parts = line.split(' '),        // http://tools.ietf.org/html/rfc5245#section-15.1
+                    addr = parts[4],
+                    type = parts[7];
+                if (type === 'host') {
+                    finalIP = addr;
+                }
+            } else if (~line.indexOf("c=")) {       // http://tools.ietf.org/html/rfc4566#section-5.7
+                var parts = line.split(' '),
+                    addr = parts[2];
+                finalIP = addr;
+            }
+        });
+        return finalIP;
+    }
+
+    if (1 || window.mozRTCPeerConnection) {      // FF [and now Chrome!] needs a channel/stream to proceed
+        rtc.createDataChannel('', {reliable:false});
+    };
+
+    rtc.onicecandidate = function (evt) {
+        // convert the candidate to SDP so we can run it through our general parser
+        // see https://twitter.com/lancestout/status/525796175425720320 for details
+        if (evt.candidate) {
+          var addr = grepSDP("a="+evt.candidate.candidate);
+          resolve(addr);
+        }
+    };
+    rtc.createOffer(function (offerDesc) {
+        rtc.setLocalDescription(offerDesc);
+    }, function (e) { console.warn("offer failed", e); });
+  });
 }

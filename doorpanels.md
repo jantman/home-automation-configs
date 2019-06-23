@@ -1,5 +1,14 @@
 # Doorpanel RaspberryPi Touchscreen Alarm Panels
 
+## HASS setup
+
+As of somewhere in the 0.80-0.94 releases, HASS now requires an API token for use of the websocket API. This is a bit of a pain. As a result, we have to locally place a file in our clone of this repo at ``homeassistant/www/doorpanels/js/local_apitoken.js`` with content like:
+
+```
+export const apiToken = "yourTokenHere";
+export const hassBaseUrl = "http://YourHassHostName:8123";
+```
+
 ## RaspberryPi Hardware/Software Setup
 
 For my intial test, I'm using a RaspberryPi 3B+ and a cheap [Kuman 3.5 inch 320x480 TFT LCD Touchscreen](https://www.amazon.com/gp/product/B01FXC5ECS/) that I got on Amazon, along with a case that fits the screen and Pi.

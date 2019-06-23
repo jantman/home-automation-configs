@@ -12,8 +12,6 @@ RUN_INTERVAL = 300  # seconds
 INTER_ENTITY_DELAY = 15  # seconds
 
 REFRESH_NODES = {
-    'zwave.ge_45606_2way_dimmer_switch': 19,
-    'zwave.ge_45606_2way_dimmer_switch_2': 20,
     'zwave.2gig_technologies_ct101_thermostat_iris': 5
 }
 

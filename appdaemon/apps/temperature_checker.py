@@ -39,7 +39,7 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         for e in self.get_state('sensor').values():
             if e is None:
                 continue
-            uom = e.get('attributes', {}).get('unit_of_measurement', {})
+            uom = e.get('attributes', {}).get('unit_of_measurement', '')
             ename = e['entity_id']
             if uom != '°F':
                 self._log.debug('Skipping entity: %s', ename)

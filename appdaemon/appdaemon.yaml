@@ -6,3 +6,4 @@ appdaemon:
     HASS:
       type: hass
       ha_url: http://127.0.0.1:8123
+      token: !secret hass_token
