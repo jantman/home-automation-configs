@@ -273,13 +273,9 @@ views:
         - type: picture-entity
           entity: switch.bedrm_state
           camera_image: camera.bedrm
-        - type: entities
-          title: Climate
-          entities:
-            - sensor.thermostat_fan_state
-            - sensor.thermostat_operation_mode
-            - climate.2gig_technologies_ct101_thermostat_iris_cooling_1
-            - climate.2gig_technologies_ct101_thermostat_iris_heating_1
+        - type: thermostat
+          name: Climate
+          entity: climate.2gig_technologies_ct101_thermostat_iris_cooling_1
         - type: entities
           title: Lights
           entities:
