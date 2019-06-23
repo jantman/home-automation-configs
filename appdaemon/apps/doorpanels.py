@@ -92,15 +92,15 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
 
     def _handle_event(self, event_name, data, _):
         self._log.debug('Got event %s - %s', event_name, data)
-        client = data['service_data'].get('client', 'unknown')
-        if data['service_data']['type'] == 'leave':
+        client = data.get('client', 'unknown')
+        if data['type'] == 'leave':
             return self._handle_leave(client)
-        if data['service_data']['type'] == 'stay':
+        if data['type'] == 'stay':
             return self._handle_stay(client)
-        if data['service_data']['type'] == 'disarm':
+        if data['type'] == 'disarm':
             return self._handle_disarm(client)
-        if data['service_data']['type'] == 'enterCode':
-            return self._handle_code(data['service_data']['code'], client)
+        if data['type'] == 'enterCode':
+            return self._handle_code(data['code'], client)
 
     def _handle_leave(self, client_ip):
         self._log.info(

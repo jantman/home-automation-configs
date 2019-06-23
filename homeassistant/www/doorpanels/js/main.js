@@ -167,7 +167,8 @@ function sendEvent(data) {
   $.ajax(
     {
       url: hassBaseUrl + '/api/events/CUSTOM-DOORPANELS',
-      data: data,
+      contentType: 'application/json',
+      data: JSON.stringify(data),
       headers: {
         'Authorization': 'Bearer ' + apiToken
       },
