@@ -118,7 +118,10 @@ IGNORED_OBJECTS = [
     # grill in back yard
     IgnoredObject(
         'Grill',
-        ['surfboard', 'suitcase', 'umbrella', 'kite', 'backpack', 'handbag'],
+        [
+            'surfboard', 'suitcase', 'umbrella', 'kite', 'backpack', 'handbag',
+            'toilet',
+        ],
         monitor_num=4,
         bounding_box=(840, 560, 100, 100)
     ),
@@ -128,6 +131,12 @@ IGNORED_OBJECTS = [
         ['toilet'],
         monitor_num=4,
         bounding_box=(700, 250, 100, 100)
+    ),
+    IgnoredObject(
+        'BackFenceBox',
+        ['pottedplant'],
+        monitor_num=4,
+        bounding_box=(425, 180, 150, 150)
     ),
     # ignore... stuff... inside the house
     IgnoredObject(
