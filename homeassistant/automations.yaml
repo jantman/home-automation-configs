@@ -28,7 +28,7 @@
       entity_id: light.zipato_bulb_2_level
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level
-    - service: HomeAssistant.turn_off
+    - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 - alias: Turn Lights Off During Day When Away
   trigger:
@@ -54,7 +54,7 @@
       entity_id: light.zipato_bulb_2_level
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level
-    - service: HomeAssistant.turn_off
+    - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
 # Kitchen Lights                                                               #
