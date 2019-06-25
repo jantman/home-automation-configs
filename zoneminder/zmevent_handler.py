@@ -224,15 +224,8 @@ def update_event_name(event, analysis, filters, dry_run=False):
     _set_event_name(event.EventId, name, dry_run=dry_run)
 
 
-def run(args):
-    # populate the event from ZoneMinder DB
-    if args.monitor_id in [11, 12]:
-        logger.warning(
-            'Not running for Event %s on Monitor %s (cause: %s)',
-            args.event_id, args.monitor_id, args.cause
-        )
-        return
-    event = ZMEvent(args.event_id, args.monitor_id, args.cause)
+def handle_event(event_id, monitor_id, cause, dry_run=False):
+    event = ZMEvent(event_id, monitor_id, cause)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
     if os.geteuid() != evt_owner:
@@ -279,7 +272,7 @@ def run(args):
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
         update_event_name(
-            event, analysis, result['filters'], dry_run=args.dry_run
+            event, analysis, result['filters'], dry_run=dry_run
         )
     except Exception:
         logger.critical(
@@ -292,13 +285,27 @@ def run(args):
             'in HASS_IGNORE_MONITOR_IDS', event.EventId, event.MonitorId
         )
         return
+    return result
+
+
+def run(args):
+    # populate the event from ZoneMinder DB
+    if args.monitor_id in [11, 12]:
+        logger.warning(
+            'Not running for Event %s on Monitor %s (cause: %s)',
+            args.event_id, args.monitor_id, args.cause
+        )
+        return
+    result = handle_event(
+        args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
+    )
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
     if args.dry_run:
         logger.warning('Would POST to HASS: %s', res_json)
         return
-    send_to_hass(res_json, event.EventId)
+    send_to_hass(res_json, args.event_id)
 
 
 def main():
