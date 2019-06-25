@@ -139,6 +139,11 @@ def setup_logging(args):
     logger.addHandler(JournalHandler())
 
 
+def setup_library_logging():
+    global logger
+    logger = logging.getLogger('zmevent_handler')
+
+
 def send_to_hass(json_str, event_id):
     logger.info(json_str)
     url = '%s/events/%s' % (CONFIG['HASS_API_URL'], HASS_EVENT_NAME)
