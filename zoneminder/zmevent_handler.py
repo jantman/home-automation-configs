@@ -284,26 +284,21 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    if event.MonitorId in HASS_IGNORE_MONITOR_IDS:
-        logger.info(
-            'Not sending Event %s for monitor %s to HASS - MonitorId '
-            'in HASS_IGNORE_MONITOR_IDS', event.EventId, event.MonitorId
-        )
-        return
     return result
 
 
 def run(args):
     # populate the event from ZoneMinder DB
-    if args.monitor_id in [11, 12]:
-        logger.warning(
-            'Not running for Event %s on Monitor %s (cause: %s)',
-            args.event_id, args.monitor_id, args.cause
-        )
-        return
     result = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
+    if args.monitor_id in HASS_IGNORE_MONITOR_IDS:
+        logger.info(
+            'Not sending Event %s for monitor %s to HASS - MonitorId '
+            'in HASS_IGNORE_MONITOR_IDS',
+            result['event']['EventId'], args.monitor_id
+        )
+        return
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
