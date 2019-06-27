@@ -55,8 +55,8 @@ def parse_args(argv):
     )
     p.add_argument('-v', '--verbose', dest='verbose', action='count', default=0,
                    help='verbose output. specify twice for debug-level output.')
-    p.add_argument('EVENT_ID', action='append', type=int, default=[],
-                   nargs='+', help='Event ID(s)')
+    p.add_argument('EVENT_ID', type=int, default=[], nargs='+',
+                   help='Event ID(s)')
     args = p.parse_args(argv)
 
     return args
