@@ -129,6 +129,10 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         alarm_state = self.alarm_state
         self._log.debug('Got %s event data=%s', event_name, data)
+        self._log.info(
+            'Handle %s - event %s for monitor %s', event_name,
+            data['event']['EventId'], data['event']['Monitor']['Name']
+        )
         if event_name != 'ZM_ALARM':
             self._log.error(
                 'Got event of improper type: %s', event_name
