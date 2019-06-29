@@ -2,6 +2,7 @@
 Configuration for zmevent_handler.py and related scripts.
 """
 
+import os
 import json
 from datetime import datetime
 from decimal import Decimal
