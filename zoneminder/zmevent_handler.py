@@ -60,7 +60,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 # Imports from this directory
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
-    HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS
+    HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets
 )
 from zmevent_image_analysis import YoloAnalyzer, ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -92,17 +92,6 @@ def parse_args(argv):
                    help='event cause')
     args = p.parse_args(argv)
     return args
-
-
-def populate_secrets():
-    """Populate the ``CONFIG`` global from environment variables."""
-    global CONFIG
-    for varname in CONFIG.keys():
-        if varname not in os.environ:
-            raise RuntimeError(
-                'ERROR: Variable %s must be set in environment' % varname
-            )
-        CONFIG[varname] = os.environ[varname]
 
 
 def get_basicconfig_kwargs(args):

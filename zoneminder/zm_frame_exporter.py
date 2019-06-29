@@ -21,7 +21,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 # Imports from this directory
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
-    HASS_EVENT_NAME, CONFIG
+    HASS_EVENT_NAME, CONFIG, populate_secrets
 )
 from zmevent_models import ZMEvent
 
@@ -182,17 +182,6 @@ def set_log_level_format(level, format):
     formatter = logging.Formatter(fmt=format)
     logger.handlers[0].setFormatter(formatter)
     logger.setLevel(level)
-
-
-def populate_secrets():
-    """Populate the ``CONFIG`` global from environment variables."""
-    global CONFIG
-    for varname in CONFIG.keys():
-        if varname not in os.environ:
-            raise RuntimeError(
-                'ERROR: Variable %s must be set in environment' % varname
-            )
-        CONFIG[varname] = os.environ[varname]
 
 
 if __name__ == "__main__":

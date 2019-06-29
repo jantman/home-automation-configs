@@ -27,7 +27,9 @@ from yaml import load as load_yaml
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
-from zmevent_config import ANALYSIS_TABLE_NAME, CONFIG, HASS_SECRETS_PATH
+from zmevent_config import (
+    ANALYSIS_TABLE_NAME, CONFIG, HASS_SECRETS_PATH, populate_secrets
+)
 from zmevent_image_analysis import ImageAnalysisWrapper, AlternateYoloAnalyzer
 from zmevent_models import ZMEvent
 
@@ -347,17 +349,6 @@ def parse_args(argv):
                    help='verbose output. specify twice for debug-level output.')
     args = p.parse_args(argv)
     return args
-
-
-def populate_secrets():
-    """Populate the ``CONFIG`` global from environment variables."""
-    global CONFIG
-    for varname in CONFIG.keys():
-        if varname not in os.environ:
-            raise RuntimeError(
-                'ERROR: Variable %s must be set in environment' % varname
-            )
-        CONFIG[varname] = os.environ[varname]
 
 
 def get_basicconfig_kwargs(args):

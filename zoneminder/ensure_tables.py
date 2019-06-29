@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import logging
 import pymysql
 
 sys.path.append('/usr/local/bin')
-from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME
+# This is running from a git clone, not really installed
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, populate_secrets
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 
 def ensure_table():
+    populate_secrets()
     conn = pymysql.connect(
         host='localhost', user=CONFIG['MYSQL_USER'],
         password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],

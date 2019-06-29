@@ -38,6 +38,17 @@ CONFIG = {
 }
 
 
+def populate_secrets():
+    """Populate the ``CONFIG`` global from environment variables."""
+    global CONFIG
+    for varname in CONFIG.keys():
+        if varname not in os.environ:
+            raise RuntimeError(
+                'ERROR: Variable %s must be set in environment' % varname
+            )
+        CONFIG[varname] = os.environ[varname]
+
+
 def is_person_rectangle(i, label, x, y, w, h, zones, score):
     """
     ``i`` is an IgnoredObject instance. This is a custom method to match the
