@@ -204,6 +204,7 @@ script: !include scripts.yaml
 
 zoneminder:
   - host: localhost
+  - host: telescreen
 
 camera:
   - platform: zoneminder
