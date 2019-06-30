@@ -51,7 +51,7 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
             return
         # read the message and convert it into a python dictionary
         length = int(self.headers.get('content-length'))
-        message = json.loads(self.rfile.read(length))
+        message = json.loads(self.rfile.read(length).decode())
 
         response = self.analyze_event(message)
 
