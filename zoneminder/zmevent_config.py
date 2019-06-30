@@ -90,8 +90,8 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
 
 
 #: IgnoredObject instances to filter objects out from detection results
-if node() == 'guarddog':
-    IGNORED_OBJECTS = [
+IGNORED_OBJECTS = {
+    'guarddog': [
         # False detection for porch railing
         IgnoredObject(
             'FrontPorchLeftRailing',
@@ -229,15 +229,14 @@ if node() == 'guarddog':
             zone_names=['BackFence']
         )
     ]
-else:
-    IGNORED_OBJECTS = []
-
+}
 
 #: List of Monitor IDs to never send to HASS
 HASS_IGNORE_MONITOR_IDS = [
     11,
     12
 ]
+
 
 class DateSafeJsonEncoder(json.JSONEncoder):
     """

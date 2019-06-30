@@ -34,6 +34,7 @@ import json
 import time
 import re
 from collections import defaultdict
+from platform import node
 
 try:
     import requests
@@ -62,13 +63,10 @@ from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
     HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets
 )
-from zmevent_image_analysis import YoloAnalyzer, ImageAnalysisWrapper
+from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
-
-#: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
-ANALYZERS = [YoloAnalyzer]
 
 #: logger - this will be set in :py:func:`~.main` to log to either stdout/err
 #: or a file depending on options
@@ -262,7 +260,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
             )
     # run object detection on the event
     try:
-        analyzer = ImageAnalysisWrapper(event, ANALYZERS)
+        analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], node())
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
         update_event_name(

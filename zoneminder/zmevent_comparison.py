@@ -22,6 +22,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from yaml import load as load_yaml
+from platform import node
 
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -30,7 +31,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from zmevent_config import (
     ANALYSIS_TABLE_NAME, CONFIG, HASS_SECRETS_PATH, populate_secrets
 )
-from zmevent_image_analysis import ImageAnalysisWrapper, AlternateYoloAnalyzer
+from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 
 try:
@@ -38,8 +39,8 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-#: A list of the :py:class:`~.ImageAnalyzer` subclasses to use for each frame.
-ANALYZERS = [AlternateYoloAnalyzer]
+#: A list of the :py:class:`~.ImageAnalyzer` subclass names to use.
+ANALYZERS = ['AlternateYoloAnalyzer']
 
 #: logger - this will be set in :py:func:`~.main` to log to either stdout/err
 #: or a file depending on options
@@ -123,7 +124,7 @@ class EventComparer(object):
                 evt.FramesForAnalysis[
                     frame_id
                 ] = evt.AllFrames[frame_id]
-            analyzer = ImageAnalysisWrapper(evt, ANALYZERS)
+            analyzer = ImageAnalysisWrapper(evt, ANALYZERS, node())
             results[evt_id] = analyzer.analyze_event()
             logger.debug('Done analyzing event %d', evt_id)
         duration = datetime.now() - _start

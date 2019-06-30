@@ -455,3 +455,71 @@ class ZMEvent(object):
         r.raise_for_status()
         assert r.json()['message'] == 'Saved'
         logger.info('%s renamed', self)
+
+
+class DetectedObject(object):
+
+    def __init__(self, label, zones, score, x, y, w, h, ignore_reason=None):
+        self._label = label
+        self._zones = zones
+        self._score = score
+        self._x = x
+        self._y = y
+        self._w = w
+        self._h = h
+        self._ignore_reason = None
+
+    @property
+    def as_dict(self):
+        return {
+            'label': self._label,
+            'zones': self._zones,
+            'score': self._score,
+            'x': self._x,
+            'y': self._y,
+            'w': self._w,
+            'h': self._h,
+            'ignore_reason': self._ignore_reason
+        }
+
+
+class ObjectDetectionResult(object):
+
+    def __init__(
+        self, analyzer_name, frame, frame_path, detected_path, detections,
+        ignored_detections, runtime
+    ):
+        """
+        Class to represent the results of running object detection on an image.
+
+        :param analyzer_name: name of the analyzer class used
+        :type analyzer_name: str
+        :param frame: the Frame that was analyzed
+        :type frame: Frame
+        :param frame_path: path to the raw frame to analyze on disk
+        :type frame_path: str
+        :param detected_path: path to the output image with labels
+        :type detected_path: str
+        :param detections: list of DetectedObject instances
+        :type detections: list
+        """
+        self.analyzer_name = analyzer_name
+        self.frame_path = frame_path
+        self.detected_path = detected_path
+        self.detections = detections
+        self.ignored_detections = ignored_detections
+        self.runtime = runtime
+        self._frame = frame
+
+    @property
+    def as_dict(self):
+        return {
+            'analyzer_name': self.analyzer_name,
+            'frame_path': self.frame_path,
+            'output_path': self.detected_path,
+            'detections': self.detections,
+            'ignored_detections': self.ignored_detections,
+            'runtime': self.runtime,
+            'EventId': self._frame.EventId,
+            'FrameId': self._frame.FrameId
+        }
