@@ -86,7 +86,7 @@ class ImageAnalysisWrapper(object):
         for a in self._analyzers:
             logger.debug('Running object detection with: %s', a)
             # BEGIN TEMPORARY DEBUGGING
-            logger.debug('ANALYZE CALL: %s', json.dumps({
+            logger.info('ANALYZE CALL: %s', json.dumps({
                 'monitor_zones': {
                     x: x.as_dict for x in self._event.Monitor.Zones
                 },
