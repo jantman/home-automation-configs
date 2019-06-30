@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from decimal import Decimal
 from zmevent_object_filter import IgnoredObject
+from platform import node
 
 #: If logging to a file, the file path to log to.
 LOG_PATH = '/var/cache/zoneminder/temp/zmevent_handler.log'
@@ -34,16 +35,20 @@ CONFIG = {
     'MYSQL_DB': None,
     'MYSQL_USER': None,
     'MYSQL_PASS': None,
-    'BASE_URL': None,  # ZoneMinder base URL, i.e.: http://localhost/zm/
-    'HASS_API_URL': None,  # usually should be: http://localhost:8123/api
+    'BASE_URL': 'http://redirect.jasonantman.com/zm/',
+    'LOCAL_ZM_URL': 'http://localhost/zm/',
+    'HASS_API_URL': 'http://localhost:8123/api',
 }
+
+if node() == 'telescreen':
+    CONFIG['BASE_URL'] = 'http://redirect.jasonantman.com/telescreen/'
 
 
 def populate_secrets():
     """Populate the ``CONFIG`` global from environment variables."""
     global CONFIG
     for varname in CONFIG.keys():
-        if varname not in os.environ:
+        if varname not in os.environ and config[varname] is None:
             raise RuntimeError(
                 'ERROR: Variable %s must be set in environment' % varname
             )

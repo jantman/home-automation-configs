@@ -102,6 +102,6 @@ if __name__ == "__main__":
 
     populate_secrets()
     ZmDirLister(
-        os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'],
-        os.environ['MYSQL_DB']
+        CONFIG['MYSQL_USER'], CONFIG['MYSQL_PASS'],
+        CONFIG['MYSQL_DB']
     ).run(args.EVENT_ID)

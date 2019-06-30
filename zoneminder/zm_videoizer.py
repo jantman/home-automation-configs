@@ -54,7 +54,7 @@ class ZmVideoizer(object):
             print(p)
 
     def _generate_video(self, event_id):
-        url = 'http://guarddog/zm/index.php'
+        url = 'http://localhost/zm/index.php'
         data = {
             'view': 'request',
             'request': 'event',

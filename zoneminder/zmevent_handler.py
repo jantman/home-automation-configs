@@ -165,7 +165,7 @@ def _set_event_name(event_id, name, dry_run=False):
         return
     logger.info('Renaming event %s to: %s', event_id, name)
     r = requests.put(
-        'http://localhost/zm/api/events/%s.json' % event_id,
+        '%sapi/events/%s.json' % (CONFIG['LOCAL_ZM_URL'], event_id),
         data={'Event[Name]': name}
     )
     r.raise_for_status()
