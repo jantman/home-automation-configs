@@ -90,144 +90,147 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
 
 
 #: IgnoredObject instances to filter objects out from detection results
-IGNORED_OBJECTS = [
-    # False detection for porch railing
-    IgnoredObject(
-        'FrontPorchLeftRailing',
-        ['bench', 'chair', 'zebra'],
-        monitor_num=3
-    ),
-    # front
-    IgnoredObject(
-        'Front',
-        # yolo3-tiny often sees shadows on my front as strange things...
-        ['suitcase', 'umbrella', 'stop sign', 'elephant'],
-        monitor_num=3,
-        bounding_box=(1447, 574, 500, 500)
-    ),
-    # front camera front street
-    IgnoredObject(
-        'FrontCamFrontStreet',
-        ['sheep', 'car', 'truck', 'train', 'pottedplant'],
-        monitor_num=9,
-        zone_names=['Street']
-    ),
-    # front camera SideYardNear
-    IgnoredObject(
-        'FrontCamSideYardNear',
-        ['pottedplant'],
-        monitor_num=9,
-        zone_names=['SideYardNear']
-    ),
-    # garage
-    IgnoredObject(
-        'GarageFrontCam',
-        ['boat'],
-        monitor_num=9,
-        zone_names=['GarageSide']
-    ),
-    # garage identified as person
-    IgnoredObject(
-        'GARAGEasPerson', ['person'],
-        monitor_num=9,
-        callable=is_garage_as_person
-    ),
-    # grill in back yard
-    IgnoredObject(
-        'Grill',
-        [
-            'surfboard', 'suitcase', 'umbrella', 'kite', 'backpack', 'handbag',
-            'toilet',
-        ],
-        monitor_num=4,
-        bounding_box=(840, 560, 100, 100)
-    ),
-    # shadows on the storage box in the yard get recognized as weird things...
-    IgnoredObject(
-        'BackStorageBox',
-        ['toilet'],
-        monitor_num=4,
-        bounding_box=(700, 250, 100, 100)
-    ),
-    IgnoredObject(
-        'BackFenceBox',
-        ['pottedplant'],
-        monitor_num=4,
-        bounding_box=(425, 180, 150, 150)
-    ),
-    # ignore... stuff... inside the house
-    IgnoredObject(
-        'IndoorStuff',
-        [
-            'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
-            'sink', 'bowl', 'refrigerator', 'laptop', 'chair', 'diningtable',
-            'bottle'
-        ],
-        monitor_num=2
-    ),
-    # yolo3-tiny seems to randomly be classifying my kitchen window, wire
-    # metal shelving and rice cooker as a person, with < 30% confidence.
-    # ignore that.
-    IgnoredObject(
-        'KitchenShelvesAsPerson',
-        ['person'],
-        bounding_box=(385, 635, 15, 15),
-        min_score=0.3,
-        monitor_num=2
-    ),
-    # yolo3-tiny thinks this tree stump in my yard is a sheep or cow...
-    IgnoredObject(
-        'FrontTreeStump',
-        ['sheep', 'cow'],
-        bounding_box=(1540, 335, 50, 50),
-        monitor_num=3
-    ),
-    # it also gets confused about a bush in my yard
-    IgnoredObject(
-        'FrontShrub',
-        ['sheep', 'cow', 'pottedplant'],
-        bounding_box=(1300, 150, 100, 100),
-        monitor_num=3
-    ),
-    # ignore all the giraffes on the side of the house...
-    IgnoredObject(
-        'SideGiraffes',
-        ['giraffe'],
-        monitor_num=5
-    ),
-    IgnoredObject(
-        'SIDEperson', ['person'],
-        monitor_num=5,
-        callable=is_person_rectangle
-    ),
-    IgnoredObject(
-        'SIDEtrailer',
-        ['pottedplant'],
-        monitor_num=5,
-        bounding_box=(260, 520, 100, 100)
-    ),
-    IgnoredObject(
-        'OFFICEJunk', ['traffic light'],
-        monitor_num=6
-    ),
-    IgnoredObject(
-        'BEDRMJunk', ['bed', 'oven'],
-        monitor_num=7
-    ),
-    # Ignore cars off my property...
-    IgnoredObject(
-        'SideStreetCar',
-        ['car', 'truck', 'bus', 'train'],
-        monitor_num=5,
-        zone_names=['Street1']
-    ),
-    IgnoredObject(
-        'BackStreetCar',
-        ['car', 'truck', 'bus', 'train'],
-        monitor_num=4,
-        zone_names=['BackFence']
-    )
-]
+if node() == 'guarddog':
+    IGNORED_OBJECTS = [
+        # False detection for porch railing
+        IgnoredObject(
+            'FrontPorchLeftRailing',
+            ['bench', 'chair', 'zebra'],
+            monitor_num=3
+        ),
+        # front
+        IgnoredObject(
+            'Front',
+            # yolo3-tiny often sees shadows on my front as strange things...
+            ['suitcase', 'umbrella', 'stop sign', 'elephant'],
+            monitor_num=3,
+            bounding_box=(1447, 574, 500, 500)
+        ),
+        # front camera front street
+        IgnoredObject(
+            'FrontCamFrontStreet',
+            ['sheep', 'car', 'truck', 'train', 'pottedplant'],
+            monitor_num=9,
+            zone_names=['Street']
+        ),
+        # front camera SideYardNear
+        IgnoredObject(
+            'FrontCamSideYardNear',
+            ['pottedplant'],
+            monitor_num=9,
+            zone_names=['SideYardNear']
+        ),
+        # garage
+        IgnoredObject(
+            'GarageFrontCam',
+            ['boat'],
+            monitor_num=9,
+            zone_names=['GarageSide']
+        ),
+        # garage identified as person
+        IgnoredObject(
+            'GARAGEasPerson', ['person'],
+            monitor_num=9,
+            callable=is_garage_as_person
+        ),
+        # grill in back yard
+        IgnoredObject(
+            'Grill',
+            [
+                'surfboard', 'suitcase', 'umbrella', 'kite', 'backpack',
+                'handbag', 'toilet',
+            ],
+            monitor_num=4,
+            bounding_box=(840, 560, 100, 100)
+        ),
+        # shadows on the storage box in the yard get recognized as weird things
+        IgnoredObject(
+            'BackStorageBox',
+            ['toilet'],
+            monitor_num=4,
+            bounding_box=(700, 250, 100, 100)
+        ),
+        IgnoredObject(
+            'BackFenceBox',
+            ['pottedplant'],
+            monitor_num=4,
+            bounding_box=(425, 180, 150, 150)
+        ),
+        # ignore... stuff... inside the house
+        IgnoredObject(
+            'IndoorStuff',
+            [
+                'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
+                'sink', 'bowl', 'refrigerator', 'laptop', 'chair',
+                'diningtable', 'bottle'
+            ],
+            monitor_num=2
+        ),
+        # yolo3-tiny seems to randomly be classifying my kitchen window, wire
+        # metal shelving and rice cooker as a person, with < 30% confidence.
+        # ignore that.
+        IgnoredObject(
+            'KitchenShelvesAsPerson',
+            ['person'],
+            bounding_box=(385, 635, 15, 15),
+            min_score=0.3,
+            monitor_num=2
+        ),
+        # yolo3-tiny thinks this tree stump in my yard is a sheep or cow...
+        IgnoredObject(
+            'FrontTreeStump',
+            ['sheep', 'cow'],
+            bounding_box=(1540, 335, 50, 50),
+            monitor_num=3
+        ),
+        # it also gets confused about a bush in my yard
+        IgnoredObject(
+            'FrontShrub',
+            ['sheep', 'cow', 'pottedplant'],
+            bounding_box=(1300, 150, 100, 100),
+            monitor_num=3
+        ),
+        # ignore all the giraffes on the side of the house...
+        IgnoredObject(
+            'SideGiraffes',
+            ['giraffe'],
+            monitor_num=5
+        ),
+        IgnoredObject(
+            'SIDEperson', ['person'],
+            monitor_num=5,
+            callable=is_person_rectangle
+        ),
+        IgnoredObject(
+            'SIDEtrailer',
+            ['pottedplant'],
+            monitor_num=5,
+            bounding_box=(260, 520, 100, 100)
+        ),
+        IgnoredObject(
+            'OFFICEJunk', ['traffic light'],
+            monitor_num=6
+        ),
+        IgnoredObject(
+            'BEDRMJunk', ['bed', 'oven'],
+            monitor_num=7
+        ),
+        # Ignore cars off my property...
+        IgnoredObject(
+            'SideStreetCar',
+            ['car', 'truck', 'bus', 'train'],
+            monitor_num=5,
+            zone_names=['Street1']
+        ),
+        IgnoredObject(
+            'BackStreetCar',
+            ['car', 'truck', 'bus', 'train'],
+            monitor_num=4,
+            zone_names=['BackFence']
+        )
+    ]
+else:
+    IGNORED_OBJECTS = []
 
 
 #: List of Monitor IDs to never send to HASS
