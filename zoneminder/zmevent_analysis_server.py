@@ -10,8 +10,8 @@ import os
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
-from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
-from zmevent_image_analysis import YoloAnalyzer, AlternateYoloAnalyzer
+from zmevent_config import DateSafeJsonEncoder
+from zmevent_image_analysis import YoloAnalyzer
 from zmevent_models import MonitorZone
 
 try:
@@ -28,8 +28,9 @@ except ImportError:
         '"pip install yolo34py-gpu"'
     )
 
-
-logger = logging.getLogger(__name__)
+FORMAT = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
+logging.basicConfig(level=logging.INFO, format=FORMAT)
+logger = logging.getLogger()
 
 ANALYZERS = [YoloAnalyzer]
 
