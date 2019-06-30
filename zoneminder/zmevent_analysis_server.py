@@ -74,11 +74,11 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
                 },
                 msg['hostname']
             )
-            for frame in [msg['frame_path']]:
+            for frameid, framepath in msg['frames'].items():
                 res = cls.analyze(
                     msg['EventId'],
-                    msg['FrameId'],
-                    frame
+                    frameid,
+                    framepath
                 )
                 results.append(res)
         return results
