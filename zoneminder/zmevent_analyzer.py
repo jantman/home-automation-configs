@@ -88,7 +88,8 @@ class ImageAnalysisWrapper(object):
             # BEGIN TEMPORARY DEBUGGING
             logger.info('ANALYZE CALL: %s', json.dumps({
                 'monitor_zones': {
-                    x: x.as_dict for x in self._event.Monitor.Zones.keys()
+                    x: self._event.Monitor.Zones[x].as_dict
+                    for x in self._event.Monitor.Zones.keys()
                 },
                 'hostname': self._hostname,
                 'EventId': self._event.EventId,
