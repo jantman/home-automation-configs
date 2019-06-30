@@ -297,7 +297,8 @@ def run(args):
 
 def main():
     # setsid so we can continue running even if caller dies
-    os.setsid()
+    if os.environ.get('NO_SETSID', None) != 'true':
+        os.setsid()
     # populate secrets from environment variables
     populate_secrets()
     # parse command line arguments
