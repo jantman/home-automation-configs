@@ -146,7 +146,10 @@ class MonitorZone(object):
         for k, v in kwargs.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        self.point_list = self._parse_db_coords_string(self.Coords)
+        if 'point_list' in kwargs:
+            self.point_list = kwargs['point_list']
+        else:
+            self.point_list = self._parse_db_coords_string(self.Coords)
         self.polygon = Polygon(LinearRing(self.point_list))
 
     def _parse_db_coords_string(self, s):
@@ -486,16 +489,18 @@ class DetectedObject(object):
 class ObjectDetectionResult(object):
 
     def __init__(
-        self, analyzer_name, frame, frame_path, detected_path, detections,
-        ignored_detections, runtime
+        self, analyzer_name, event_id, frame_id, frame_path, detected_path,
+        detections, ignored_detections, runtime
     ):
         """
         Class to represent the results of running object detection on an image.
 
         :param analyzer_name: name of the analyzer class used
         :type analyzer_name: str
-        :param frame: the Frame that was analyzed
-        :type frame: Frame
+        :param event_id: the EventId being analyzed
+        :type event_id: int
+        :param frame_id: the FrameId being analyzed
+        :type frame_id: int
         :param frame_path: path to the raw frame to analyze on disk
         :type frame_path: str
         :param detected_path: path to the output image with labels
@@ -509,7 +514,8 @@ class ObjectDetectionResult(object):
         self.detections = detections
         self.ignored_detections = ignored_detections
         self.runtime = runtime
-        self._frame = frame
+        self._frame_id = frame_id
+        self._event_id = event_id
 
     @property
     def as_dict(self):
@@ -520,6 +526,6 @@ class ObjectDetectionResult(object):
             'detections': self.detections,
             'ignored_detections': self.ignored_detections,
             'runtime': self.runtime,
-            'EventId': self._frame.EventId,
-            'FrameId': self._frame.FrameId
+            'EventId': self._event_id,
+            'FrameId': self._frame_id
         }

@@ -69,17 +69,18 @@ class ImageAnalyzer(object):
     Base class for specific object detection algorithms/packages.
     """
 
-    def __init__(self, event, hostname):
+    def __init__(self, monitor_zones, hostname):
         """
         Initialize an image analyzer.
 
-        :param event: the event to analyze
-        :type event: ZMEvent
+        :param monitor_zones: dict of string zone names to MonitorZone objects,
+          for the monitor this event happened on
+        :type monitor_zones: dict
         """
-        self._event = event
+        self._monitor_zones = monitor_zones
         self._hostname = hostname
 
-    def analyze(self, frame_path):
+    def analyze(self, event_id, frame_id, frame_path):
         """
         Analyze a frame; return an ObjectDetectionResult.
         """
@@ -89,8 +90,8 @@ class ImageAnalyzer(object):
 class YoloAnalyzer(ImageAnalyzer):
     """Object detection using yolo34py and yolov3-tiny"""
 
-    def __init__(self, event, hostname):
-        super(YoloAnalyzer, self).__init__(event, hostname)
+    def __init__(self, monitor_zones, hostname):
+        super(YoloAnalyzer, self).__init__(monitor_zones, hostname)
         self._ensure_configs()
         logger.info('Instantiating YOLO3 Detector...')
         with suppress_stdout_stderr():
@@ -149,12 +150,14 @@ class YoloAnalyzer(ImageAnalyzer):
     def _config_path(self, f):
         return os.path.join(YOLO_CFG_PATH, f)
 
-    def do_image_yolo(self, frame, fname, detected_fname):
+    def do_image_yolo(self, event_id, frame_id, fname, detected_fname):
         """
         Analyze a single image using yolo34py.
 
-        :param frame: the Frame being analyzed
-        :type frame: Frame
+        :param event_id: the EventId being analyzed
+        :type event_id: int
+        :param frame_id: the FrameId being analyzed
+        :type frame_id: int
         :param fname: path to input image
         :type fname: str
         :param detected_fname: file path to write object detection image to
@@ -172,7 +175,7 @@ class YoloAnalyzer(ImageAnalyzer):
             if not isinstance(cat, str):
                 cat = cat.decode()
             x, y, w, h = bounds
-            zones = self._zones_for_object(frame, x, y, w, h)
+            zones = self._zones_for_object(x, y, w, h)
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
                 foo.name for foo in IGNORED_OBJECTS.get(self._hostname, [])
@@ -181,8 +184,9 @@ class YoloAnalyzer(ImageAnalyzer):
             if len(matched_filters) > 0:
                 # object should be ignored
                 logger.info(
-                    '%s: Ignoring %s (%.2f) at %d,%d based on filters: %s',
-                    frame, cat, score, x, y, matched_filters
+                    'Event %s Frame %s: Ignoring %s (%.2f) at %d,%d based on '
+                    'filters: %s',
+                    event_id, frame_id, cat, score, x, y, matched_filters
                 )
                 rect_color = (104, 104, 104)
                 text_color = (111, 247, 93)
@@ -220,10 +224,10 @@ class YoloAnalyzer(ImageAnalyzer):
         ]
         return Polygon(LinearRing(points))
 
-    def _zones_for_object(self, frame, x, y, w, h):
+    def _zones_for_object(self, x, y, w, h):
         res = {}
         obj_polygon = self._xywh_to_ring(x, y, w, h)
-        for zone in frame.event.Monitor.Zones.values():
+        for zone in self._monitor_zones.values():
             if obj_polygon.intersects(zone.polygon):
                 amt = (
                     obj_polygon.intersection(zone.polygon).area /
@@ -232,16 +236,16 @@ class YoloAnalyzer(ImageAnalyzer):
                 res[zone.Name] = amt
         return res
 
-    def analyze(self, frame):
+    def analyze(self, event_id, frame_id, frame_path):
         _start = time.time()
         # get all the results
-        frame_path = frame.path
         output_path = frame_path.replace('.jpg', '.yolo3.jpg')
-        res = self.do_image_yolo(frame, frame_path, output_path)
+        res = self.do_image_yolo(event_id, frame_id, frame_path, output_path)
         _end = time.time()
         return ObjectDetectionResult(
             self.__class__.__name__,
-            frame,
+            event_id,
+            frame_id,
             frame_path,
             output_path,
             res['detections'],
@@ -303,16 +307,16 @@ class AlternateYoloAnalyzer(YoloAnalyzer):
                 ))
             logger.debug('Wrote %s', path)
 
-    def analyze(self, frame):
+    def analyze(self, event_id, frame_id, frame_path):
         _start = time.time()
         # get all the results
-        frame_path = frame.path
         output_path = frame_path.replace('.jpg', '.yolo3alt.jpg')
-        res = self.do_image_yolo(frame, frame_path, output_path)
+        res = self.do_image_yolo(event_id, frame_id, frame_path, output_path)
         _end = time.time()
         return ObjectDetectionResult(
             self.__class__.__name__,
-            frame,
+            event_id,
+            frame_id,
             frame_path,
             output_path,
             res['detections'],

@@ -87,7 +87,11 @@ class ImageAnalysisWrapper(object):
             logger.debug('Running object detection with: %s', a)
             cls = a(self._event, self._hostname)
             for frame in self._event.FramesForAnalysis.values():
-                res = cls.analyze(frame)
+                res = cls.analyze(
+                    self._event.EventId,
+                    frame.FrameId,
+                    frame.path
+                )
                 results.append(res)
                 try:
                     self._result_to_db(res, frame)
