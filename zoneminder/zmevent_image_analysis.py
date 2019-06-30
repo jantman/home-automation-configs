@@ -90,7 +90,7 @@ class YoloAnalyzer(ImageAnalyzer):
     """Object detection using yolo34py and yolov3-tiny"""
 
     def __init__(self, event, hostname):
-        super(YoloAnalyzer, self).__init__(event)
+        super(YoloAnalyzer, self).__init__(event, hostname)
         self._ensure_configs()
         logger.info('Instantiating YOLO3 Detector...')
         with suppress_stdout_stderr():
