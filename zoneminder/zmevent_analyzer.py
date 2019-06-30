@@ -85,6 +85,17 @@ class ImageAnalysisWrapper(object):
         results = []
         for a in self._analyzers:
             logger.debug('Running object detection with: %s', a)
+            # BEGIN TEMPORARY DEBUGGING
+            logger.debug('ANALYZE CALL: %s', json.dumps({
+                'monitor_zones': {
+                    x: x.as_dict for x in self._event.Monitor.Zones
+                },
+                'hostname': self._hostname,
+                'EventId': self._event.EventId,
+                'FrameId': frame.FrameId,
+                'frame_path': frame.path
+            }))
+            # END TEMPORARY DEBUGGING
             cls = a(self._event.Monitor.Zones, self._hostname)
             for frame in self._event.FramesForAnalysis.values():
                 res = cls.analyze(
