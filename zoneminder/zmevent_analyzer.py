@@ -85,7 +85,7 @@ class ImageAnalysisWrapper(object):
         results = []
         for a in self._analyzers:
             logger.debug('Running object detection with: %s', a)
-            cls = a(self._event, self._hostname)
+            cls = a(self._event.Monitor.Zones, self._hostname)
             for frame in self._event.FramesForAnalysis.values():
                 res = cls.analyze(
                     self._event.EventId,
