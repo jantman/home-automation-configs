@@ -48,7 +48,9 @@ def populate_secrets():
     """Populate the ``CONFIG`` global from environment variables."""
     global CONFIG
     for varname in CONFIG.keys():
-        if varname not in os.environ and CONFIG[varname] is None:
+        if CONFIG[varname] is not None:
+            continue
+        if varname not in os.environ:
             raise RuntimeError(
                 'ERROR: Variable %s must be set in environment' % varname
             )
