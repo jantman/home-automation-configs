@@ -89,6 +89,10 @@ class ImageAnalysisWrapper(object):
             ]
             item['detected_path'] = item['output_path']
             del item['output_path']
+            item['event_id'] = item['EventId']
+            del item['EventId']
+            item['frame_id'] = item['FrameId']
+            del item['FrameId']
             result.append(ObjectDetectionResult(**item))
         return result
 
