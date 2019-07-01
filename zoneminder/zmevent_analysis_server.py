@@ -42,9 +42,12 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
+    def do_GET(self):
+        self._set_headers()
+        self.wfile.write('{"status": "ok"}'.encode('utf-8'))
+
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
-
         # refuse to receive non-json content
         if ctype != 'application/json':
             self.send_response(400)
@@ -63,7 +66,33 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
         )
 
     def analyze_event(self, msg):
-        """returns a list of ObjectDetectionResult instances"""
+        """
+        returns a list of ObjectDetectionResult instances
+
+        Sample event:
+
+        {
+            "EventId": 192843,
+            "monitor_zones": {
+                "36": {
+                    "Type": "Active",
+                    "Name": "DrivewayFar",
+                    "point_list": [
+                        [781, 264],
+                        [1128, 412],
+                        [877, 491],
+                        [648, 297]
+                    ],
+                    "MonitorId": 9,
+                    "Id": 36
+                },
+            },
+            "hostname": "guarddog",
+            "frames": {
+                "119": "/usr/share/zoneminder/www/events/9/19/06/30/13/34/19/00119-capture.jpg"
+            }
+        }
+        """
         results = []
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
