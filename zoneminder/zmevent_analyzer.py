@@ -100,7 +100,7 @@ class ImageAnalysisWrapper(object):
                 for x in self._event.Monitor.Zones.keys()
             },
             'frames': {
-                f.FrameId: f.path
+                f.FrameId: self._to_framepath(f.path)
                 for f in self._event.FramesForAnalysis.values()
             }
         }
@@ -124,6 +124,7 @@ class ImageAnalysisWrapper(object):
                 'Analysis POST failed on all 6 attempts!'
             )
             return []
+        results = self._to_results(results)
         for res in results:
             try:
                 self._result_to_db(
