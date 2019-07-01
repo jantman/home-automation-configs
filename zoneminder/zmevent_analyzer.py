@@ -1,37 +1,21 @@
 import logging
 import pymysql
 import json
+import requests
+from time import sleep
+from random import uniform
 
 from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
-from zmevent_image_analysis import YoloAnalyzer, AlternateYoloAnalyzer
-
-try:
-    import cv2
-except ImportError:
-    raise SystemExit(
-        'could not import cv2 - please "pip install opencv-python"'
-    )
-try:
-    from pydarknet import Detector, Image
-except ImportError:
-    raise SystemExit(
-        'could not import pydarknet - please "pip install yolo34py" or '
-        '"pip install yolo34py-gpu"'
-    )
+from zmevent_models import ObjectDetectionResult, DetectedObject
 
 
 logger = logging.getLogger(__name__)
-
-ANALYZER_NAMES = {
-    'YoloAnalyzer': YoloAnalyzer,
-    'AlternateYoloAnalyzer': AlternateYoloAnalyzer,
-}
 
 
 class ImageAnalysisWrapper(object):
     """Wraps calling the ``ANALYZER`` classes and storing their results."""
 
-    def __init__(self, event, analyzer_names, hostname):
+    def __init__(self, event, _, hostname):
         self._event = event
         logger.debug('Connecting to MySQL')
         self._conn = pymysql.connect(
@@ -39,9 +23,6 @@ class ImageAnalysisWrapper(object):
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
             charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
         )
-        self._analyzers = [
-            ANALYZER_NAMES[x] for x in analyzer_names
-        ]
         self._hostname = hostname
 
     def _result_to_db(self, result, frame):
@@ -80,36 +61,78 @@ class ImageAnalysisWrapper(object):
                     sql, self._event, exc_info=True
                 )
 
+    def _to_framepath(self, p):
+        if self._hostname == 'telescreen':
+            return p.replace(
+                '/var/cache/zoneminder/events/',
+                '/mnt/telescreen/telescreen-events/'
+            )
+        return p
+
+    def _to_results(self, d):
+        result = []
+        for item in d:
+            if self._hostname == 'telescreen':
+                item['frame_path'] = item['frame_path'].replace(
+                    '/mnt/telescreen/telescreen-events/',
+                    '/var/cache/zoneminder/events/'
+                )
+                item['output_path'] = item['output_path'].replace(
+                    '/mnt/telescreen/telescreen-events/',
+                    '/var/cache/zoneminder/events/'
+                )
+            item['detections'] = [
+                DetectedObject(**x) for x in item['detections']
+            ]
+            item['ignored_detections'] = [
+                DetectedObject(**y) for y in item['ignored_detections']
+            ]
+            result.append(ObjectDetectionResult(**item))
+        return result
+
     def analyze_event(self):
         """returns a list of ObjectDetectionResult instances"""
-        results = []
-        for a in self._analyzers:
-            logger.debug('Running object detection with: %s', a)
-            cls = a(self._event.Monitor.Zones, self._hostname)
-            for frame in self._event.FramesForAnalysis.values():
-                # BEGIN TEMPORARY DEBUGGING
-                logger.info('ANALYZE CALL: %s', json.dumps({
-                    'monitor_zones': {
-                        x: self._event.Monitor.Zones[x].as_dict
-                        for x in self._event.Monitor.Zones.keys()
-                    },
-                    'hostname': self._hostname,
-                    'EventId': self._event.EventId,
-                    'FrameId': frame.FrameId,
-                    'frame_path': frame.path
-                }))
-                # END TEMPORARY DEBUGGING
-                res = cls.analyze(
-                    self._event.EventId,
-                    frame.FrameId,
-                    frame.path
+        data = {
+            'hostname': self._hostname,
+            'EventId': self._event.EventId,
+            'monitor_zones': {
+                x: self._event.Monitor.Zones[x].as_dict
+                for x in self._event.Monitor.Zones.keys()
+            },
+            'frames': {
+                f.FrameId: f.path
+                for f in self._event.FramesForAnalysis.values()
+            }
+        }
+        logger.debug('POST data: %s', data)
+        results = None
+        for i in range(0, 6):
+            url = 'http://guarddog:8008/'
+            try:
+                logger.info('POST to %s', url)
+                r = requests.post(url, json=data)
+                r.raise_for_status()
+                results = r.json()
+                break
+            except Exception:
+                logger.error(
+                    'ERROR POSTing to zmevent_analysis_server', exc_info=True
                 )
-                results.append(res)
-                try:
-                    self._result_to_db(res, frame)
-                except Exception:
-                    logger.critical(
-                        'Exception writing analysis result to DB for %s %s',
-                        self._event, a.__name__, exc_info=True
-                    )
+                sleep(uniform(0.25, 3.0))
+        if results is None:
+            logger.critical(
+                'Analysis POST failed on all 6 attempts!'
+            )
+            return []
+        for res in results:
+            try:
+                self._result_to_db(
+                    res,
+                    self._event.FramesForAnalysis[res['FrameId']]
+                )
+            except Exception:
+                logger.critical(
+                    'Exception writing analysis result to DB for %s: %s',
+                    self._event, res, exc_info=True
+                )
         return results

@@ -29,6 +29,9 @@ HASS_EVENT_NAME = 'ZM_ALARM'
 #: Path to homeassistant secrets.yaml
 HASS_SECRETS_PATH = '/opt/homeassistant/.homeassistant/secrets.yaml'
 
+#: Hostname for this instance
+ZM_HOSTNAME = 'guarddog'
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {
@@ -42,6 +45,8 @@ CONFIG = {
 
 if node() == 'telescreen':
     CONFIG['BASE_URL'] = 'http://redirect.jasonantman.com/telescreen/'
+    EVENTS_PATH = '/var/cache/zoneminder/events/'
+    ZM_HOSTNAME = 'telescreen'
 
 
 def populate_secrets():

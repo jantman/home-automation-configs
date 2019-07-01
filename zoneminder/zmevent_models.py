@@ -10,9 +10,10 @@ import pymysql
 from PIL import Image
 import requests
 from shapely.geometry.polygon import LinearRing, Polygon
+from platform import node
 
 from zmevent_config import (
-    EVENTS_PATH, CONFIG, DateSafeJsonEncoder
+    EVENTS_PATH, CONFIG, DateSafeJsonEncoder, ZM_HOSTNAME
 )
 
 logger = logging.getLogger(__name__)
@@ -313,10 +314,17 @@ class ZMEvent(object):
         for k, v in res.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        self.path = os.path.join(
-            EVENTS_PATH, '%s' % self.MonitorId,
-            self.StartTime.strftime('%y/%m/%d/%H/%M/%S')
-        )
+        if ZM_HOSTNAME == 'guarddog':
+            self.path = os.path.join(
+                EVENTS_PATH, '%s' % self.MonitorId,
+                self.StartTime.strftime('%y/%m/%d/%H/%M/%S')
+            )
+        elif ZM_HOSTNAME == 'telescreen':
+            self.path = os.path.join(
+                EVENTS_PATH, '%s' % self.MonitorId,
+                self.StartTime.strftime('%y-%m-%d'),
+                '%s' % self.EventId
+            )
         logger.debug(self.as_json)
         # Other items
         self._class_from_sql(
@@ -507,6 +515,10 @@ class ObjectDetectionResult(object):
         :type detected_path: str
         :param detections: list of DetectedObject instances
         :type detections: list
+        :param ignored_detections: list of DetectedObject instances
+        :type ignored_detections: list
+        :param runtime: amount of time taken to run the analysis
+        :type runtime: float
         """
         self.analyzer_name = analyzer_name
         self.frame_path = frame_path

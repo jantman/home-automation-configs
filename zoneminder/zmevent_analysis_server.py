@@ -93,6 +93,10 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
             }
         }
         """
+        logger.info(
+            'Received analysis request for %s Event %s - %d frames',
+            msg['hostname'], msg['EventId'], len(msg['frames'])
+        )
         results = []
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
@@ -110,6 +114,10 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
                     framepath
                 )
                 results.append(res)
+        logger.info(
+            'Analysis for %s Event %s complete; returning %d results',
+            msg['hostname'], msg['EventId'], len(results)
+        )
         return results
 
 
