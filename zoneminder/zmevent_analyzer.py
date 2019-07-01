@@ -87,6 +87,8 @@ class ImageAnalysisWrapper(object):
             item['ignored_detections'] = [
                 DetectedObject(**y) for y in item['ignored_detections']
             ]
+            item['detected_path'] = item['output_path']
+            del item['output_path']
             result.append(ObjectDetectionResult(**item))
         return result
 
