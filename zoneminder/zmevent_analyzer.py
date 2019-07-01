@@ -128,7 +128,7 @@ class ImageAnalysisWrapper(object):
             try:
                 self._result_to_db(
                     res,
-                    self._event.FramesForAnalysis[res['FrameId']]
+                    self._event.FramesForAnalysis['%s' % res['FrameId']]
                 )
             except Exception:
                 logger.critical(
