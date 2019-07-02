@@ -310,9 +310,6 @@ def main():
         'Triggered; EventId=%s MonitorId=%s Cause=%s',
         args.event_id, args.monitor_id, args.cause
     )
-    if node() == 'telescreen':
-        logger.critical('TELESCREEN - NOT RUNNING')
-        return
     # run...
     run(args)
 
