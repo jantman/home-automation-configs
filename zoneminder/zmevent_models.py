@@ -322,7 +322,7 @@ class ZMEvent(object):
         elif ZM_HOSTNAME == 'telescreen':
             self.path = os.path.join(
                 EVENTS_PATH, '%s' % self.MonitorId,
-                self.StartTime.strftime('%y-%m-%d'),
+                self.StartTime.strftime('%Y-%m-%d'),
                 '%s' % self.EventId
             )
         logger.debug(self.as_json)
