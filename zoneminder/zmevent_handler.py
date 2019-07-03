@@ -179,7 +179,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         _set_event_name(
             event.EventId, '%s-NotMotion' % event.Name, dry_run=dry_run
         )
-        return
+        return '%s-NotMotion' % event.Name
     m = re.match(
         r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Notes
     )
@@ -187,7 +187,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         _set_event_name(
             event.EventId, '%s-UnknownZones' % event.Name, dry_run=dry_run
         )
-        return
+        return '%s-UnknownZones' % event.Name
     zones = [x.strip() for x in m.group(1).split(',')]
     objects = defaultdict(int)
     for odr in analysis:
@@ -205,7 +205,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
             '%s-NoObject-%s' % (event.Name, ','.join(zones)),
             dry_run=dry_run
         )
-        return
+        return '%s-NoObject-%s' % (event.Name, ','.join(zones))
     # else we have objects detected in zones with motion
     name = event.Name + '-'
     for label, _ in sorted(objects.items(), key=lambda kv: kv[1], reverse=True):
