@@ -61,7 +61,8 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 # Imports from this directory
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
-    HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets
+    HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets,
+    HASS_IGNORE_EVENT_NAME_RES
 )
 from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -288,6 +289,15 @@ def run(args):
             result['event']['EventId'], args.monitor_id
         )
         return
+    for r in HASS_IGNORE_EVENT_NAME_RES:
+        if r.match(result['event']['Name']):
+            logger.info(
+                'Not sending Event %s for monitor %s to HASS - event name '
+                '%s matches regex %s',
+                result['event']['EventId'], args.monitor_id,
+                result['event']['Name'], r.pattern
+            )
+            return
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )

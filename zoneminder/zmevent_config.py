@@ -3,6 +3,7 @@ Configuration for zmevent_handler.py and related scripts.
 """
 
 import os
+import re
 import json
 from datetime import datetime
 from decimal import Decimal
@@ -244,6 +245,11 @@ HASS_IGNORE_MONITOR_IDS = [
     12
 ]
 
+
+#: List of Event Name regexes to never send to HASS
+HASS_IGNORE_EVENT_NAME_RES = [
+    re.compile(r'^FRONT-.*-RoadCamera$')
+]
 
 class DateSafeJsonEncoder(json.JSONEncoder):
     """
