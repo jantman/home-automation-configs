@@ -286,16 +286,16 @@ def run(args):
         logger.info(
             'Not sending Event %s for monitor %s to HASS - MonitorId '
             'in HASS_IGNORE_MONITOR_IDS',
-            result['event']['EventId'], args.monitor_id
+            result['event'].EventId, args.monitor_id
         )
         return
     for r in HASS_IGNORE_EVENT_NAME_RES:
-        if r.match(result['event']['Name']):
+        if r.match(result['event'].Name):
             logger.info(
                 'Not sending Event %s for monitor %s to HASS - event name '
                 '%s matches regex %s',
-                result['event']['EventId'], args.monitor_id,
-                result['event']['Name'], r.pattern
+                result['event'].EventId, args.monitor_id,
+                result['event'].Name, r.pattern
             )
             return
     res_json = json.dumps(
