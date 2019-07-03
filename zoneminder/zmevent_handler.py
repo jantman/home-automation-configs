@@ -214,6 +214,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         name += label + ','
     name = name.strip(',')
     _set_event_name(event.EventId, name, dry_run=dry_run)
+    return name
 
 
 def handle_event(event_id, monitor_id, cause, dry_run=False):
@@ -263,9 +264,10 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
         analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], node())
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
-        update_event_name(
+        new_name = update_event_name(
             event, analysis, result['filters'], dry_run=dry_run
         )
+        result['event'].Name = new_name
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
