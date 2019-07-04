@@ -245,6 +245,10 @@ HASS_IGNORE_MONITOR_IDS = [
     12
 ]
 
+#: List of zones to never send to HASS, per monitor
+HASS_IGNORE_MONITOR_ZONES = {
+    9: set(['RoadCamera'])
+}
 
 #: List of Event Name regexes to never send to HASS
 HASS_IGNORE_EVENT_NAME_RES = [

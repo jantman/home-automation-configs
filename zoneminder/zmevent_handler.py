@@ -62,7 +62,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
     HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets,
-    HASS_IGNORE_EVENT_NAME_RES
+    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES
 )
 from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -180,7 +180,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         _set_event_name(
             event.EventId, '%s-NotMotion' % event.Name, dry_run=dry_run
         )
-        return '%s-NotMotion' % event.Name
+        return '%s-NotMotion' % event.Name, []
     m = re.match(
         r'^Motion: (([A-Za-z0-9,]+\s?)*).*$', event.Notes
     )
@@ -188,7 +188,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         _set_event_name(
             event.EventId, '%s-UnknownZones' % event.Name, dry_run=dry_run
         )
-        return '%s-UnknownZones' % event.Name
+        return '%s-UnknownZones' % event.Name, []
     zones = [x.strip() for x in m.group(1).split(',')]
     objects = defaultdict(int)
     for odr in analysis:
@@ -206,7 +206,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
             '%s-NoObject-%s' % (event.Name, ','.join(zones)),
             dry_run=dry_run
         )
-        return '%s-NoObject-%s' % (event.Name, ','.join(zones))
+        return '%s-NoObject-%s' % (event.Name, ','.join(zones)), zones
     # else we have objects detected in zones with motion
     name = event.Name + '-'
     for label, _ in sorted(objects.items(), key=lambda kv: kv[1], reverse=True):
@@ -215,7 +215,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
         name += label + ','
     name = name.strip(',')
     _set_event_name(event.EventId, name, dry_run=dry_run)
-    return name
+    return name, zones
 
 
 def handle_event(event_id, monitor_id, cause, dry_run=False):
@@ -261,11 +261,12 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
                 cls, event, exc_info=True
             )
     # run object detection on the event
+    zones = []
     try:
         analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], node())
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
-        new_name = update_event_name(
+        new_name, zones = update_event_name(
             event, analysis, result['filters'], dry_run=dry_run
         )
         result['event'].Name = new_name
@@ -274,12 +275,12 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    return result
+    return result, zones
 
 
 def run(args):
     # populate the event from ZoneMinder DB
-    result = handle_event(
+    result, zones = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
     if args.monitor_id in HASS_IGNORE_MONITOR_IDS:
@@ -298,6 +299,15 @@ def run(args):
                 result['event'].Name, r.pattern
             )
             return
+    ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(args.monitor_id, set([]))
+    if set(zones).issubset(ignored_zones):
+        logger.info(
+            'Not sending Event %s for monitor %s to HASS - zones (%s) '
+            'are subset of ignored (%s)',
+            result['event'].EventId, args.monitor_id,
+            zones, ignored_zones
+        )
+        return
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
