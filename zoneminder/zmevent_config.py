@@ -63,6 +63,14 @@ def populate_secrets():
         CONFIG[varname] = os.environ[varname]
 
 
+def is_person_over_600px_high(i, label, x, y, w, h, zones, score):
+    """
+    Custom method to match "person" objects that are more than 600px (over half
+    the frame) high.
+    """
+    return h >= 600
+
+
 def is_person_rectangle(i, label, x, y, w, h, zones, score):
     """
     ``i`` is an IgnoredObject instance. This is a custom method to match the
@@ -146,10 +154,17 @@ IGNORED_OBJECTS = {
             'Grill',
             [
                 'surfboard', 'suitcase', 'umbrella', 'kite', 'backpack',
-                'handbag', 'toilet',
+                'handbag', 'toilet', 'boat',
             ],
             monitor_num=4,
             bounding_box=(840, 560, 100, 100)
+        ),
+        # other grill
+        IgnoredObject(
+            'WeberGrill',
+            ['toilet', 'surfboard'],
+            monitor_num=4,
+            bounding_box=(1100, 830, 20, 20)
         ),
         # shadows on the storage box in the yard get recognized as weird things
         IgnoredObject(
@@ -208,6 +223,16 @@ IGNORED_OBJECTS = {
             'SIDEperson', ['person'],
             monitor_num=5,
             callable=is_person_rectangle
+        ),
+        IgnoredObject(
+            'SIDEhalfFrameHighPerson', ['person'],
+            monitor_num=5,
+            callable=is_person_over_600px_high
+        ),
+        IgnoredObject(
+            'MikesShrubAsCar', ['car'],
+            monitor_num=5,
+            bounding_box=[255, 370, 20, 20]
         ),
         IgnoredObject(
             'SIDEtrailer',
