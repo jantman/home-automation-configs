@@ -162,9 +162,9 @@ IGNORED_OBJECTS = {
         # other grill
         IgnoredObject(
             'WeberGrill',
-            ['toilet', 'surfboard'],
+            ['toilet', 'surfboard', 'boat'],
             monitor_num=4,
-            bounding_box=(1100, 830, 20, 20)
+            bounding_box=(1100, 830, 30, 30)
         ),
         # shadows on the storage box in the yard get recognized as weird things
         IgnoredObject(
