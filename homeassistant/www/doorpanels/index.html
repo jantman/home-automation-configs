@@ -19,10 +19,10 @@
   <div id="status"></div>
   <div id="disarmed" style="display: none;">
     <h1 id="arming_away" style="color: red; background-color: black; display: none; text-align: center;">Arming...</h1>
-    <button id="stay" style="position: absolute; width: 148px; height: 10px; top: 75px;left: 86px;" onclick="handleAlarmButton('stay');">
+    <button id="stay" style="position: absolute; width: 148px; height: 62px; top: 10px;left: 86px;" onclick="handleAlarmButton('stay');">
       <i class="mdi mdi-home-lock"></i> Stay
     </button>
-    <button id="leave" style="position: absolute; width: 166px; height: 10px; top: 75px; left: 238px;" onclick="handleAlarmButton('leave');">
+    <button id="leave" style="position: absolute; width: 166px; height: 62px; top: 10px; left: 238px;" onclick="handleAlarmButton('leave');">
       <i class="mdi mdi-car-side"></i> Leave
     </button>
     <button class="light-porchlights" style="position: absolute; width: 164px; height: 62px; top: 125px; left: 78px;" onclick="handleLightButton('porchlights');">
@@ -31,19 +31,22 @@
     <button class="light-tvlight" style="position: absolute; width: 130px; height: 62px; top: 125px; left: 255px;" onclick="handleLightButton('tvlight');">
       <i class="mdi mdi-lightbulb-outline light-tvlight-icon"></i> LR
     </button>
-    <button id="duress" style="position: absolute; width: 130px; height: 62px; top: 225px; left: 175px;" onclick="handleDuressButton();">
+    <button class="duress" style="position: absolute; width: 130px; height: 62px; top: 225px; left: 175px;" onclick="handleDuressButton();">
       Duress
     </button>
   </div>
   <div id="home-armed" style="display: none;">
-    <button id="disarm" style="position: absolute; width: 180px; height: 62px; top: 75px;left: 150px;" onclick="handleAlarmButton('disarm');">
+    <button id="disarm" style="position: absolute; width: 180px; height: 62px; top: 10px;left: 150px;" onclick="handleAlarmButton('disarm');">
       <i class="mdi mdi-lock-open"></i> Disarm
     </button>
-    <button class="light-porchlights" style="position: absolute; width: 164px; height: 62px; top: 175px; left: 78px;" onclick="handleLightButton('porchlights');">
+    <button class="light-porchlights" style="position: absolute; width: 164px; height: 62px; top: 125px; left: 78px;" onclick="handleLightButton('porchlights');">
       <i class="mdi mdi-lightbulb-outline light-porchlights-icon"></i> Porch
     </button>
-    <button class="light-tvlight" style="position: absolute; width: 130px; height: 62px; top: 175px; left: 255px;" onclick="handleLightButton('tvlight');">
+    <button class="light-tvlight" style="position: absolute; width: 130px; height: 62px; top: 125px; left: 255px;" onclick="handleLightButton('tvlight');">
       <i class="mdi mdi-lightbulb-outline light-tvlight-icon"></i> LR
+    </button>
+    <button class="duress" style="position: absolute; width: 130px; height: 62px; top: 225px; left: 175px;" onclick="handleDuressButton();">
+      Duress
     </button>
   </div>
   <div id="away-armed" style="display: none;">
