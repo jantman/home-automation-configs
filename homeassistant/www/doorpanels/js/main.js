@@ -128,6 +128,15 @@ export function handleAlarmButton(name) {
 window.handleAlarmButton = handleAlarmButton;
 
 /**
+ * Handle click of the duress button.
+ */
+export function handleDuressButton() {
+  console.log('Got "duress" alarm button.');
+  sendEvent({ 'type': 'duress', 'client': myIP });
+}
+window.handleDuressButton = handleDuressButton;
+
+/**
  * Handle the press of a button on the numeric pad for the alarm code. Appends
  * the character to the current code string, and sets a timeout after which we
  * should clear the current code string.
