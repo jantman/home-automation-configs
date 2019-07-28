@@ -864,7 +864,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'System Disarmed',
             'System has been disarmed.'
         )
-        if not is_duress:
+        if not is_duress and not self.in_duress:
             self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
             Path('/tmp/camera_control.time').touch()
             for cam_entity in AWAY_CAMERA_ENTITIES:
