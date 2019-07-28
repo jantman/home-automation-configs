@@ -3,6 +3,7 @@ var hawsConn = null;
 var currentCode = '';
 var inputTimeout = null;
 var groupStates = {};
+var inDuress = null;
 
 import {
   Auth,
@@ -43,6 +44,7 @@ import {
   getStates(connection).then(states => {
     states.forEach(function(s) {
       if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
+      if (s.entity_id == 'input_boolean.alarm_duress') { handleAlarmDuress(s.state); }
       if (s.entity_id.startsWith('group.')) {
         var groupName = s.entity_id.split(".")[1];
         groupStates[groupName] = s.state;
@@ -82,6 +84,7 @@ function handleEvent(e) {
         $('body').removeClass('alarm-triggered');
       }
     }
+    if(e.data.entity_id == 'input_boolean.alarm_duress') { handleAlarmDuress(e.data.new_state.state); }
   }
 }
 
@@ -126,6 +129,21 @@ export function handleAlarmButton(name) {
   }
 }
 window.handleAlarmButton = handleAlarmButton;
+
+/**
+ * Handle click of the duress button.
+ */
+export function handleDuressButton() {
+  console.log('Got "duress" alarm button.');
+  if(inDuress == false|| inDuress == null) {
+    console.log('Sending "duress" event');
+    sendEvent({'type': 'duress', 'client': myIP});
+  } else {
+    console.log('Sending "end-duress" event');
+    sendEvent({'type': 'end-duress', 'client': myIP});
+  }
+}
+window.handleDuressButton = handleDuressButton;
 
 /**
  * Handle the press of a button on the numeric pad for the alarm code. Appends
@@ -205,6 +223,22 @@ function handleAlarmState(st_name) {
     $('#home-armed').hide();
     $('#away-armed').hide();
     $('#status').show();
+  }
+}
+
+/**
+ * Update the display/UI depending on the current duress state.
+ *
+ * @param st_name [String] the current state of input_boolean.alarm_duress
+ */
+function handleAlarmDuress(st_name) {
+  console.log("Handle change of Duress to: " + st_name);
+  if (st_name == "on") {
+    inDuress = true;
+    $('.duress').addClass('duress-active');
+  } else {
+    inDuress = false;
+    $('.duress').removeClass('duress-active');
   }
 }
 
