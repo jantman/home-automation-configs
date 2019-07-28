@@ -135,9 +135,11 @@ window.handleAlarmButton = handleAlarmButton;
  */
 export function handleDuressButton() {
   console.log('Got "duress" alarm button.');
-  if(inDuress) {
+  if(inDuress == false|| inDuress == null) {
+    console.log('Sending "duress" event');
     sendEvent({'type': 'duress', 'client': myIP});
   } else {
+    console.log('Sending "end-duress" event');
     sendEvent({'type': 'end-duress', 'client': myIP});
   }
 }
