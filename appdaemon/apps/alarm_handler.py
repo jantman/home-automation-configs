@@ -773,11 +773,20 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         for e in self.get_state('input_boolean').values():
             if e is None:
                 continue
+            eid = e['entity_id']
+            if not (
+                eid.startswith('input_boolean.silence_') or
+                eid == 'input_boolean.cameras_silent' or
+                eid.startswith('input_boolean.enable_') or
+                eid == 'input_boolean.no_alarm_delay' or
+                eid == 'input_boolean.arming_away' or
+                eid == 'input_boolean.trigger_delay'
+            ):
+                self._log.info('Not resetting input_boolean: %s', eid)
+                continue
             a = e.get('attributes', {})
-            self._log.info(
-                'Turning OFF: %s (%s)', e['entity_id'], a['friendly_name']
-            )
-            self.turn_off(e['entity_id'])
+            self._log.info('Turning OFF: %s (%s)', eid, a['friendly_name'])
+            self.turn_off(eid)
 
     def _arm_home(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Home."""
