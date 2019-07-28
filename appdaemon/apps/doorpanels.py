@@ -82,6 +82,7 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         self._log.debug('Loaded secrets.')
         # verify that the secrets we need are present
         assert 'alarm_codes' in conf
+        assert 'alarm_duress_codes' in conf
         # return the full dict
         return conf
 
