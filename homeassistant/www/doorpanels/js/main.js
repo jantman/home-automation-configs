@@ -227,9 +227,9 @@ function handleAlarmState(st_name) {
 function handleAlarmDuress(st_name) {
   console.log("Handle change of Duress to: " + st_name);
   if (st_name == "on") {
-    $('.duress').css("background-color", "#ffcc00");
+    $('.duress').addClass('duress-active');
   } else {
-    $('.duress').css("background-color");
+    $('.duress').removeClass('duress-active');
   }
 }
 
