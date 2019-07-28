@@ -238,6 +238,8 @@ notify:
     user_key: !secret pushover_user_key
 
 input_boolean:
+  alarm_duress:
+    name: Alarm Duress
   trigger_first_morning:
     name: Waiting for first morning motion
     icon: mdi:kettle
