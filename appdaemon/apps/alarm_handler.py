@@ -329,6 +329,11 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """Return the string state of the alarm_state input select."""
         return self.get_state(ALARM_STATE_SELECT_ENTITY)
 
+    @property
+    def in_duress(self):
+        """Return True if in DURESS mode, False otherwise."""
+        return self.get_state(ALARM_DURESS_ENTITY) == 'on'
+
     def _update_alarm_state_file(self, state):
         self._last_transition_time = time.time()
         try:
@@ -795,10 +800,13 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'System has been armed in "Home" mode. All exterior sensors '
             'secure.', sound='gamelan'
         )
-        self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
-        Path('/tmp/camera_control.time').touch()
-        for cam_entity in AWAY_CAMERA_ENTITIES:
-            self.turn_off(cam_entity)
+        if self.in_duress:
+            self._log.info('In DURESS mode; not turning off cameras.')
+        else:
+            self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+            Path('/tmp/camera_control.time').touch()
+            for cam_entity in AWAY_CAMERA_ENTITIES:
+                self.turn_off(cam_entity)
         self._reset_input_booleans()
         self.select_option(ALARM_STATE_SELECT_ENTITY, HOME)
 
