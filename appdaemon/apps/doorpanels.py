@@ -39,6 +39,9 @@ HOME = 'Home'
 AWAY = 'Away'
 DISARMED = 'Disarmed'
 AWAY_DELAY = 'Away-Delay'
+DISARMED_DURESS = 'Disarmed-Duress'
+DURESS = 'Duress'
+END_DURESS = 'End-Duress'
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
 #: at runtime via events. See ``sane_app_logging.py``.
@@ -102,6 +105,10 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
             return self._handle_disarm(client)
         if data['type'] == 'enterCode':
             return self._handle_code(data['code'], client)
+        if data['type'] == 'duress':
+            return self._handle_duress(client)
+        if data['type'] == 'end-duress':
+            return self._handle_end_duress(client)
 
     def _handle_leave(self, client_ip):
         self._log.info(
@@ -109,6 +116,22 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         )
         self.fire_event(
             'CUSTOM_ALARM_STATE_SET', state=AWAY_DELAY
+        )
+
+    def _handle_duress(self, client_ip):
+        self._log.info(
+            'Duress event from client %s', client_ip
+        )
+        self.fire_event(
+            'CUSTOM_ALARM_STATE_SET', state=DURESS
+        )
+
+    def _handle_end_duress(self, client_ip):
+        self._log.info(
+            'End-Duress event from client %s', client_ip
+        )
+        self.fire_event(
+            'CUSTOM_ALARM_STATE_SET', state=END_DURESS
         )
 
     def _handle_stay(self, client_ip):
@@ -170,7 +193,8 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
             )
             return
         desc = self._hass_secrets['alarm_codes'].get(code, None)
-        if desc is None:
+        duress_desc = self._hass_secrets['alarm_duress_codes'].get(code, None)
+        if desc is None and duress_desc is None:
             self.fire_event(
                 'CUSTOM_ALARM_TRIGGER',
                 message='Doorpanel disarm attempt with invalid '
@@ -178,6 +202,19 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
             )
             self._log.warning(
                 'Alarm disarm attempt with invalid code from %s' % client_ip
+            )
+            return
+        if duress_desc:
+            self._log.info(
+                'Alarm disarmed DURESS with code: %s from %s',
+                duress_desc, client_ip
+            )
+            self.call_service(
+                'logbook/log', name='Alarm Disarmed DURESS via Doorpanel',
+                message='Code used: %s from %s' % (duress_desc, client_ip)
+            )
+            self.fire_event(
+                'CUSTOM_ALARM_STATE_SET', state=DISARMED_DURESS
             )
             return
         self._log.info(

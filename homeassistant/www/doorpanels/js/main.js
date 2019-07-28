@@ -3,6 +3,7 @@ var hawsConn = null;
 var currentCode = '';
 var inputTimeout = null;
 var groupStates = {};
+var inDuress = null;
 
 import {
   Auth,
@@ -134,7 +135,11 @@ window.handleAlarmButton = handleAlarmButton;
  */
 export function handleDuressButton() {
   console.log('Got "duress" alarm button.');
-  sendEvent({ 'type': 'duress', 'client': myIP });
+  if(inDuress) {
+    sendEvent({'type': 'duress', 'client': myIP});
+  } else {
+    sendEvent({'type': 'end-duress', 'client': myIP});
+  }
 }
 window.handleDuressButton = handleDuressButton;
 
@@ -227,8 +232,10 @@ function handleAlarmState(st_name) {
 function handleAlarmDuress(st_name) {
   console.log("Handle change of Duress to: " + st_name);
   if (st_name == "on") {
+    inDuress = true;
     $('.duress').addClass('duress-active');
   } else {
+    inDuress = false;
     $('.duress').removeClass('duress-active');
   }
 }

@@ -109,6 +109,12 @@ HOME = 'Home'
 AWAY = 'Away'
 DISARMED = 'Disarmed'
 AWAY_DELAY = 'Away-Delay'
+DISARMED_DURESS = 'Disarmed-Duress'
+DURESS = 'Duress'
+END_DURESS = 'End-Duress'
+
+#: Entity ID for the input_boolean for alarm duress mode.
+ALARM_DURESS_ENTITY = 'input_boolean.alarm_duress'
 
 #: Entity ID for input_boolean that enables alarming on interior sensors
 INTERIOR_ENABLE_ENTITY = 'input_boolean.enable_motion'
@@ -531,8 +537,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
         event type: LOGWRAPPER_SET_DEBUG
         data: dict with one key, ``state``. String value must match the value
-        of one of :py:const:`~.HOME`, :py:const:`~.AWAY` or
-        :py:const:`~.DISARMED`.
+        of one of :py:const:`~.HOME`, :py:const:`~.AWAY`,
+        :py:const:`~.DISARMED`, :py:const:`~.DISARMED_DURESS`,
+        :py:const:`~.DURESS`, or :py:const:`~.END_DURESS`.
         """
         self._log.debug('Got %s event data=%s', event_name, data)
         if event_name != 'CUSTOM_ALARM_STATE_SET':
@@ -542,7 +549,10 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         state = data.get('state', None)
         prev_state = self.get_state(ALARM_STATE_SELECT_ENTITY)
-        if state not in [HOME, AWAY, DISARMED, AWAY_DELAY]:
+        if state not in [
+            HOME, AWAY, DISARMED, AWAY_DELAY, DURESS, END_DURESS,
+            DISARMED_DURESS
+        ]:
             self._log.error(
                 'Got invalid state for CUSTOM_ALARM_STATE_SET event: %s',
                 state
@@ -553,6 +563,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'Got CUSTOM_ALARM_STATE_SET event with state=%s but alarm is '
                 'already in that state. Ignoring.', state
             )
+            return
+        if state in [DURESS, END_DURESS]:
+            self._log.info('Got %s event', state)
+            self._handle_duress(state)
+            return
+        if state == DISARMED_DURESS:
+            self._log.info('Got Disarm-Duress event')
+            self._disarm(prev_state, is_duress=True)
             return
         if state == HOME:
             self._log.info('Arming HOME from event')
@@ -568,6 +586,23 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         self._log.info('Disarming from event')
         self._disarm(prev_state)
+
+    def _handle_duress(self, new_state):
+        if new_state == DURESS:
+            self._log.info('Handling DURESS event')
+            self._log.info('Turning on cameras: %s', AWAY_CAMERA_ENTITIES)
+            Path('/tmp/camera_control.time').touch()
+            for cam_entity in AWAY_CAMERA_ENTITIES:
+                self.turn_on(cam_entity)
+            self.turn_on(ALARM_DURESS_ENTITY)
+            return
+        # else END_DURESS
+        self._log.info('Handling END_DURESS event')
+        self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+        Path('/tmp/camera_control.time').touch()
+        for cam_entity in AWAY_CAMERA_ENTITIES:
+            self.turn_off(cam_entity)
+        self.turn_off(ALARM_DURESS_ENTITY)
 
     def _arm_away_delay(self, prev_state):
         self._log.info(
@@ -796,7 +831,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self.select_option(ALARM_STATE_SELECT_ENTITY, AWAY)
         self.turn_off('input_boolean.arming_away')
 
-    def _disarm(self, prev_state):
+    def _disarm(self, prev_state, is_duress=False):
         """Disarm the system."""
         self._log.info('Disarming system (previous state: %s)', prev_state)
         self._update_alarm_state_file('DISARMED')
@@ -812,10 +847,14 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'System Disarmed',
             'System has been disarmed.'
         )
-        self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
-        Path('/tmp/camera_control.time').touch()
-        for cam_entity in AWAY_CAMERA_ENTITIES:
-            self.turn_off(cam_entity)
+        if not is_duress:
+            self._log.info('Turning off cameras: %s', AWAY_CAMERA_ENTITIES)
+            Path('/tmp/camera_control.time').touch()
+            for cam_entity in AWAY_CAMERA_ENTITIES:
+                self.turn_off(cam_entity)
+        else:
+            self._log.info('Disarmed DURESS mode; not turning off cameras.')
+            self.turn_on(ALARM_DURESS_ENTITY)
         self._reset_input_booleans()
         self.select_option(ALARM_STATE_SELECT_ENTITY, DISARMED)
 
