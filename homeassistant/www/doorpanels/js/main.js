@@ -137,12 +137,12 @@ export function handleDuressDoubleClick() {
   console.log('Got "duress" double click.');
   if(inDuress == false|| inDuress == null) {
     console.log('Sending "duress" event');
-    sendEvent({'type': 'duress', 'client': myIP});
     $('body').addClass('duress-pending');
+    sendEvent({'type': 'duress', 'client': myIP});
   } else {
     console.log('Sending "end-duress" event');
+    $('body').addClass('duress-pending');
     sendEvent({'type': 'end-duress', 'client': myIP});
-    $('body').removeClass('duress-pending');
   }
 }
 window.handleDuressDoubleClick = handleDuressDoubleClick;
