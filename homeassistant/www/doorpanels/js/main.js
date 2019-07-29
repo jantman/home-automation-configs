@@ -131,10 +131,10 @@ export function handleAlarmButton(name) {
 window.handleAlarmButton = handleAlarmButton;
 
 /**
- * Handle click of the duress button.
+ * Handle double-click on background for duress.
  */
-export function handleDuressButton() {
-  console.log('Got "duress" alarm button.');
+export function handleDuressDoubleClick() {
+  console.log('Got "duress" double click.');
   if(inDuress == false|| inDuress == null) {
     console.log('Sending "duress" event');
     sendEvent({'type': 'duress', 'client': myIP});
@@ -143,7 +143,7 @@ export function handleDuressButton() {
     sendEvent({'type': 'end-duress', 'client': myIP});
   }
 }
-window.handleDuressButton = handleDuressButton;
+window.handleDuressDoubleClick = handleDuressDoubleClick;
 
 /**
  * Handle the press of a button on the numeric pad for the alarm code. Appends
@@ -235,10 +235,10 @@ function handleAlarmDuress(st_name) {
   console.log("Handle change of Duress to: " + st_name);
   if (st_name == "on") {
     inDuress = true;
-    $('.duress').addClass('duress-active');
+    $('body').addClass('duress-active');
   } else {
     inDuress = false;
-    $('.duress').removeClass('duress-active');
+    $('body').removeClass('duress-active');
   }
 }
 
