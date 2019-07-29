@@ -138,9 +138,11 @@ export function handleDuressDoubleClick() {
   if(inDuress == false|| inDuress == null) {
     console.log('Sending "duress" event');
     sendEvent({'type': 'duress', 'client': myIP});
+    $('body').addClass('duress-pending');
   } else {
     console.log('Sending "end-duress" event');
     sendEvent({'type': 'end-duress', 'client': myIP});
+    $('body').removeClass('duress-pending');
   }
 }
 window.handleDuressDoubleClick = handleDuressDoubleClick;
@@ -233,6 +235,7 @@ function handleAlarmState(st_name) {
  */
 function handleAlarmDuress(st_name) {
   console.log("Handle change of Duress to: " + st_name);
+  $('body').removeClass('duress-pending');
   if (st_name == "on") {
     inDuress = true;
     $('body').addClass('duress-active');
