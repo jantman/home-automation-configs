@@ -270,7 +270,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'HallStuff',
-            ['parking meter', 'toilet', 'cake'],
+            ['parking meter', 'toilet', 'cake', 'handbag'],
             monitor_num=8
         )
     ]
