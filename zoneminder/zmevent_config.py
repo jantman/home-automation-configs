@@ -260,6 +260,11 @@ IGNORED_OBJECTS = {
             ['car', 'truck', 'bus', 'train'],
             monitor_num=4,
             zone_names=['BackFence']
+        ),
+        IgnoredObject(
+            'HallStuff',
+            ['parking meter'],
+            monitor_num=8
         )
     ]
 }
