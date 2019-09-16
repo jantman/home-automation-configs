@@ -129,6 +129,13 @@ IGNORED_OBJECTS = {
             monitor_num=9,
             zone_names=['Street']
         ),
+        # Ignore Kevin's cars
+        IgnoredObject(
+            'FrontCamKevinsCars',
+            ['car', 'truck'],
+            monitor_num=9,
+            bounding_box=(1000, 95, 180, 50)
+        ),
         # front camera SideYardNear
         IgnoredObject(
             'FrontCamSideYardNear',
