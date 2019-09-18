@@ -132,7 +132,7 @@ IGNORED_OBJECTS = {
         # Ignore Kevin's cars
         IgnoredObject(
             'FrontCamKevinsCars',
-            ['car', 'truck'],
+            ['car', 'truck', 'bicycle'],
             monitor_num=9,
             bounding_box=(1000, 95, 180, 50)
         ),
