@@ -169,7 +169,7 @@ IGNORED_OBJECTS = {
         # other grill
         IgnoredObject(
             'WeberGrill',
-            ['toilet', 'surfboard', 'boat'],
+            ['toilet', 'surfboard', 'boat', 'sports ball'],
             monitor_num=4,
             bounding_box=(1100, 830, 30, 30)
         ),
