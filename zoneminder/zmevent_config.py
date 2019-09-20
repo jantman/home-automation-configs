@@ -206,8 +206,8 @@ IGNORED_OBJECTS = {
         #
         # ignore all the giraffes on the side of the house...
         IgnoredObject(
-            'SideGiraffes',
-            ['giraffe'],
+            'SideAnimals',
+            ['giraffe', 'cow'],
             monitor_num=5
         ),
         IgnoredObject(
