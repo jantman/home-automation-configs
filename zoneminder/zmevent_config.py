@@ -117,7 +117,7 @@ IGNORED_OBJECTS = {
             [
                 'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
                 'sink', 'bowl', 'refrigerator', 'laptop', 'chair',
-                'diningtable', 'bottle'
+                'diningtable', 'bottle', 'umbrella', 'bird', 'cow', 'elephant'
             ],
             monitor_num=2
         ),
@@ -197,7 +197,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'BackStreetCar',
-            ['car', 'truck', 'bus', 'train'],
+            ['car', 'truck', 'bus', 'train', 'kite'],
             monitor_num=4,
             zone_names=['BackFence']
         ),
@@ -207,7 +207,7 @@ IGNORED_OBJECTS = {
         # ignore all the giraffes on the side of the house...
         IgnoredObject(
             'SideAnimals',
-            ['giraffe', 'cow'],
+            ['giraffe', 'cow', 'sports ball'],
             monitor_num=5
         ),
         IgnoredObject(
@@ -257,7 +257,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'HallStuff',
-            ['parking meter', 'toilet', 'cake', 'handbag'],
+            ['parking meter', 'toilet', 'cake', 'handbag', 'teddy bear'],
             monitor_num=8
         ),
         #
