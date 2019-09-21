@@ -119,7 +119,7 @@ INITIAL_STATES = {
         'entity_id': 'light.linear_lb60z1_dimmable_led_light_bulb_level',
         'state': 'off'
     },
-    'light.linear_lb60z1_dimmable_led_light_bulb_level_2': {
+    'light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level': {
         'attributes': {
             'brightness': 93,
             'friendly_name': 'KitchenBulb2 '
@@ -132,7 +132,7 @@ INITIAL_STATES = {
             'value_index': 0,
             'value_instance': 1
         },
-        'entity_id': 'light.linear_lb60z1_dimmable_led_light_bulb_level_2',
+        'entity_id': 'light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level',
         'state': 'off'
     },
     'light.linear_lb60z1_dimmable_led_light_bulb_level_3': {

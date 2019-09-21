@@ -23,7 +23,7 @@ views:
             - type: state-icon
               tap_action:
                 action: toggle
-              entity: light.linear_lb60z1_dimmable_led_light_bulb_level_2 # Kitchen bulb 2
+              entity: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level # Kitchen bulb 2
               style:
                 top: 47%
                 left: 27%
@@ -281,7 +281,7 @@ views:
           entities:
             # kitchen
             - light.linear_lb60z1_dimmable_led_light_bulb_level
-            - light.linear_lb60z1_dimmable_led_light_bulb_level_2
+            - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
             # porch
             - light.linear_lb60z1_dimmable_led_light_bulb_level_3
             - light.zipato_bulb_2_level

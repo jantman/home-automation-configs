@@ -17,7 +17,7 @@
     - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_off
@@ -43,7 +43,7 @@
     - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_off
@@ -69,7 +69,7 @@
     - service: homeassistant.turn_on
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
 - alias: Turn Kitchen Light Off 10 Minutes After Motion
   id: KitchenLightMotionOff
   trigger:
@@ -82,7 +82,7 @@
     - service: homeassistant.turn_off
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
 ################################################################################
 # Porch Lights                                                                 #
 ################################################################################
@@ -266,7 +266,7 @@
     - service: homeassistant.turn_on
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_2
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_on

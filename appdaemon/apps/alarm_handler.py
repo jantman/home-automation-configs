@@ -123,7 +123,7 @@ INTERIOR_ENABLE_ENTITY = 'input_boolean.enable_motion'
 LIGHT_ENTITIES = [
     # Kitchen
     'light.linear_lb60z1_dimmable_led_light_bulb_level',
-    'light.linear_lb60z1_dimmable_led_light_bulb_level_2',
+    'light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level',
     # Porch
     'light.linear_lb60z1_dimmable_led_light_bulb_level_3',
     # TV
