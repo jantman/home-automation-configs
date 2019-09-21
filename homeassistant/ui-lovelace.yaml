@@ -245,7 +245,7 @@ views:
             - zwave.ecolink_motion_detector_2
             - zwave.kitchensensor
             - zwave.linear_lb60z1_dimmable_led_light_bulb
-            - zwave.linear_lb60z1_dimmable_led_light_bulb_2
+            - zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb
             - zwave.linear_lb60z1_dimmable_led_light_bulb_3
             - zwave.lrmotion
             - zwave.officesensor
