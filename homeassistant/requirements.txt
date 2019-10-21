@@ -37,7 +37,7 @@ python-openzwave==0.4.19
 python-pushover==0.4
 python-slugify==3.0.2
 pytz==2019.1
-PyYAML==3.13
+PyYAML==5.1
 requests==2.22.0
 responses==0.10.6
 ruamel.yaml==0.15.94
