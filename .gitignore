@@ -9,3 +9,4 @@ testing/hass-config
 testing/appdaemon-config
 *.pyc
 homeassistant/www/doorpanels/js/local_apitoken.js
+wemos_d1_mini/config.py
