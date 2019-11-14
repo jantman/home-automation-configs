@@ -9,6 +9,9 @@ Connect the other leg to ground.
 
 Connect the cathode (short leg) of a red LED to ground.
 Connect the anode through a 220-Ohm resistor to D7 / GPIO13.
+
+red 470 ohm
+
 """
 
 import sys
