@@ -22,6 +22,7 @@ import network
 import socket
 from time import sleep_ms
 from binascii import hexlify
+import json
 micropython.alloc_emergency_exception_buf(100)
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
@@ -33,7 +34,7 @@ class ButtonSender:
         print("Init")
         self.unhandled_event = False
         self.button = Pin(12, Pin.IN, Pin.PULL_UP)
-        self.led = Pin(13, Pin.OUT)
+        self.led = Pin(2, Pin.OUT)
         self.led.on()
         self.wlan = network.WLAN(network.STA_IF)
         self.connect_wlan()
@@ -66,7 +67,18 @@ class ButtonSender:
     def handle_change(self):
         self.unhandled_event = False
         if self.button.value():
-            self.http_post()
+            #self.http_post()
+            print('In duress? %s' % self.in_duress)
+            print('Alarm state: %s' % self.alarm_state)
+
+    @property
+    def alarm_state(self):
+        return self.get_entity_state('input_select.alarmstate')
+
+    @property
+    def in_duress(self):
+        st = self.get_entity_state('input_boolean.alarm_duress')
+        return st == 'on'
 
     def on_press(self, _):
         print('on_press() called')
@@ -85,14 +97,52 @@ class ButtonSender:
             ),
             'utf8'
         ))
+        buf = ''
         while True:
             data = s.recv(100)
             if data:
-                print(str(data, 'utf8'), end='')
+                buf += str(data, 'utf8')
             else:
                 break
+        print(buf)
         s.close()
+        if 'HTTP/1.0 200 OK' in buf:
+            print('OK')
+        else:
+            print('FAIL')
         self.led.off()
+
+    def get_entity_state(self, entity_id):
+        self.led.on()
+        addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
+        print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
+        s = socket.socket()
+        s.connect(addr)
+        path = '/api/states/' + entity_id
+        print('GET: %s' % path)
+        s.send(bytes(
+            'GET %s HTTP/1.0\r\nHost: %s\r\n\r\n' % (
+                path, HOOK_HOST
+            ),
+            'utf8'
+        ))
+        buf = ''
+        while True:
+            data = s.recv(100)
+            if data:
+                buf += str(data, 'utf8')
+            else:
+                break
+        print(buf)
+        s.close()
+        if 'HTTP/1.0 200 OK' in buf:
+            print('OK')
+        else:
+            print('FAIL')
+        data = buf.strip().split("\n")[-1]
+        res = json.loads(data)
+        self.led.off()
+        return res['state']
 
 
 if __name__ == '__main__':
