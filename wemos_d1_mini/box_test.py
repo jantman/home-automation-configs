@@ -10,6 +10,7 @@ import micropython
 from time import sleep_ms
 micropython.alloc_emergency_exception_buf(100)
 
+
 # Pin mappings - board number to GPIO number
 D0 = micropython.const(16)
 D1 = micropython.const(5)
@@ -45,9 +46,11 @@ class BoxTest:
         print('Init Buttons')
         self.pin_to_button_colors = {}
         self.buttons = {}
+        self.buttons_pressed = {}
         for color, pin in BUTTON_MAP.items():
             self.pin_to_button_colors['Pin(%s)' % pin] = color
             self.buttons[color] = Pin(pin, Pin.IN, Pin.PULL_UP)
+            self.buttons_pressed[color] = False
         self.debounce_timer = Timer(0)
         self.timer_running = False
         print(self.debounce_timer)
@@ -63,7 +66,7 @@ class BoxTest:
         print('set IRQ')
         for pin in self.buttons.values():
             pin.irq(
-                trigger=Pin.IRQ_FALLING,
+                trigger=Pin.IRQ_RISING,
                 handler=self.button_pin_irq_callback
             )
         while True:
@@ -71,8 +74,9 @@ class BoxTest:
                 pass
             sleep_ms(50)
 
-    def button_pin_irq_callback(self, _):
+    def button_pin_irq_callback(self, pin):
         print('button_pin_irq_callback()')
+        self.buttons_pressed[self.pin_to_button_colors[str(pin)]] = True
         if self.timer_running:
             return
         self.debounce_timer.init(
@@ -95,27 +99,28 @@ class BoxTest:
 
     def on_press_deferred(self, _):
         print('on_press_deferred() called')
-        print(self.read_buttons())
-        return
-        color = self.pin_to_button_colors[str(pin)]
-        print('on_press_deferred() called for pin: %s (%s)' % (color, pin))
-        # print(pin.name)
-        # print(pin.phys_port)
-        # print(pin.__dict__())
-        # print(vars(pin))
-        # print(str(pin))
-        if color == 'blue':
-            self.set_rgb(False, False, True)
-        elif color == 'green':
-            self.set_rgb(False, True, False)
-        elif color == 'red':
-            self.set_rgb(True, False, False)
-        elif color == 'white':
-            self.set_rgb(True, True, True)
-        elif color == 'black':
-            self.set_rgb(False, False, False)
-        elif color == 'yellow':
-            self.set_rgb(True, True, False)
+        pressed = [
+            x for x in self.buttons_pressed.keys()
+            if self.buttons_pressed[x]
+        ]
+        print(pressed)
+        # reset the dict
+        self.buttons_pressed = self.buttons_pressed.fromkeys(
+            self.buttons_pressed, False
+        )
+        for color in pressed:
+            if color == 'blue':
+                self.set_rgb(False, False, True)
+            elif color == 'green':
+                self.set_rgb(False, True, False)
+            elif color == 'red':
+                self.set_rgb(True, False, False)
+            elif color == 'white':
+                self.set_rgb(True, True, True)
+            elif color == 'black':
+                self.set_rgb(False, False, False)
+            elif color == 'yellow':
+                self.set_rgb(True, True, False)
 
 
 if __name__ == '__main__':
