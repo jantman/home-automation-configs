@@ -1,6 +1,6 @@
 """
 Pinout:
-https://github.com/nodemcu/nodemcu-devkit-v1.0/blob/master/README.md#pin-map
+https://wiki.wemos.cc/products:d1:d1_mini#pin
 
 Connect one leg of a button to "D6" on the board / GPIO12.
 Connect the other leg to ground.

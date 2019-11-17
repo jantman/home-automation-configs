@@ -7,6 +7,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 ## What's Here
 
 * [boot.py](boot.py) - the original boot file that came with MicroPython
+* [box_test.py](box_test.py) - Script to test the LED and buttons in the assembled [main.py](main.py) box.
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.

@@ -2,16 +2,9 @@
 POST to HomeAssistant webhook when a button is pressed.
 
 Pinout:
-https://github.com/nodemcu/nodemcu-devkit-v1.0/blob/master/README.md#pin-map
+https://wiki.wemos.cc/products:d1:d1_mini#pin
 
-Connect one leg of a button to "D6" on the board / GPIO12.
-Connect the other leg to ground.
-
-Connect the cathode (short leg) of a red LED to ground.
-Connect the anode through a 220-Ohm resistor to D7 / GPIO13.
-
-red 470 ohm
-
+Connect buttons and LEDs according to ``main.fzz``.
 """
 
 import sys

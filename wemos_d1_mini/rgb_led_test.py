@@ -2,7 +2,7 @@
 Intended for use pasted into MicroPython REPL.
 
 Pinout:
-https://github.com/nodemcu/nodemcu-devkit-v1.0/blob/master/README.md#pin-map
+https://wiki.wemos.cc/products:d1:d1_mini#pin
 
 Using one of the common cathode 5mm RGB LEDs (see README)...
 
