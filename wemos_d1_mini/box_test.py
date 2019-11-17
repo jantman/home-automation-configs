@@ -97,6 +97,19 @@ class BoxTest:
                 res.append(name)
         return res
 
+    def blink_leds(self, colors, length_ms=250, num_times=1):
+        for color, led in self.leds.items():
+            if color not in colors:
+                led.off()
+        for idx in range(0, num_times):
+            for color in colors:
+                self.leds[color].on()
+            sleep_ms(length_ms)
+            for color in colors:
+                self.leds[color].off()
+            if idx != num_times - 1:
+                sleep_ms(length_ms)
+
     def on_press_deferred(self, _):
         print('on_press_deferred() called')
         pressed = [
@@ -108,6 +121,11 @@ class BoxTest:
         self.buttons_pressed = self.buttons_pressed.fromkeys(
             self.buttons_pressed, False
         )
+        if not pressed:
+            return
+        if len(pressed) > 1:
+            self.blink_leds(['red'], length_ms=100, num_times=3)
+            return
         for color in pressed:
             if color == 'blue':
                 self.set_rgb(False, False, True)
