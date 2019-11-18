@@ -142,12 +142,12 @@ views:
             - type: state-icon
               entity: camera.porch
               style:
-                top: 73%
+                top: 69%
                 left: 5%
             - type: state-icon
               entity: camera.garage
               style:
-                top: 63%
+                top: 56%
                 left: 5%
             - type: state-icon
               entity: camera.front
@@ -185,6 +185,11 @@ views:
                 top: 96%
                 left: 55%
             # TEMPERATURES
+            - type: state-label
+              entity: sensor.porch_temp
+              style:
+                top: 78%
+                left: 6%
             - type: state-label
               entity: sensor.bedroomsensor_temperature
               style:

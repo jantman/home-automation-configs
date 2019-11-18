@@ -16,6 +16,10 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [main.png](main.png) - PNG output of ``main.fzz``
 * [main.svg](main.svg) - SVG output of ``main.fzz``
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
+* [temp_sensor.py](temp_sensor.py) - A quick-and-dirty script to check the temperature of a DS18B20 temperature sensor and POST it to HomeAssistant (as a sensor value) every minute.
+* [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
+* [temp_sensor.png](temp_sensor.png) - PNG of Schematic
+* [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
 
 ## Materials
 
