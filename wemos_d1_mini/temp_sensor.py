@@ -82,8 +82,7 @@ class TempSender:
         data = json.dumps({
             'state': round(temp_f, 2),
             'attributes': {
-                'friendly_name': FRIENDLY_NAME,
-                'unit_of_measurement': '\\u00b0F'
+                'friendly_name': FRIENDLY_NAME
             }
         })
         self.http_post(data)
