@@ -245,11 +245,10 @@
     service: homeassistant.turn_off
     entity_id: input_boolean.trigger_first_morning
 # "first morning" motion trigger
-- alias: First Morning Bedroom Light
+- alias: First Morning Button Trigger
   trigger:
-    platform: state
-    entity_id: light.ge_45606_2way_dimmer_switch_level
-    to: 'on'
+    platform: webhook
+    webhook_id: cc50e36b6a6b-morning
   # only complete the automation if we're still waiting for the first motion
   condition:
     - condition: state
@@ -263,6 +262,8 @@
     # so that this happens only once
     - service: homeassistant.turn_off
       entity_id: input_boolean.trigger_first_morning
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level
     - service: homeassistant.turn_on
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
@@ -326,3 +327,45 @@
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Home
+################################################################################
+# BEGIN Button box handling                                                    #
+################################################################################
+- alias: Button Box Panic Button
+  trigger:
+    platform: webhook
+    webhook_id: cc50e36b6a6b-panic
+  action:
+    - event: CUSTOM_ALARM_TRIGGER
+      event_data:
+        message: triggered by button box panic button
+- alias: Button Box Arm Home
+  trigger:
+    platform: webhook
+    webhook_id: cc50e36b6a6b-armhome
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
+- alias: Button Box Disarm
+  trigger:
+    platform: webhook
+    webhook_id: cc50e36b6a6b-disarm
+  condition:
+    - condition: state
+      entity_id: input_select.alarmstate
+      state: Home
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Disarmed
+- alias: Button Box Duress
+  trigger:
+    platform: webhook
+    webhook_id: cc50e36b6a6b-duress
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Duress
+################################################################################
+# END Button box handling                                                      #
+################################################################################

@@ -8,6 +8,7 @@ Connect buttons and LEDs according to ``main.fzz``.
 from machine import Pin, Timer
 import micropython
 from time import sleep_ms
+
 micropython.alloc_emergency_exception_buf(100)
 
 
@@ -30,6 +31,10 @@ BUTTON_MAP = {
     'yellow': D3,
     'black': D1,
 }
+
+
+def debugprint(*args):
+    print(*args)
 
 
 class BoxTest:
