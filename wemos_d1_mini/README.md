@@ -8,18 +8,21 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 
 * [boot.py](boot.py) - the original boot file that came with MicroPython
 * [box_test.py](box_test.py) - Script to test the LED and buttons in the assembled [main.py](main.py) box.
+* [button_box_v1.py](button_box_v1.py) - First version of the main application I run on my D1 Mini pushbutton control boxes. See the docstring at the top of the file for an explanation.
+* [button_box_v1.fzz](button_box_v1.fzz) - A [Fritzing](https://fritzing.org) schematic for how the pushbutton control boxes are wired.
+* [button_box_v1.png](button_box_v1.png) - PNG output of ``button_box_v1.fzz``
+* [button_box_v1.svg](button_box_v1.svg) - SVG output of ``button_box_v1.fzz``
+* [button_box_v1.jpg](button_box_v1.jpg) - Photo of button_box_v1 in use.
+* [button_box_v1_inside.jpg](button_box_v1_inside.jpg) - Photo of interior of button_box_v1 during assembly.
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
-* [main.py](main.py) - The main application I run on my D1 Mini pushbutton control boxes. See the docstring at the top of the file for an explanation.
-* [main.fzz](main.fzz) - A [Fritzing](https://fritzing.org) schematic for how the pushbutton control boxes are wired.
-* [main.png](main.png) - PNG output of ``main.fzz``
-* [main.svg](main.svg) - SVG output of ``main.fzz``
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
 * [temp_sensor.py](temp_sensor.py) - A quick-and-dirty script to check the temperature of a DS18B20 temperature sensor and POST it to HomeAssistant (as a sensor value) every minute.
 * [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
 * [temp_sensor.png](temp_sensor.png) - PNG of Schematic
 * [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
+* [temp_sensor_box.jpg](temp_sensor_box.jpg) - Photo of installed temperature sensor box.
 
 ## Materials
 
