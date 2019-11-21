@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+<svg xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' version='1.2' baseProfile='tiny' x='0in' y='0in' width='6.08152in' height='1.92721in' viewBox='0 0 437.869 138.759' >
+<g partID='58400'><g transform='translate(264.019,132.24)' ><g transform='matrix(1,0,0,-1,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<rect class="interior rect" stroke="#000000" stroke-width="0.9" xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="78.3" x="14.85" stroke-linecap="round" y="0.45" width="63.9"/>
+<g stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" font-family="'Droid Sans'">
+<g id="pins" xmlns="http://www.w3.org/2000/svg" fill="none" font-size="3.49999">
+<g id="pins-left" xmlns="http://www.w3.org/2000/svg" text-anchor="start">
+<line id="connector0pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="14.4" x1="0.349999" y1="14.4"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="15.0999">RST</text>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="14.0499" width="0.699999"/>
+<line id="connector1pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="21.6" x1="0.349999" y1="21.6"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="22.2999">A0</text>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="21.2499" width="0.699999"/>
+<line id="connector2pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="28.8" x1="0.349999" y1="28.8"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="29.4999">D0</text>
+<g id="connector2terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="28.4499" width="0.699999"/>
+<line id="connector3pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="36" x1="0.349999" y1="36"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="36.6999">D5</text>
+<g id="connector3terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="35.6499" width="0.699999"/>
+<line id="connector4pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="43.2" x1="0.349999" y1="43.2"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="43.8999">D6</text>
+<g id="connector4terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="42.8499" width="0.699999"/>
+<line id="connector5pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="50.4" x1="0.349999" y1="50.4"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="51.0999">D7</text>
+<g id="connector5terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="50.0499" width="0.699999"/>
+<line id="connector6pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="57.6" x1="0.349999" y1="57.6"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="58.2999">D8</text>
+<g id="connector6terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="57.2499" width="0.699999"/>
+<line id="connector7pin" x2="14.75" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="64.8" x1="0.349999" y1="64.8"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="16.15" y="65.4999">3V3</text>
+<g id="connector7terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="-0.349999" y="64.4499" width="0.699999"/>
+</g>
+<g id="right" xmlns="http://www.w3.org/2000/svg" text-anchor="end">
+<line id="connector8pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="64.8" x1="78.8499" y1="64.8"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="65.4999">5V</text>
+<g id="connector8terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="64.4499" width="0.699999"/>
+<line id="connector9pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="57.6" x1="78.8499" y1="57.6"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="58.2999">G</text>
+<g id="connector9terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="57.2499" width="0.699999"/>
+<line id="connector10pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="50.4" x1="78.8499" y1="50.4"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="51.0999">D4</text>
+<g id="connector10terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="50.0499" width="0.699999"/>
+<line id="connector11pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="43.2" x1="78.8499" y1="43.2"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="43.8999">D3</text>
+<g id="connector11terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="42.8499" width="0.699999"/>
+<line id="connector12pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="36" x1="78.8499" y1="36"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="36.6999">D2</text>
+<g id="connector12terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="35.6499" width="0.699999"/>
+<line id="connector13pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="28.8" x1="78.8499" y1="28.8"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="29.4999">D1</text>
+<g id="connector13terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="28.4499" width="0.699999"/>
+<line id="connector14pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="21.6" x1="78.8499" y1="21.6"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="22.2999">RX</text>
+<g id="connector14terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="21.2499" width="0.699999"/>
+<line id="connector15pin" x2="93.2499" stroke="#787878" stroke-width="0.699999" xmlns="http://www.w3.org/2000/svg" y2="14.4" x1="78.8499" y1="14.4"/>
+<text xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" x="77.4499" y="15.0999">TX</text>
+<g id="connector15terminal" xmlns="http://www.w3.org/2000/svg" height="0.699999" x="93.2499" y="14.0499" width="0.699999"/>
+</g>
+</g>
+<text id="label" xmlns="http://www.w3.org/2000/svg" fill="#000000" font-size="4.25001" x="46.8283" text-anchor="middle" y="39.685">WeMos D1 mini</text>
+</g>
+</g>
+</g></g></g><g partID='58780'><g transform='translate(176.419,77.6596)' ><g transform='matrix(0,1,1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<path xmlns="http://www.w3.org/2000/svg" d="M18.565,15.1c-0.193,0,-0.35,-0.157,-0.35,-0.35l0,-7.2c0,-0.193,0.157,-0.35,0.35,-0.35s0.35,0.157,0.35,0.35l0,7.2C18.916,14.943,18.758,15.1,18.565,15.1z"/>
+<path xmlns="http://www.w3.org/2000/svg" fill="none" d="M18.565,7.55L18.565,7.55L18.565,7.55z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M32.963,15.1c-0.192,0,-0.351,-0.157,-0.351,-0.35L32.612,7.9L4.515,7.9l0,6.85c0,0.193,-0.157,0.35,-0.35,0.35s-0.35,-0.157,-0.35,-0.35L3.815,7.2l29.499,0l0,7.55C33.313,14.943,33.155,15.1,32.963,15.1z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M36.563,15.1l-3.603,0c-0.192,0,-0.351,-0.157,-0.351,-0.35s0.156,-0.35,0.351,-0.35l3.603,0c0.192,0,0.352,0.157,0.352,0.35S36.758,15.1,36.563,15.1z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M32.963,15.1l-3.598,0c-0.193,0,-0.351,-0.157,-0.351,-0.35s0.154,-0.35,0.351,-0.35l3.598,0c0.192,0,0.351,0.157,0.351,0.35S33.155,15.1,32.963,15.1z"/>
+<polygon xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" points="36.563,21.951,32.963,21.951,29.365,21.951,32.963,14.75"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M37.131,22.3l-8.332,0l4.164,-8.333L37.131,22.3zM29.933,21.599l6.065,0l-3.035,-6.066L29.933,21.599z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M32.963,22.175c-0.124,0,-0.226,-0.103,-0.226,-0.225L32.737,14.75c0,-0.124,0.102,-0.225,0.226,-0.225s0.226,0.101,0.226,0.225l0,7.201C33.188,22.074,33.087,22.175,32.963,22.175z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M37.582,16.414c-0.06,0,-0.115,-0.021,-0.159,-0.063c-0.088,-0.088,-0.088,-0.229,0,-0.316l2.34,-2.341c0.088,-0.088,0.229,-0.088,0.318,0c0.088,0.088,0.088,0.23,0,0.318L37.74,16.35C37.696,16.392,37.64,16.414,37.582,16.414z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M37.224,13.176c-0.059,0,-0.115,-0.022,-0.158,-0.066c-0.09,-0.088,-0.09,-0.23,0,-0.318l2.341,-2.34c0.088,-0.088,0.229,-0.088,0.315,0c0.088,0.088,0.088,0.23,0,0.318l-2.34,2.34C37.338,13.154,37.278,13.176,37.224,13.176z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M41.542,12.231l-1.08,2.52l-1.438,-1.439L41.542,12.231z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M41.183,8.991l-1.078,2.52l-1.438,-1.438L41.183,8.991z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M22.165,15.1l-3.599,0c-0.193,0,-0.35,-0.157,-0.35,-0.35s0.157,-0.35,0.35,-0.35l3.599,0c0.193,0,0.35,0.157,0.35,0.35S22.358,15.1,22.165,15.1z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M18.565,15.1l-3.601,0c-0.193,0,-0.35,-0.157,-0.35,-0.35s0.157,-0.35,0.35,-0.35l3.601,0c0.193,0,0.35,0.157,0.35,0.35S18.758,15.1,18.565,15.1z"/>
+<polygon xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" points="22.165,21.951,18.565,21.951,14.964,21.951,18.565,14.75"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M22.731,22.3l-8.333,0l4.167,-8.333L22.731,22.3zM15.53,21.599l6.067,0l-3.033,-6.066L15.53,21.599z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M18.565,22.175c-0.124,0,-0.225,-0.103,-0.225,-0.225L18.34,14.75c0,-0.124,0.101,-0.225,0.225,-0.225s0.225,0.101,0.225,0.225l0,7.201C18.791,22.074,18.689,22.175,18.565,22.175z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M23.183,16.414c-0.058,0,-0.113,-0.021,-0.158,-0.063c-0.088,-0.088,-0.088,-0.229,0,-0.316l2.343,-2.341c0.088,-0.088,0.229,-0.088,0.315,0c0.09,0.088,0.09,0.23,0,0.318l-2.341,2.339C23.298,16.392,23.24,16.414,23.183,16.414z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M22.821,13.176c-0.057,0,-0.114,-0.022,-0.159,-0.066c-0.088,-0.088,-0.088,-0.23,0,-0.318l2.34,-2.34c0.088,-0.088,0.229,-0.088,0.317,0c0.088,0.088,0.088,0.23,0,0.318l-2.34,2.34C22.938,13.154,22.88,13.176,22.821,13.176z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M27.144,12.231l-1.08,2.52l-1.438,-1.439L27.144,12.231z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M26.783,8.991l-1.08,2.52l-1.438,-1.438L26.783,8.991z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M7.766,15.1L4.165,15.1c-0.193,0,-0.35,-0.157,-0.35,-0.35s0.157,-0.35,0.35,-0.35l3.601,0c0.193,0,0.35,0.157,0.35,0.35S7.959,15.1,7.766,15.1z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M4.165,15.1L0.566,15.1c-0.193,0,-0.35,-0.157,-0.35,-0.35s0.157,-0.35,0.35,-0.35l3.599,0c0.193,0,0.35,0.157,0.35,0.35S4.359,15.1,4.165,15.1z"/>
+<polygon xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" points="7.766,21.951,4.165,21.951,0.566,21.951,4.165,14.75"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M8.332,22.3L0,22.3l4.166,-8.333L8.332,22.3zM1.133,21.599L7.2,21.599l-3.034,-6.066L1.133,21.599z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M4.165,22.175c-0.124,0,-0.225,-0.103,-0.225,-0.225L3.94,14.75c0,-0.124,0.101,-0.225,0.225,-0.225S4.39,14.626,4.39,14.75l0,7.201C4.39,22.074,4.289,22.175,4.165,22.175z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M8.783,16.414c-0.058,0,-0.115,-0.021,-0.159,-0.063c-0.088,-0.088,-0.088,-0.229,0,-0.316l2.339,-2.341c0.088,-0.088,0.23,-0.088,0.318,0c0.088,0.088,0.088,0.23,0,0.318L8.942,16.35C8.898,16.392,8.841,16.414,8.783,16.414z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M8.422,13.176c-0.058,0,-0.115,-0.022,-0.159,-0.066c-0.087,-0.088,-0.087,-0.23,0,-0.318l2.341,-2.34c0.088,-0.088,0.23,-0.088,0.318,0c0.088,0.088,0.088,0.23,0,0.318l-2.341,2.34C8.537,13.154,8.48,13.176,8.422,13.176z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M12.743,12.231l-1.08,2.52l-1.439,-1.439L12.743,12.231z"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M12.382,8.991l-1.08,2.52l-1.438,-1.438L12.382,8.991z"/>
+<g xmlns="http://www.w3.org/2000/svg">
+<path id="connector2pin" xmlns="http://www.w3.org/2000/svg" fill="#787878" d="M32.964,29.5c-0.193,0,-0.35,-0.155,-0.35,-0.35l0,-7.199c0,-0.193,0.156,-0.352,0.35,-0.352c0.194,0,0.35,0.156,0.35,0.352l0,7.199C33.313,29.343,33.157,29.5,32.964,29.5z"/>
+<g id="connector2terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="2.396" x="32.663" y="27.167" width="0.75"/>
+<path id="connector1pin" xmlns="http://www.w3.org/2000/svg" fill="#787878" d="M18.567,7.9c-0.193,0,-0.35,-0.157,-0.35,-0.35l0,-7.2c0,-0.193,0.157,-0.35,0.35,-0.35s0.35,0.157,0.35,0.35l0,7.2C18.917,7.744,18.76,7.9,18.567,7.9z"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="2.399" x="18.205" width="0.75"/>
+<path id="connector3pin" xmlns="http://www.w3.org/2000/svg" fill="#787878" d="M18.566,29.5c-0.193,0,-0.35,-0.155,-0.35,-0.35l0,-7.199c0,-0.193,0.157,-0.352,0.35,-0.352s0.35,0.156,0.35,0.352l0,7.199C18.916,29.343,18.759,29.5,18.566,29.5z"/>
+<g id="connector3terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="2.396" x="18.163" y="27.167" width="0.75"/>
+<path id="connector0pin" xmlns="http://www.w3.org/2000/svg" fill="#787878" d="M4.165,29.5c-0.193,0,-0.35,-0.155,-0.35,-0.35l0,-7.199c0,-0.193,0.157,-0.352,0.35,-0.352s0.35,0.156,0.35,0.352l0,7.199C4.515,29.343,4.359,29.5,4.165,29.5z"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="2.396" x="3.726" y="27.167" width="0.75"/>
+</g>
+</g>
+</g></g></g><g partID='62550'><g transform='translate(401.152,98.6986)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='62530'><g transform='translate(408.352,91.4986)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='62510'><g transform='translate(415.552,84.2986)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='65920'><g transform='translate(401.152,33.8987)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='64880'><g transform='translate(252.078,31.1062)' ><g transform='matrix(1,0,0,1,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='60500'><g transform='translate(422.752,77.0987)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line x2="4.741" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="9.333"/>
+<line x2="1.142" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="9.333" stroke-linecap="round" x1="4.741" y1="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="21.934"/>
+<circle r="0.36" stroke="#000000" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" cx="4.741" cy="7.534"/>
+<line id="connector0pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="21.934" stroke-linecap="round" x1="4.741" y1="29.135"/>
+<g id="connector0terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.74" y="29.134" width="0.002"/>
+<line id="connector1pin" x2="4.741" stroke="#555555" stroke-width="0.7" xmlns="http://www.w3.org/2000/svg" fill="none" y2="7.534" stroke-linecap="round" x1="4.741" y1="0.333"/>
+<g id="connector1terminal" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.001" x="4.741" y="0.333" width="0"/>
+</g>
+</g></g></g><g partID='62240'><g transform='translate(213.211,107.502)' ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line class="other" x2="8.63003" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="7.55002" y1="3.096"/>
+<line class="other" x2="10.43" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="8.63003" y1="0.216"/>
+<line class="other" x2="12.23" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="10.43" y1="5.976"/>
+<line class="other" x2="14.03" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="12.23" y1="0.216"/>
+<line class="other" x2="15.8301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="14.03" y1="5.976"/>
+<line class="other" x2="17.6301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="15.8301" y1="0.216"/>
+<line class="other" x2="19.4301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="17.6301" y1="5.976"/>
+<line class="other" x2="21.2301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="19.4301" y1="0.216"/>
+<line class="other" x2="21.9501" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" x1="21.2301" y1="5.976"/>
+<line id="connector1pin" class="pin" x2="21.9501" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="2" x1="29.1502" y1="3.096"/>
+<g id="connector1terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="29.1502" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="25.5501" text-anchor="middle" font-family="'Droid Sans'" y="2.046">2</text>
+<line id="connector0pin" class="pin" x2="7.55002" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="1" x1="0.350001" y1="3.096"/>
+<g id="connector0terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="0.350001" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="3.95001" text-anchor="middle" font-family="'Droid Sans'" y="2.046">1</text>
+</g>
+</g></g><g partID='61990'><g transform='translate(213.211,93.1015)' ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line class="other" x2="8.63003" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="7.55002" y1="3.096"/>
+<line class="other" x2="10.43" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="8.63003" y1="0.216"/>
+<line class="other" x2="12.23" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="10.43" y1="5.976"/>
+<line class="other" x2="14.03" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="12.23" y1="0.216"/>
+<line class="other" x2="15.8301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="14.03" y1="5.976"/>
+<line class="other" x2="17.6301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="15.8301" y1="0.216"/>
+<line class="other" x2="19.4301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="17.6301" y1="5.976"/>
+<line class="other" x2="21.2301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="19.4301" y1="0.216"/>
+<line class="other" x2="21.9501" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" x1="21.2301" y1="5.976"/>
+<line id="connector1pin" class="pin" x2="21.9501" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="2" x1="29.1502" y1="3.096"/>
+<g id="connector1terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="29.1502" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="25.5501" text-anchor="middle" font-family="'Droid Sans'" y="2.046">2</text>
+<line id="connector0pin" class="pin" x2="7.55002" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="1" x1="0.350001" y1="3.096"/>
+<g id="connector0terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="0.350001" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="3.95001" text-anchor="middle" font-family="'Droid Sans'" y="2.046">1</text>
+</g>
+</g></g><g partID='61640'><g transform='translate(213.211,78.7015)' ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line class="other" x2="8.63003" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="7.55002" y1="3.096"/>
+<line class="other" x2="10.43" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="8.63003" y1="0.216"/>
+<line class="other" x2="12.23" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="10.43" y1="5.976"/>
+<line class="other" x2="14.03" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="12.23" y1="0.216"/>
+<line class="other" x2="15.8301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="14.03" y1="5.976"/>
+<line class="other" x2="17.6301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="15.8301" y1="0.216"/>
+<line class="other" x2="19.4301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="17.6301" y1="5.976"/>
+<line class="other" x2="21.2301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="19.4301" y1="0.216"/>
+<line class="other" x2="21.9501" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" x1="21.2301" y1="5.976"/>
+<line id="connector1pin" class="pin" x2="21.9501" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="2" x1="29.1502" y1="3.096"/>
+<g id="connector1terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="29.1502" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="25.5501" text-anchor="middle" font-family="'Droid Sans'" y="2.046">2</text>
+<line id="connector0pin" class="pin" x2="7.55002" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="1" x1="0.350001" y1="3.096"/>
+<g id="connector0terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="0.350001" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="3.95001" text-anchor="middle" font-family="'Droid Sans'" y="2.046">1</text>
+</g>
+</g></g><g partID='72330'><g transform='translate(170.079,11.2)' ><g transform='matrix(-1,0,0,1,0,0)'  ><g transform="matrix(1, 0, 0, 1, 0, -714.331)">
+<g id="schematic">
+<g>
+<rect id="rect6478" stroke-width="2.4" stroke="#000000" fill="none" height="84.8985" style="stroke-miterlimit:4;stroke-dasharray:none" x="42.6605" stroke-opacity="1" width="106.299" y="735.73"/>
+<path id="path6484" stroke-width="2.4" stroke="#000000" fill="#c2c2c2" style="color:#000000;fill-rule:nonzero;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" fill-opacity="1" stroke-opacity="1" d="m42.5197,778.109,-21.2598,0"/>
+<g id="text6518" stroke="none" fill="#000000" xmlns:xml="http://www.w3.org/XML/1998/namespace" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" xml:space="preserve" fill-opacity="1">
+<text id="tspan6520" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;text-anchor:start;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" x="46.7717" y="780.944">DQ</text>
+</g>
+<g id="text6578" stroke="none" fill="#000000" xmlns:xml="http://www.w3.org/XML/1998/namespace" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" xml:space="preserve" fill-opacity="1">
+<text id="tspan6580" x="104.315" y="783.213">DS18B20</text>
+</g>
+<path id="path6480" stroke-width="2.4" stroke="#000000" fill="#c2c2c2" style="color:#000000;fill-rule:nonzero;stroke-miterlimit:4;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" fill-opacity="1" stroke-opacity="1" d="m42.5197,799.37,-21.2598,0"/>
+<g id="text6514" stroke="none" fill="#000000" xmlns:xml="http://www.w3.org/XML/1998/namespace" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" xml:space="preserve" fill-opacity="1">
+<text id="tspan6516" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" x="54.1418" y="802.205">GND</text>
+</g>
+<rect id="connector1pin" stroke="none" fill="none" height="5.66929" x="18.4252" width="5.66929" y="796.536"/>
+<rect id="connector2pin" stroke="none" fill="none" height="5.66929" x="18.4252" width="5.66929" y="775.275"/>
+<path id="path6486" stroke-width="2.4" stroke="#000000" fill="#c2c2c2" style="color:#000000;fill-rule:nonzero;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" fill-opacity="1" stroke-opacity="1" d="m42.5197,756.849,-21.2598,0"/>
+<g id="text6522" stroke="none" fill="#000000" xmlns:xml="http://www.w3.org/XML/1998/namespace" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" xml:space="preserve" fill-opacity="1">
+<text id="tspan6524" font-size="0" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Droid Sans;-inkscape-font-specification:Droid Sans" x="54.1418" y="759.684">VDD</text>
+</g>
+<rect id="connector3pin" stroke="none" fill="none" height="5.66929" x="18.4252" width="5.66929" y="754.015"/>
+</g>
+</g>
+</g>
+</g></g></g><g partID='75190'><g transform='translate(184.469,35.5435)' ><g id="schematic" xmlns="http://www.w3.org/2000/svg">
+<line class="other" x2="8.63003" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="7.55002" y1="3.096"/>
+<line class="other" x2="10.43" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="8.63003" y1="0.216"/>
+<line class="other" x2="12.23" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="10.43" y1="5.976"/>
+<line class="other" x2="14.03" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="12.23" y1="0.216"/>
+<line class="other" x2="15.8301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="14.03" y1="5.976"/>
+<line class="other" x2="17.6301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="15.8301" y1="0.216"/>
+<line class="other" x2="19.4301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="0.216" stroke-linecap="round" x1="17.6301" y1="5.976"/>
+<line class="other" x2="21.2301" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="5.976" stroke-linecap="round" x1="19.4301" y1="0.216"/>
+<line class="other" x2="21.9501" stroke="#000000" stroke-width="0.432002" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" x1="21.2301" y1="5.976"/>
+<line id="connector1pin" class="pin" x2="21.9501" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="2" x1="29.1502" y1="3.096"/>
+<g id="connector1terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="29.1502" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="25.5501" text-anchor="middle" font-family="'Droid Sans'" y="2.046">2</text>
+<line id="connector0pin" class="pin" x2="7.55002" stroke="#787878" stroke-width="0.700001" xmlns="http://www.w3.org/2000/svg" y2="3.096" stroke-linecap="round" connectorname="1" x1="0.350001" y1="3.096"/>
+<g id="connector0terminal" class="terminal" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="none" height="0.000283465" x="0.350001" y="3.096" width="0.000283466"/>
+<text class="text" stroke="none" stroke-width="0" xmlns="http://www.w3.org/2000/svg" fill="#8c8c8c" font-size="2.50001" x="3.95001" text-anchor="middle" font-family="'Droid Sans'" y="2.046">1</text>
+</g>
+</g></g><g partID='69400'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='103.44' x2='242.362' y2='110.598' stroke-width='0.699998' /></g><g partID='65620'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='96.2397' x2='242.362' y2='96.1977' stroke-width='0.699998' /></g><g partID='67350'><line stroke-linecap='round' stroke='#404040' x1='357.619' y1='96.2397' x2='379.218' y2='96.2397' stroke-width='0.699998' /></g><g partID='67420'><line stroke-linecap='round' stroke='#404040' x1='357.619' y1='89.0397' x2='386.418' y2='89.0397' stroke-width='0.699998' /></g><g partID='67490'><line stroke-linecap='round' stroke='#404040' x1='357.619' y1='81.8397' x2='393.617' y2='81.8397' stroke-width='0.699998' /></g><g partID='62260'><line stroke-linecap='round' stroke='#404040' x1='204.784' y1='110.698' x2='213.561' y2='110.598' stroke-width='0.699998' /></g><g partID='71330'><line stroke-linecap='round' stroke='#404040' x1='364.819' y1='74.6397' x2='364.883' y2='17.054' stroke-width='0.699998' /></g><circle  fill="black" cx="364.819" cy="74.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='71260'><line stroke-linecap='round' stroke='#404040' x1='364.883' y1='17.054' x2='177.685' y2='17.054' stroke-width='0.699998' /></g><g partID='71190'><line stroke-linecap='round' stroke='#404040' x1='177.685' y1='17.054' x2='177.619' y2='96.2396' stroke-width='0.699998' /></g><circle  fill="black" cx="177.619" cy="96.2396" r="1.44" stroke-width="0" stroke="none" /><g partID='71120'><line stroke-linecap='round' stroke='#404040' x1='357.619' y1='74.6397' x2='364.819' y2='74.6397' stroke-width='0.699998' /></g><g partID='71510'><line stroke-linecap='round' stroke='#404040' x1='364.883' y1='38.6008' x2='372.018' y2='38.6397' stroke-width='0.699998' /></g><g partID='71400'><line stroke-linecap='round' stroke='#404040' x1='364.819' y1='74.6397' x2='364.883' y2='38.6008' stroke-width='0.699998' /></g><g partID='71760'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='38.6397' x2='436.763' y2='103.413' stroke-width='0.699998' /></g><circle  fill="black" cx="436.819" cy="38.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='71620'><line stroke-linecap='round' stroke='#404040' x1='400.819' y1='38.6397' x2='436.819' y2='38.6397' stroke-width='0.699998' /></g><circle  fill="black" cx="400.819" cy="38.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='71690'><line stroke-linecap='round' stroke='#404040' x1='436.763' y1='103.413' x2='400.819' y2='103.44' stroke-width='0.699998' /></g><g partID='71900'><line stroke-linecap='round' stroke='#404040' x1='256.805' y1='74.627' x2='256.819' y2='60.2407' stroke-width='0.699998' /></g><g partID='71830'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='74.6397' x2='256.805' y2='74.627' stroke-width='0.699998' /></g><g partID='71970'><line stroke-linecap='round' stroke='#404040' x1='400.819' y1='38.6397' x2='400.737' y2='31.3611' stroke-width='0.699998' /></g><circle  fill="black" cx="400.819" cy="38.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='72040'><line stroke-linecap='round' stroke='#404040' x1='400.737' y1='31.3611' x2='256.819' y2='31.4397' stroke-width='0.699998' /></g><g partID='72190'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='89.0397' x2='242.362' y2='81.7977' stroke-width='0.699998' /></g><g partID='72360'><line stroke-linecap='round' stroke='#404040' x1='177.619' y1='96.2396' x2='148.819' y2='96.2397' stroke-width='0.699998' /></g><circle  fill="black" cx="177.619" cy="96.2396" r="1.44" stroke-width="0" stroke="none" /><g partID='72580'><line stroke-linecap='round' stroke='#404040' x1='235.258' y1='74.627' x2='148.819' y2='74.9786' stroke-width='0.699998' /></g><circle  fill="black" cx="148.819" cy="74.9786" r="1.44" stroke-width="0" stroke="none" /><g partID='72510'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='81.8397' x2='235.258' y2='74.627' stroke-width='0.699998' /></g><g partID='75120'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='67.4397' x2='148.819' y2='53.7187' stroke-width='0.699998' /></g><circle  fill="black" cx="264.019" cy="67.4397" r="1.44" stroke-width="0" stroke="none" /><g partID='75240'><line stroke-linecap='round' stroke='#404040' x1='264.019' y1='67.4397' x2='213.619' y2='38.6397' stroke-width='0.699998' /></g><circle  fill="black" cx="264.019" cy="67.4397" r="1.44" stroke-width="0" stroke="none" /><g partID='75350'><line stroke-linecap='round' stroke='#404040' x1='148.819' y1='74.9786' x2='184.819' y2='38.6397' stroke-width='0.699998' /></g><circle  fill="black" cx="148.819" cy="74.9786" r="1.44" stroke-width="0" stroke="none" /><g partID='75500'><line stroke-linecap='round' stroke='#404040' x1='357.619' y1='103.44' x2='372.017' y2='103.44' stroke-width='0.699998' /></g><g partID='75570'><line stroke-linecap='round' stroke='#404040' x1='204.784' y1='81.7606' x2='213.561' y2='81.7977' stroke-width='0.699998' /></g><g partID='75680'><line stroke-linecap='round' stroke='#404040' x1='213.561' y1='96.1977' x2='204.784' y2='96.1976' stroke-width='0.699998' /></g><g partID='75860'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='81.8397' x2='422.419' y2='81.8397' stroke-width='0.699998' /></g><g partID='75750'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='38.6397' x2='436.819' y2='81.8397' stroke-width='0.699998' /></g><g partID='76740'><line stroke-linecap='round' stroke='#404040' x1='400.819' y1='38.6397' x2='436.819' y2='38.6397' stroke-width='0.699998' /></g><circle  fill="black" cx="400.819" cy="38.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='76890'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='89.0397' x2='415.219' y2='89.0396' stroke-width='0.699998' /></g><g partID='77040'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='38.6397' x2='436.819' y2='89.0397' stroke-width='0.699998' /></g><g partID='77190'><line stroke-linecap='round' stroke='#404040' x1='400.819' y1='38.6397' x2='436.819' y2='38.6397' stroke-width='0.699998' /></g><circle  fill="black" cx="400.819" cy="38.6397" r="1.44" stroke-width="0" stroke="none" /><g partID='77380'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='96.2397' x2='408.019' y2='96.2396' stroke-width='0.699998' /></g><g partID='77570'><line stroke-linecap='round' stroke='#404040' x1='436.819' y1='38.6397' x2='436.819' y2='96.2397' stroke-width='0.699998' /></g><g partID='58400' id='partLabel'><g transform='translate(357.619,47.4397)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>WeMos D1 Mini1</text></g></g></g><g partID='58780' id='partLabel'><g transform='translate(211.526,122.236)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>LED1</text></g></g></g></g><g partID='62550' id='partLabel'><g transform='translate(406.752,105.315)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S1 - Red</text></g></g></g></g><g partID='62530' id='partLabel'><g transform='translate(413.952,98.1146)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S2 - Green</text></g></g></g></g><g partID='64880' id='partLabel'><g transform='translate(258.694,25.5062)' ><g transform='matrix(1,0,0,1,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S5 - 16mm Silver</text></g></g></g></g><g partID='60500' id='partLabel'><g transform='translate(428.352,83.7147)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S4 - White</text></g></g></g></g><g partID='65920' id='partLabel'><g transform='translate(406.752,40.5147)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S0 - Blue</text></g></g></g></g><g partID='62510' id='partLabel'><g transform='translate(421.152,90.9146)' ><g transform='matrix(0,1,-1,0,0,0)'  ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>S3 - Yellow</text></g></g></g></g><g partID='61990' id='partLabel'><g transform='translate(242.712,77.1015)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>R2</text><text x='0' y='8.75'>&#xb1;1%</text><text x='0' y='13.75'>2k&#x3a9;</text></g></g></g><g partID='61640' id='partLabel'><g transform='translate(242.712,62.7015)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>R1</text><text x='0' y='8.75'>&#xb1;1%</text><text x='0' y='13.75'>470&#x3a9;</text></g></g></g><g partID='62240' id='partLabel'><g transform='translate(242.712,91.5015)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>R3</text><text x='0' y='8.75'>&#xb1;1%</text><text x='0' y='13.75'>5.1k&#x3a9;</text></g></g></g><g partID='72330' id='partLabel'><g transform='translate(170.079,0)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>DS1</text><text x='0' y='8.75'>DS18B20</text></g></g></g><g partID='75190' id='partLabel'><g transform='translate(213.969,24.3435)' ><g font-size='5' font-style='normal' font-weight='normal' fill='#000000' font-family="'DroidSans'" id='schematicLabel' fill-opacity='1' stroke='none' ><text x='0' y='3.75'>R4</text><text x='0' y='8.75'>4.7k&#x3a9;</text></g></g></g></svg>
