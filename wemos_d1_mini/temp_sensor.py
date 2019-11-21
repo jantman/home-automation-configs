@@ -82,7 +82,8 @@ class TempSender:
         data = json.dumps({
             'state': round(temp_f, 2),
             'attributes': {
-                'friendly_name': FRIENDLY_NAME
+                'friendly_name': FRIENDLY_NAME,
+                'unit_of_measurement': '\u00b0F'
             }
         })
         self.http_post(data)
@@ -106,7 +107,7 @@ class TempSender:
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
             'Content-Type: application/json\r\n' \
             'Content-Length: %d\r\n\r\n%s' % (
-                self.post_path, HOOK_HOST, len(data), data
+                self.post_path, HOOK_HOST, len(bytes(data, 'utf8')), data
             )
         print('SEND:\n%s' % b)
         s.send(bytes(b, 'utf8'))
