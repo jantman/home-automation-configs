@@ -7,13 +7,17 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 ## What's Here
 
 * [boot.py](boot.py) - the original boot file that came with MicroPython
-* [box_test.py](box_test.py) - Script to test the LED and buttons in the assembled [main.py](main.py) box.
+* [box_test.py](box_test.py) - Script to test the LED and buttons in the assembled [button_box_v1.py](button_box_v1.py) box.
+* [box_test_v2.py](box_test_v2.py) - Script to test the LED and buttons in the assembled [button_box_v1.py](button_box_v1.py) box.
 * [button_box_v1.py](button_box_v1.py) - First version of the main application I run on my D1 Mini pushbutton control boxes. See the docstring at the top of the file for an explanation.
 * [button_box_v1.fzz](button_box_v1.fzz) - A [Fritzing](https://fritzing.org) schematic for how the pushbutton control boxes are wired.
 * [button_box_v1.png](button_box_v1.png) - PNG output of ``button_box_v1.fzz``
 * [button_box_v1.svg](button_box_v1.svg) - SVG output of ``button_box_v1.fzz``
 * [button_box_v1.jpg](button_box_v1.jpg) - Photo of button_box_v1 in use.
 * [button_box_v1_inside.jpg](button_box_v1_inside.jpg) - Photo of interior of button_box_v1 during assembly.
+* [button_box_v2.fzz](button_box_v2.fzz) - Schematic of V2 button box.
+* [button_box_v2_schem.png](button_box_v2_schem.png) - PNG of ``button_box_v2.fzz``
+* [button_box_v2_schem.svg](button_box_v2_schem.svg) - SVG of ``button_box_v2.fzz``
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
