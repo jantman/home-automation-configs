@@ -7,7 +7,7 @@
       entity_id: device_tracker.rf8m22eq54n_2
       from: 'home'
   condition:
-    condition: or  # 'when dark' condition: either after sunset or before sunrise
+    condition: and  # 'when light' condition: either after sunrise and before sunset
     conditions:
       - condition: sun
         after: sunrise
