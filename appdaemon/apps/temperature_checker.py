@@ -23,6 +23,10 @@ NOTIFY_SERVICE = 'notify/gmail'
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
 
+#: List of entity IDs to ignore
+IGNORE_IDS = [
+    'sensor.porch_temp'
+]
 
 class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
@@ -41,6 +45,9 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 continue
             uom = e.get('attributes', {}).get('unit_of_measurement', '')
             ename = e['entity_id']
+            if ename in IGNORE_IDS:
+                self._log.debug('Skipping ignored entity: %s', ename)
+                continue
             if uom != '°F':
                 self._log.debug('Skipping entity: %s', ename)
                 continue
