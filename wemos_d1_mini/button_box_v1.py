@@ -20,6 +20,8 @@ micropython.alloc_emergency_exception_buf(100)
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
+socket.setdefaulttimeout(10.0)
+
 # Pin mappings - board number to GPIO number
 D0 = micropython.const(16)
 D1 = micropython.const(5)
