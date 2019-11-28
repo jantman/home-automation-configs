@@ -165,7 +165,7 @@ class YoloAnalyzer(ImageAnalyzer):
         :return: yolo3 detection results
         :rtype: list of DetectedObject instances
         """
-        logger.debug('Starting: %s', fname)
+        logger.info('Analyzing: %s', fname)
         img = cv2.imread(fname)
         img2 = Image(img)
         results = self._net.detect(img2, thresh=0.2, hier_thresh=0.3, nms=0.4)
