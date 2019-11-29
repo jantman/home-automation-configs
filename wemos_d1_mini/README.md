@@ -24,6 +24,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
+* [sync.py](sync.py) - Wrapper script around [rshell](https://github.com/dhylands/rshell) to automate syncing scripts to my boards.
 * [temp_sensor.py](temp_sensor.py) - A quick-and-dirty script to check the temperature of a DS18B20 temperature sensor and POST it to HomeAssistant (as a sensor value) every minute.
 * [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
 * [temp_sensor.png](temp_sensor.png) - PNG of Schematic

@@ -1,0 +1,11 @@
+adafruit-ampy==1.0.7
+Click==7.0
+docopt==0.6.2
+ecdsa==0.14.1
+esptool==2.8
+pyaes==1.6.1
+pyserial==3.4
+python-dotenv==0.10.3
+pyudev==0.21.0
+rshell==0.0.26
+six==1.13.0
