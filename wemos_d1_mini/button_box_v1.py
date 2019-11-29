@@ -142,11 +142,11 @@ class ButtonSender:
 
     def show_status(self):
         if self.in_duress:
-            self.blink_leds(['red', 'green'], length_ms=1000)
+            self.blink_leds(['red', 'green'], length_ms=3000)
         elif self.alarm_state == 'Disarmed':
-            self.blink_leds(['green'], length_ms=1000)
+            self.blink_leds(['green'], length_ms=3000)
         else:
-            self.blink_leds(['red'], length_ms=1000)
+            self.blink_leds(['red'], length_ms=3000)
 
     @property
     def alarm_state(self):
