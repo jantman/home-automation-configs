@@ -20,8 +20,6 @@ micropython.alloc_emergency_exception_buf(100)
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
-socket.setdefaulttimeout(10.0)
-
 # Pin mappings - board number to GPIO number
 D0 = micropython.const(16)
 D1 = micropython.const(5)
@@ -104,6 +102,7 @@ class TempSender:
         addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
         print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
         s = socket.socket()
+        s.settimeout(10.0)
         s.connect(addr)
         print('POST to: %s: %s' % (self.post_path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
