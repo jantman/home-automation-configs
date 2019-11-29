@@ -16,6 +16,8 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [button_box_v1.jpg](button_box_v1.jpg) - Photo of button_box_v1 in use.
 * [button_box_v1_inside.jpg](button_box_v1_inside.jpg) - Photo of interior of button_box_v1 during assembly.
 * [button_box_v2.fzz](button_box_v2.fzz) - Schematic of V2 button box.
+* [button_box_v2_bb.png](button_box_v2_bb.png) - PNG protoboard layout of V2 button box.
+* [button_box_v2_bb.svg](button_box_v2_bb.svg) - SVG protoboard layout of V2 button box.
 * [button_box_v2_schem.png](button_box_v2_schem.png) - PNG of ``button_box_v2.fzz``
 * [button_box_v2_schem.svg](button_box_v2_schem.svg) - SVG of ``button_box_v2.fzz``
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
@@ -27,6 +29,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [temp_sensor.png](temp_sensor.png) - PNG of Schematic
 * [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
 * [temp_sensor_box.jpg](temp_sensor_box.jpg) - Photo of installed temperature sensor box.
+* ``webrepl*`` and ``websocket_helper.py`` - Imported from https://github.com/micropython/webrepl @ 03492fef5c687e76057e6e93f6602b0a2dd5e660 because this isn't published to PyPI or as a real Python package.
 
 ## Materials
 
