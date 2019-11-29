@@ -139,12 +139,12 @@ if __name__ == "__main__":
         default='/dev/ttyUSB2',
         help='path to device port (default: /dev/ttyUSB2)'
     )
-    p.add_argument('-v', '--verbose', dest='verbose', action='count', default=0,
-                   help='verbose output. specify twice for debug-level output.')
+    p.add_argument('-v', '--verbose', dest='verbose', action='store_true',
+                   default=False, help='debug-level output.')
     args = p.parse_args(sys.argv[1:])
     # set logging level
-    if args.verbose > 1:
+    if args.verbose:
         set_log_debug()
-    elif args.verbose == 1:
+    else:
         set_log_info()
     BoardSyncer(args.port).sync()
