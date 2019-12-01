@@ -9,8 +9,6 @@ from machine import Pin, Timer
 import network
 import micropython
 from time import sleep_ms
-from onewire import OneWire
-from ds18x20 import DS18X20
 from binascii import hexlify
 
 micropython.alloc_emergency_exception_buf(100)
@@ -64,12 +62,6 @@ class BoxTest:
         self.timer_running = False
         print(self.debounce_timer)
         print(dir(self.debounce_timer))
-        print('Init OneWire')
-        self.ds_pin = Pin(D8)
-        self.ow_inst = OneWire(self.ds_pin)
-        self.ds_sensor = DS18X20(self.ow_inst)
-        self.temp_id = self.ds_sensor.scan()[0]
-        print('Temperature sensor: %s' % self.temp_id)
         self.wlan = network.WLAN(network.STA_IF)
         self.connect_wlan()
         self.mac = hexlify(self.wlan.config('mac')).decode()
@@ -97,17 +89,6 @@ class BoxTest:
                 trigger=Pin.IRQ_RISING,
                 handler=self.button_pin_irq_callback
             )
-        print('converting temps...')
-        self.ds_sensor.convert_temp()
-        sleep(1)
-        temp_c = self.ds_sensor.read_temp(self.temp_id)
-        print('temp_c=%s' % temp_c)
-        if temp_c == 85.0:
-            print('Got bad temp; reset onewire bus')
-            self.ow_inst.reset()
-            return
-        temp_f = ((temp_c * 9.0) / 5.0) + 32
-        print('temp_f=%s' % temp_f)
         while True:
             if self.unhandled_event:
                 pass
