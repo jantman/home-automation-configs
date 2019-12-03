@@ -70,7 +70,7 @@ views:
               entity: light.ge_45606_2way_dimmer_switch_level_2
               style:
                 top: 80%
-                left: 66%
+                left: 62%
             # DOORS
             - type: state-icon
               title: Crawlspace Door
@@ -117,7 +117,7 @@ views:
               entity: binary_sensor.office_motion # office
               style:
                 top: 82%
-                left: 75%
+                left: 70%
             - type: state-icon
               entity: binary_sensor.bedroom_motion # bedroom
               style:
@@ -193,8 +193,8 @@ views:
             - type: state-label
               entity: sensor.bedroomsensor_temperature
               style:
-                top: 50%
-                left: 66%
+                top: 40%
+                left: 60%
             - type: state-label
               entity: sensor.pi2graphite_1wire_bedroom
               style:
@@ -203,23 +203,23 @@ views:
             - type: state-label
               entity: sensor.pi2graphite_1wire_office
               style:
-                top: 94%
-                left: 65%
+                top: 96%
+                left: 74%
             - type: state-label
               entity: sensor.officesensor_temperature
               style:
-                top: 94%
-                left: 77%
+                top: 81%
+                left: 79%
             - type: state-label
               entity: sensor.kitchensensor_temperature
               style:
-                top: 48%
-                left: 20%
+                top: 65%
+                left: 25%
             - type: state-label
               entity: sensor.lrmotion_temperature
               style:
-                top: 90%
-                left: 35%
+                top: 73%
+                left: 48%
             - type: state-label
               entity: sensor.2gig_technologies_ct101_thermostat_iris_temperature
               style:
