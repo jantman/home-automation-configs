@@ -225,6 +225,11 @@ views:
               style:
                 top: 65%
                 left: 40%
+            - type: state-label
+              entity: sensor.tv_temp
+              style:
+                top: 96%
+                left: 34%
         - type: picture-entity
           entity: switch.side_state
           camera_image: camera.side
