@@ -27,6 +27,9 @@ PER_BOARD_FILES = {
     },
     'cc50e36b6a6b': {
         'button_box_v1.py': 'main.py'
+    },
+    'ecfabc6102f0': {
+        'button_box_v2.py': 'main.py'
     }
 }
 

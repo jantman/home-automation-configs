@@ -1,3 +1,4 @@
+
 """
 Pinout:
 https://wiki.wemos.cc/products:d1:d1_mini#pin
@@ -30,7 +31,7 @@ BUTTON_MAP = {
     'white': D4,
     'silver': D7,
     'red': D1,
-    'green': D2,
+    'green': D5,
     'yellow': D3,
 }
 
@@ -47,7 +48,6 @@ class BoxTest:
         print('Init LEDs')
         self.leds = {
             'red': Pin(D6, Pin.OUT, value=False),
-            'blue': Pin(D5, Pin.OUT, value=False),
             'green': Pin(D0, Pin.OUT, value=False)
         }
         print('Init Buttons')
@@ -77,10 +77,9 @@ class BoxTest:
                 pass
         print('network config:', self.wlan.ifconfig())
 
-    def set_rgb(self, red, green, blue):
+    def set_rgb(self, red, green, _):
         self.leds['red'].value(red)
         self.leds['green'].value(green)
-        self.leds['blue'].value(blue)
 
     def run(self):
         print('set IRQ')
