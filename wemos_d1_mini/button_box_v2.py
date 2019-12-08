@@ -131,7 +131,17 @@ class ButtonSender:
             self.http_post(self.hook_path + '-duress')
         elif color == 'yellow':
             self.http_post(self.hook_path + '-light')
-        sleep_ms(500)
+        sleep(2)
+        self.show_status()
+        sleep(2)
+        self.show_status()
+        sleep(2)
+        self.show_status()
+        sleep(2)
+        self.show_status()
+        sleep(2)
+        self.show_status()
+        sleep(2)
         self.show_status()
 
     def show_status(self):
