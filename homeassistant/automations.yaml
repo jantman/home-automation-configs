@@ -333,7 +333,9 @@
 - alias: Button Box Panic Button
   trigger:
     platform: webhook
-    webhook_id: cc50e36b6a6b-panic
+    webhook_id:
+      - cc50e36b6a6b-panic
+      - ecfabc6102f0-panic
   action:
     - event: CUSTOM_ALARM_TRIGGER
       event_data:
@@ -341,7 +343,9 @@
 - alias: Button Box Arm Home
   trigger:
     platform: webhook
-    webhook_id: cc50e36b6a6b-armhome
+    webhook_id:
+      - cc50e36b6a6b-armhome
+      - ecfabc6102f0-armhome
   action:
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
@@ -349,7 +353,9 @@
 - alias: Button Box Disarm
   trigger:
     platform: webhook
-    webhook_id: cc50e36b6a6b-disarm
+    webhook_id:
+      - cc50e36b6a6b-disarm
+      - ecfabc6102f0-disarm
   condition:
     - condition: state
       entity_id: input_select.alarmstate
@@ -361,11 +367,22 @@
 - alias: Button Box Duress
   trigger:
     platform: webhook
-    webhook_id: cc50e36b6a6b-duress
+    webhook_id:
+      - cc50e36b6a6b-duress
+      - ecfabc6102f0-duress
   action:
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Duress
+- alias: Button Box Kitchen Light
+  trigger:
+    platform: webhook
+    webhook_id: ecfabc6102f0-light
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_on
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
 ################################################################################
 # END Button box handling                                                      #
 ################################################################################
