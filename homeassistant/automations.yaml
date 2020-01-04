@@ -330,30 +330,64 @@
 ################################################################################
 # BEGIN Button box handling                                                    #
 ################################################################################
-- alias: Button Box Panic Button
+- alias: Button Box Panic Button cc50e36b6a6b
   trigger:
     - platform: webhook
       webhook_id: cc50e36b6a6b-panic
+  action:
+    - event: CUSTOM_ALARM_TRIGGER
+      event_data:
+        message: triggered by button box panic button cc50e36b6a6b
+- alias: Button Box Arm Home cc50e36b6a6b
+  trigger:
+    - platform: webhook
+      webhook_id: cc50e36b6a6b-armhome
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
+        message: triggered by cc50e36b6a6b
+- alias: Button Box Disarm cc50e36b6a6b
+  trigger:
+    - platform: webhook
+      webhook_id: cc50e36b6a6b-disarm
+  condition:
+    - condition: state
+      entity_id: input_select.alarmstate
+      state: Home
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Disarmed
+        message: triggered by cc50e36b6a6b
+- alias: Button Box Duress cc50e36b6a6b
+  trigger:
+    - platform: webhook
+      webhook_id: cc50e36b6a6b-duress
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Duress
+        message: triggered by cc50e36b6a6b
+- alias: Button Box Panic Button ecfabc6102f0
+  trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-panic
   action:
     - event: CUSTOM_ALARM_TRIGGER
       event_data:
-        message: triggered by button box panic button
-- alias: Button Box Arm Home
+        message: triggered by button box panic button ecfabc6102f0
+- alias: Button Box Arm Home ecfabc6102f0
   trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-armhome
     - platform: webhook
       webhook_id: ecfabc6102f0-armhome
   action:
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Home
-- alias: Button Box Disarm
+        message: triggered by ecfabc6102f0
+- alias: Button Box Disarm ecfabc6102f0
   trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-disarm
     - platform: webhook
       webhook_id: ecfabc6102f0-disarm
   condition:
@@ -364,16 +398,16 @@
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Disarmed
-- alias: Button Box Duress
+        message: triggered by ecfabc6102f0
+- alias: Button Box Duress ecfabc6102f0
   trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-duress
     - platform: webhook
       webhook_id: ecfabc6102f0-duress
   action:
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Duress
+        message: triggered by ecfabc6102f0
 - alias: Button Box Kitchen Light
   trigger:
     - platform: webhook

@@ -552,6 +552,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'Got event of improper type: %s', event_name
             )
             return
+        self._log.info('Handle state set event: %s', data)
         state = data.get('state', None)
         prev_state = self.get_state(ALARM_STATE_SELECT_ENTITY)
         if state not in [
