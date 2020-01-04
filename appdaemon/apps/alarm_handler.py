@@ -99,7 +99,7 @@ DELAYED_EXTERIOR_SENSOR_DELAY_SEC = 360 # 6 minutes
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
 #: presence or proximity.
-DEVICE_TRACKER_ENTITY = 'device_tracker.rf8m22eq54n_2'
+DEVICE_TRACKER_ENTITY = 'device_tracker.unknown'
 
 #: Entity ID for the input_select that controls the alarm state. This should
 #: have three options for the three possible alarm states: Home, Away, and

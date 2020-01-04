@@ -4,7 +4,7 @@
 - alias: Turn Lights Off When Away During Day
   trigger:
       platform: state
-      entity_id: device_tracker.rf8m22eq54n_2
+      entity_id: device_tracker.unknown
       from: 'home'
   condition:
     condition: and  # 'when light' condition: either after sunrise and before sunset
@@ -37,7 +37,7 @@
       offset: '+00:00:00'
   condition:
     condition: state
-    entity_id: device_tracker.rf8m22eq54n_2
+    entity_id: device_tracker.unknown
     state: 'away'
   action:
     - service: homeassistant.turn_off
@@ -121,7 +121,7 @@
         - condition: sun
           before: sunrise
     - condition: state
-      entity_id: device_tracker.rf8m22eq54n_2
+      entity_id: device_tracker.unknown
       state: 'home'
   action:
     - service: homeassistant.turn_off
@@ -136,7 +136,7 @@
       offset: '+00:00:00'
   condition:
     condition: state
-    entity_id: device_tracker.rf8m22eq54n_2
+    entity_id: device_tracker.unknown
     state: 'away'
   action:
     service: light.turn_on
@@ -148,7 +148,7 @@
   alias: Turn Porch Light On Dim When Sunset and Away
   trigger:
       platform: state
-      entity_id: device_tracker.rf8m22eq54n_2
+      entity_id: device_tracker.unknown
       to: 'away'
   condition:
     # it must be dark out
@@ -255,7 +255,7 @@
       entity_id: input_boolean.trigger_first_morning
       state: 'on'
     - condition: state
-      entity_id: device_tracker.rf8m22eq54n_2
+      entity_id: device_tracker.unknown
       state: 'home'
   action:
     # turn off the "waiting" boolean regardless of whether lights will turn on
@@ -295,7 +295,7 @@
   condition:
     # device must be home
     - condition: state
-      entity_id: device_tracker.rf8m22eq54n_2
+      entity_id: device_tracker.unknown
       state: 'home'
     # it must be dark out
     - condition: or  # 'when dark' condition: either after sunset or before sunrise
