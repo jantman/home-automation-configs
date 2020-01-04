@@ -533,7 +533,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         msg = data.get('message', '<no message>')
         self._trigger_alarm(
             subject='ALARM TRIGGERED by Event',
-            message='Event Message: ' % msg
+            message='Event Message: %s' % msg
         )
 
     def _handle_state_set_event(self, event_name, data, _):
