@@ -244,8 +244,6 @@
         before: sunrise
   action:
     - service: homeassistant.turn_on
-      entity_id: switch.livingroomlight_switch
-    - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
 ################################################################################
 # BEGIN "first morning" routine                                                #
