@@ -324,6 +324,8 @@ alexa:
         name: 'Office Light'
       light.ge_45606_2way_dimmer_switch_level_3:
         name: 'Living Room Lights'
+      switch.livingroomlight_switch:
+        name: 'TV Light'
     filter:
       include_entities:
         # Bedroom Motion
