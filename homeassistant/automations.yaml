@@ -56,6 +56,29 @@
       entity_id: light.ge_45606_2way_dimmer_switch_level
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
+- alias: Turn Lights On 30m Before Sunset When Away and Randomlights Off
+  trigger:
+      platform: sun
+      event: sunset
+      offset: '-00:30:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: device_tracker.unknown
+        state: 'away'
+      - condition: state
+        entity_id: input_boolean.enable_randomlights
+        state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+    - service: homeassistant.turn_on
+      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_on
+      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
 # Kitchen Lights                                                               #
 ################################################################################
@@ -268,8 +291,6 @@
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
       entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
-    - service: homeassistant.turn_on
-      entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_on
