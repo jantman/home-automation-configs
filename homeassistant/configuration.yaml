@@ -236,6 +236,14 @@ notify:
     platform: pushover
     api_key: !secret pushover_api_key
     user_key: !secret pushover_user_key
+  - name: tvpi
+    platform: kodi
+    host: tvpi
+
+media_player:
+  - platform: kodi
+    host: tvpi
+    name: tvpi
 
 input_boolean:
   alarm_duress:
