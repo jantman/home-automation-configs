@@ -58,9 +58,9 @@
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 - alias: Turn Lights On 30m Before Sunset When Away and Randomlights Off
   trigger:
-      platform: sun
-      event: sunset
-      offset: '-00:30:00'
+    platform: sun
+    event: sunset
+    offset: '-00:30:00'
   condition:
     condition: and
     conditions:
