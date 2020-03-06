@@ -123,11 +123,6 @@ views:
               style:
                 top: 50%
                 left: 75%
-            - type: state-icon
-              entity: binary_sensor.garagemotion_sensor # garage
-              style:
-                top: 96%
-                left: 2%
             # CAMERAS
             - type: state-icon
               entity: camera.lrkitchen
@@ -320,7 +315,6 @@ views:
             - input_boolean.silence_bedroomsensor_sensor
             - input_boolean.silence_ecolink_doorwindow_sensor_sensor_2
             - input_boolean.silence_ecolink_motion_detector_sensor
-            - input_boolean.silence_garagemotion_sensor
             - input_boolean.silence_livingroom_motion
             - input_boolean.silence_office_motion
             - input_boolean.silence_lrmotion_sensor

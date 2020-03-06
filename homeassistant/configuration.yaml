@@ -290,8 +290,6 @@ input_boolean:
     name: Silence Crawlspace
   silence_ecolink_motion_detector_sensor:
     name: Silence Back Bedroom Motion
-  silence_garagemotion_sensor:
-    name: Silence GarageMotion Sensor
   silence_livingroom_motion:
     name: Silence Living Room Motion
   silence_office_motion:

@@ -74,8 +74,7 @@ from pushover_notifier import PushoverNotifier
 #: List of regular expressions to match the binary_sensor entities for my
 #: "exterior" zone, i.e. things that alarm when I'm either Home or Away
 EXTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$'),
-    re.compile(r'^binary_sensor\.garagemotion_sensor$')
+    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$')
 ]
 
 #: List of regular expressions to match the binary_sensor entities for my
@@ -89,9 +88,7 @@ INTERIOR_SENSOR_REs = [
 #: sensors that should not alarm for ``DELAYED_EXTERIOR_SENSOR_DELAY_SEC``
 #: seconds after arming the alarm, and should not fail arming the alarm if
 #: they are open/triggered when arming is requested.
-DELAYED_EXTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.garagemotion_sensor.*$')
-]
+DELAYED_EXTERIOR_SENSOR_REs = []
 
 #: Integer number of seconds for how long to delay triggering off of
 #: ``DELAYED_EXTERIOR_SENSOR_REs`` after arming the alarm.
@@ -171,11 +168,7 @@ CAMERA_IMAGE_ENTITIES = {
     # office
     'binary_sensor.office_motion': {'monitor_id': 6},
     # bedroom
-    'binary_sensor.bedroom_motion': {'monitor_id': 7},
-    # garage
-    'binary_sensor.garagemotion_sensor': {
-        'monitor_id': 9, 'second_monitor_id': 10
-    }
+    'binary_sensor.bedroom_motion': {'monitor_id': 7}
 }
 
 #: List of camera entities to turn on when system is armed in AWAY mode, and
@@ -212,7 +205,6 @@ AWAY_DELAY_ENTITIES = [
     # front door
     'binary_sensor.ecolink_doorwindow_sensor_sensor',
     'binary_sensor.livingroom_motion',
-    'binary_sensor.garagemotion_sensor',
 ]
 
 #: Path of a file to "touch" whenever the alarm changes state.
