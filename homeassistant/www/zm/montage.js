@@ -14,7 +14,6 @@ function getDimensions(url) {
 }
 
 function fit_dimensions(orig_w, orig_h, box_w, box_h) {
-  console.log("orig_w=" + orig_w + " orig_h=" + orig_h + " box_w=" + box_w + " box_h=" + box_h);
   if (orig_w > box_w) {
     wscale = box_w / orig_w;
     hscale = box_h / orig_h;
@@ -22,21 +21,18 @@ function fit_dimensions(orig_w, orig_h, box_w, box_h) {
     wscale = orig_w / box_w;
     hscale = orig_h / box_h;
   }
-  console.log("wscale=" + wscale + " hscale=" + hscale);
   if (wscale < hscale) {
     scale = wscale;
   } else {
     scale = hscale;
   }
-  console.log("scale=" + scale);
   return [Math.floor(orig_w * scale), Math.floor(orig_h * scale)]
 }
 
 function imageDiv(host, mon_id, fitWidth, fitHeight, orig_dims) {
   new_dims = fit_dimensions(orig_dims[0], orig_dims[1], fitWidth, fitHeight);
-  iWidth = new_dims[0];
+  iWidth = new_dims[0] - 8;
   rHeight = new_dims[1];
-  console.log(host + " " + mon_id + " orig_dims=" + orig_dims + " final=" + iWidth + "x" + rHeight);
   if (host == "guarddog") {
     link = "http://guarddog/zm/index.php?view=watch&mid=" + mon_id;
     url = "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=" + mon_id;
@@ -47,7 +43,7 @@ function imageDiv(host, mon_id, fitWidth, fitHeight, orig_dims) {
     alert("Unsupported host: " + host);
     return "";
   }
-  s = '  <div style="float: left; width: ' + iWidth + 'px; height: ' + rHeight + 'px;">\n';
+  s = '  <div style="float: left;">\n';
   s = s + '    <a href="' + link + '" target="_blank"><img src="' + url + '&width=' + iWidth + 'px&height=' + rHeight + 'px" width="' + iWidth + '" height="' + rHeight + '"></a>\n';
   s = s + '  </div>\n';
   return s;
@@ -64,13 +60,11 @@ function showMonitors(monitors) {
   width = window.innerWidth;
   numRows = monitors.length;
   rowHeight = Math.floor(availHeight / numRows);
-  console.log("availHeight=" + availHeight + " rowHeight=" + rowHeight);
   content = "";
   for (row of monitors) {
-    content = content + '<div class="clearfix" style="height: ' + rowHeight + 'px;">\n';
+    content = content + '<div class="clearfix">\n';
     numImages = row.length;
-    imgWidth = Math.floor(width / numImages) - 10;
-    console.log("Row has " + numImages + " images; width=" + width + " imgWidth=" + imgWidth);
+    imgWidth = Math.floor(width / numImages);
     for (img of row) {
       content += imageDiv(img[0], img[1], imgWidth, rowHeight, dimensions[img[0]][img[1]]);
     }
