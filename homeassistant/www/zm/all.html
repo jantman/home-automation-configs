@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <title>ZM Montage - ALL</title>
+
+  <link rel="stylesheet" href="main.css">
+  <script src="montage.js"></script>
+</head>
+
+<body>
+<div style="height: 5%; margin-left: 2em;">
+  <a href="index.html">Index</a> - <a href="dogs.html">Dogs</a> - <a href="external.html">External</a> - <a href="street.html">Street</a>
+</div>
+<div id="container"></div>
+<!--
+<div class="clearfix">
+  <div class="box4">
+    <a href="http://redirect.jasonantman.com/zm/index.php?view=watch&mid=4" target="_blank">
+      <img src="http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=4" alt="monitor 4">
+    </a>
+  </div>
+  <div class="box4">
+    <a href="http://redirect.jasonantman.com/zm/index.php?view=watch&mid=10" target="_blank">
+      <img src="http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=10" alt="monitor 10">
+    </a>
+  </div>
+  <div class="box4">
+    <a href="http://redirect.jasonantman.com/zm/index.php?view=watch&mid=3" target="_blank">
+      <img src="http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=3" alt="monitor 3">
+    </a>
+  </div>
+  <div class="box4">
+    <a href="http://redirect.jasonantman.com/zm/index.php?view=watch&mid=9" target="_blank">
+      <img src="http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=9" alt="monitor 9">
+    </a>
+  </div>
+</div>
+-->
+<script>
+var monitors = [
+  [
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=4", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=4"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=10", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=10"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=3", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=3"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=9", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=9"]
+  ],
+  [
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=5", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=5"],
+    ["http://redirect.jasonantman.com/telescreen/index.php?view=watch&mid=1", "http://telescreen/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=1"],
+    ["http://redirect.jasonantman.com/telescreen/index.php?view=watch&mid=2", "http://telescreen/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=2"],
+    ["http://redirect.jasonantman.com/telescreen/index.php?view=watch&mid=3", "http://telescreen/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=3"]
+  ],
+  [
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=2", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=2"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=6", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=6"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=7", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=7"],
+    ["http://redirect.jasonantman.com/zm/index.php?view=watch&mid=8", "http://guarddog/zm/cgi-bin/nph-zms?mode=jpeg&maxfps=5&monitor=8"]
+  ]
+];
+var availHeight = window.innerHeight;
+availHeight = Math.floor(availHeight - (availHeight * 0.05));
+var width = window.innerWidth;
+var numRows = monitors.length;
+var rowHeight = Math.floor(availHeight / numRows);
+var content = "";
+var imgWidth;
+var numImages;
+var row;
+var img;
+for (row of monitors) {
+  console.log(row);
+  content = content + '<div class="clearfix" style="height: ' + rowHeight + 'px;">\n';
+  numImages = row.length;
+  imgWidth = Math.floor(width / numImages);
+  for (img of row) {
+    content = content + '  <div style="float: left; width: ' + imgWidth + 'px;">\n';
+    content = content + '    <a href="' + img[0] + '" target="_blank"><img src="' + img[1] + '&width=' + imgWidth + 'px&height=' + rowHeight + 'px"></a>\n';
+    content = content + '  </div>\n';
+  }
+  content = content + '</div>\n';
+}
+document.getElementById("container").innerHTML = content;
+</script>
+</body>
+
+</html>
