@@ -327,6 +327,9 @@ views:
           entity: switch.back_state
           camera_image: camera.back
         - type: picture-entity
+          entity: switch.gate_state
+          camera_image: camera.gate
+        - type: picture-entity
           entity: switch.lrkitchen_state
           camera_image: camera.lrkitchen
         - type: picture-entity
