@@ -293,10 +293,6 @@
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.alarmstate
-        option: Disarmed
 ################################################################################
 # END "first morning" routine                                                  #
 ################################################################################
