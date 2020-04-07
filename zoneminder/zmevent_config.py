@@ -48,6 +48,7 @@ if node() == 'telescreen':
     CONFIG['BASE_URL'] = 'http://redirect.jasonantman.com/telescreen/'
     EVENTS_PATH = '/var/cache/zoneminder/events/'
     ZM_HOSTNAME = 'telescreen'
+    CONFIG['HASS_API_URL'] = 'http://192.168.0.102:8123/api'
 
 
 def populate_secrets():
