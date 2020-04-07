@@ -138,6 +138,7 @@ def send_to_hass(json_str, event_id):
     count = 0
     while count < 13:
         count += 1
+        r = None
         try:
             logger.debug('Try POST to: %s', url)
             r = requests.post(
@@ -148,8 +149,11 @@ def send_to_hass(json_str, event_id):
             assert 'message' in r.json()
             logger.info('Event successfully posted to HASS: %s', r.text)
             return
-        except Exception:
-            logger.error('Error POSTing to HASS at %s: %s', url, r.text)
+        except Exception as exc:
+            if r is not None:
+                logger.error('Error POSTing to HASS at %s: %s', url, r.text)
+            else:
+                logger.error('Error POSTing to HASS at %s: %s', url, exc)
     fname = os.path.join(
         os.path.dirname(LOG_PATH), 'event_%s.json' % event_id
     )
