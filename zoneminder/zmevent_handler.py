@@ -314,6 +314,7 @@ def run(args):
             zones, ignored_zones
         )
         return
+    result['hostname'] = node()
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
