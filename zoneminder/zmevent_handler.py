@@ -287,11 +287,11 @@ def run(args):
     result, zones = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
-    if args.monitor_id in HASS_IGNORE_MONITOR_IDS:
+    if args.monitor_id in HASS_IGNORE_MONITOR_IDS.get(node(), []):
         logger.info(
             'Not sending Event %s for monitor %s to HASS - MonitorId '
-            'in HASS_IGNORE_MONITOR_IDS',
-            result['event'].EventId, args.monitor_id
+            'in HASS_IGNORE_MONITOR_IDS[%s]',
+            result['event'].EventId, args.monitor_id, node()
         )
         return
     for r in HASS_IGNORE_EVENT_NAME_RES:
@@ -303,7 +303,9 @@ def run(args):
                 result['event'].Name, r.pattern
             )
             return
-    ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(args.monitor_id, set([]))
+    ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(
+        node(), {}
+    ).get(args.monitor_id, set([]))
     if set(zones).issubset(ignored_zones):
         logger.info(
             'Not sending Event %s for monitor %s to HASS - zones (%s) '

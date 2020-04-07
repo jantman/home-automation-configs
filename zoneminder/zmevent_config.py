@@ -302,14 +302,18 @@ IGNORED_OBJECTS = {
 }
 
 #: List of Monitor IDs to never send to HASS
-HASS_IGNORE_MONITOR_IDS = [
-    11,
-    12
-]
+HASS_IGNORE_MONITOR_IDS = {
+    'guarddog': [
+        11,
+        12
+    ]
+}
 
 #: List of zones to never send to HASS, per monitor
 HASS_IGNORE_MONITOR_ZONES = {
-    9: set(['RoadCamera'])
+    'guarddog': {
+        9: set(['RoadCamera'])
+    }
 }
 
 #: List of Event Name regexes to never send to HASS
