@@ -48,52 +48,6 @@ logger = None
 
 
 class EventComparer(object):
-    """
-    # populate the event from ZoneMinder DB
-    event = ZMEvent(args.event_id, args.monitor_id, args.cause)
-    # ensure that this command is run by the user that owns the event
-    evt_owner = os.stat(event.path).st_uid
-    if os.geteuid() != evt_owner:
-        raise RuntimeError(
-            'This command may only be run by the user that owns %s: UID %s'
-            ' (not UID %s)', event.path, evt_owner, os.geteuid()
-        )
-    logger.debug('Loaded event: %s', event.as_json)
-    # wait for the event to finish - we wait up to 30s then continue
-    event.wait_for_finish()
-    result = {
-        'event': event,
-        'filters': [],
-        'object_detections': []
-    }
-    # run filters on event
-    logger.debug('Running filters on %s', event)
-    for cls in EventFilter.__subclasses__():
-        try:
-            logger.debug('Filter: %s', cls)
-            f = cls(event)
-            f.run()
-            result['filters'].append(f)
-        except Exception:
-            logger.critical(
-                'Exception running filter %s on event %s',
-                cls, event, exc_info=True
-            )
-    # run object detection on the event
-    try:
-        analyzer = ImageAnalysisWrapper(event, ANALYZERS)
-        analysis = analyzer.analyze_event()
-        result['object_detections'] = analysis
-    except Exception:
-        logger.critical(
-            'ERROR running ImageAnalysisWrapper on event: %s', event,
-            exc_info=True
-        )
-    res_json = json.dumps(
-        result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
-    )
-    send_to_hass(res_json, event.EventId)
-    """
 
     def __init__(self):
         logger.debug('Connecting to MySQL')
