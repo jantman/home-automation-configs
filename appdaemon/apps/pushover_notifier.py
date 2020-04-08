@@ -36,7 +36,6 @@ class PushoverNotifier(object):
         assert 'amcrest_password' in conf
         assert 'gmail_username' in conf
         assert 'gmail_password' in conf
-        assert 'zm_url_base' in conf
         # return the full dict
         return conf
 
