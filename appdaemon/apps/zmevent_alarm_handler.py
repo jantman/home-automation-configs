@@ -44,6 +44,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
+from platform import node
 
 from sane_app_logging import SaneLoggingApp
 from alarm_handler import ALARM_STATE_SELECT_ENTITY, HOME, AWAY, DISARMED
@@ -54,7 +55,9 @@ from pushover_notifier import PushoverNotifier
 LOG_DEBUG = False
 
 #: List of monitor names to ignore when the alarm state is HOME
-HOME_IGNORE_MONITORS = ['LRKitchen', 'OFFICE', 'BEDRM', 'HALL']
+HOME_IGNORE_MONITORS = {
+    'guarddog': ['LRKitchen', 'OFFICE', 'BEDRM', 'HALL']
+}
 
 #: Path of a file that's touched every time the alarm changes state.
 TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
@@ -152,12 +155,15 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         if (
             alarm_state == HOME and
-            data['event']['Monitor']['Name'] in HOME_IGNORE_MONITORS
+            data['event']['Monitor']['Name'] in HOME_IGNORE_MONITORS.get(
+                data.get('hostname', ''), []
+            )
         ):
             self._log.info(
                 'Ignoring ZM_ALARM for Event %s on Monitor %s; alarm is in '
-                'HOME state and monitor in HOME_IGNORE_MONITORS.',
-                data['event']['EventId'], data['event']['Monitor']['Name']
+                'HOME state and monitor in HOME_IGNORE_MONITORS[%s]',
+                data['event']['EventId'], data['event']['Monitor']['Name'],
+                data.get('hostname', '')
             )
             return
         if max([len(x['detections']) for x in data['object_detections']]) == 0:
@@ -247,8 +253,8 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             data['event']['AlarmFrames'], data['event']['TotScore'],
             data['event']['AvgScore'], data['event']['MaxScore']
         )
-        url = '%sindex.php?view=event&eid=%s' % (
-            self._hass_secrets['zm_url_base'],
+        url = '%s?view=event&eid=%s' % (
+            self._index_url(data),
             data['event']['EventId']
         )
         image = primary_image['output_path']
@@ -259,9 +265,14 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _notify_email(self, subject, data):
         addr = self._hass_secrets['gmail_username']
-        index_url = '%sindex.php' % self._hass_secrets['zm_url_base']
+        index_url = self._index_url(data)
         msg = EmailNotifier(subject, data, addr, index_url).build_message()
         self._do_notify_email(msg)
+
+    def _index_url(self, data):
+        k = 'zm_url_base_%s' % data.get('hostname', 'guarddog')
+        base = self._hass_secrets[k]
+        return '%sindex.php' % base
 
 
 class EmailNotifier(object):
