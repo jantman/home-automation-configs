@@ -98,6 +98,7 @@ class ImageAnalysisWrapper(object):
 
     def analyze_event(self):
         """returns a list of ObjectDetectionResult instances"""
+        NUM_TRIES = 10
         data = {
             'hostname': self._hostname,
             'EventId': self._event.EventId,
@@ -112,11 +113,11 @@ class ImageAnalysisWrapper(object):
         }
         logger.debug('POST data: %s', data)
         results = None
-        for i in range(0, 6):
+        for i in range(0, NUM_TRIES):
             url = 'http://guarddog:8008/'
             try:
                 logger.info('POST to %s', url)
-                r = requests.post(url, json=data, timeout=10.0)
+                r = requests.post(url, json=data, timeout=20.0)
                 r.raise_for_status()
                 results = r.json()
                 break
@@ -127,7 +128,7 @@ class ImageAnalysisWrapper(object):
                 sleep(uniform(0.25, 3.0))
         if results is None:
             logger.critical(
-                'Analysis POST failed on all 6 attempts!'
+                'Analysis POST failed on all %d attempts!', NUM_TRIES
             )
             return []
         results = self._to_results(results)
