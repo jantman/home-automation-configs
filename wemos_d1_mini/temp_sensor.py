@@ -31,8 +31,17 @@ D6 = micropython.const(12)
 D7 = micropython.const(13)
 D8 = micropython.const(15)
 
-ENTITY_ID = 'sensor.porch_temp'
-FRIENDLY_NAME = 'Porch Temp'
+ENTITIES = {
+    '500291c9b245': 'sensor.porch_temp',
+    'bcddc2b67528': 'sensor.chest_freezer_temp',
+    'bcddc2b66c5a': 'sensor.kitchen_freezer_temp'
+}
+
+FRIENDLY_NAMES = {
+    '500291c9b245': 'Porch Temp',
+    'bcddc2b67528': 'Chest Freezer Temp',
+    'bcddc2b66c5a': 'Kitchen Freezer Temp'
+}
 
 
 class TempSender:
@@ -58,7 +67,12 @@ class TempSender:
         self.leds['red'].off()
         self.mac = hexlify(self.wlan.config('mac')).decode()
         print('MAC: %s' % self.mac)
-        self.post_path = '/api/states/' + ENTITY_ID
+        self.entity_id = ENTITIES[self.mac]
+        self.friendly_name = FRIENDLY_NAMES[self.mac]
+        print('Entity ID: %s; Friendly Name: %s' % (
+            self.entity_id, self.friendly_name
+        ))
+        self.post_path = '/api/states/' + self.entity_id
         print('POST path: %s' % self.post_path)
 
     def run(self):
@@ -82,7 +96,7 @@ class TempSender:
         data = json.dumps({
             'state': round(temp_f, 2),
             'attributes': {
-                'friendly_name': FRIENDLY_NAME,
+                'friendly_name': self.friendly_name,
                 'unit_of_measurement': '\u00b0F'
             }
         })

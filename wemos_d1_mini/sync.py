@@ -30,6 +30,12 @@ PER_BOARD_FILES = {
     },
     'ecfabc6102f0': {
         'button_box_v2.py': 'main.py'
+    },
+    'bcddc2b66c5a': {
+        'temp_sensor.py': 'main.py'
+    },
+    'bcddc2b67528': {
+        'temp_sensor.py': 'main.py'
     }
 }
 

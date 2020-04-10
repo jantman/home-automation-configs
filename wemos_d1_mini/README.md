@@ -30,6 +30,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [temp_sensor.png](temp_sensor.png) - PNG of Schematic
 * [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
 * [temp_sensor_box.jpg](temp_sensor_box.jpg) - Photo of installed temperature sensor box.
+* [temp_sensor_test.py](temp_sensor_test.py) - Script for testing new temperature sensors.
 * ``webrepl*`` and ``websocket_helper.py`` - Imported from https://github.com/micropython/webrepl @ 03492fef5c687e76057e6e93f6602b0a2dd5e660 because this isn't published to PyPI or as a real Python package.
 
 ## Materials
@@ -52,6 +53,10 @@ Follow the [Getting started with MicroPython on the ESP8266](https://docs.microp
 2. Plug the board in to your computer via USB and make sure your user has access to the tty.
 3. Use esptool to erase the flash.
 4. Flash MicroPython on to it; I'm currently using 1.11.
+
+## Quick Board Identity
+
+``esptool.py --port /dev/ttyUSBn read_mac``
 
 ## Main Projects
 
