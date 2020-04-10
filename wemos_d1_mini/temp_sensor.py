@@ -117,7 +117,14 @@ class TempSender:
         print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
         s = socket.socket()
         s.settimeout(10.0)
-        s.connect(addr)
+        try:
+            s.connect(addr)
+        except OSError as exc:
+            print('ERROR connecting to %s: %s' % (addr, exc))
+            self.set_rgb(False, False, False)
+            self.blink_leds(['red'], num_times=3, length_ms=100)
+            s.close()
+            return None
         print('POST to: %s: %s' % (self.post_path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
             'Content-Type: application/json\r\n' \
