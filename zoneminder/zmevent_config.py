@@ -33,6 +33,12 @@ HASS_SECRETS_PATH = '/opt/homeassistant/.homeassistant/secrets.yaml'
 #: Hostname for this instance
 ZM_HOSTNAME = 'guarddog'
 
+#: statsd hostname/ip to send metrics to; set to None to disable
+STATSD_HOST = '192.168.0.24'
+
+#: statsd port
+STATSD_PORT = 8125
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {

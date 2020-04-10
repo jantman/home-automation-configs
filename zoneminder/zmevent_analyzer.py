@@ -2,11 +2,12 @@ import logging
 import pymysql
 import json
 import requests
-from time import sleep
+from time import sleep, time
 from random import uniform
 
 from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 from zmevent_models import ObjectDetectionResult, DetectedObject
+from statsd_utils import statsd_increment_counter, statsd_send_time
 
 
 logger = logging.getLogger(__name__)
@@ -113,6 +114,7 @@ class ImageAnalysisWrapper(object):
         }
         logger.debug('POST data: %s', data)
         results = None
+        start = time()
         for i in range(0, NUM_TRIES):
             url = 'http://guarddog:8008/'
             try:
@@ -122,6 +124,9 @@ class ImageAnalysisWrapper(object):
                 results = r.json()
                 break
             except Exception:
+                statsd_send_time(
+                    'analyze_event.post_failure_time', time() - start
+                )
                 logger.error(
                     'ERROR POSTing to zmevent_analysis_server', exc_info=True
                 )
@@ -129,6 +134,9 @@ class ImageAnalysisWrapper(object):
         if results is None:
             logger.critical(
                 'Analysis POST failed on all %d attempts!', NUM_TRIES
+            )
+            statsd_send_time(
+                'analyze_event.unrecoverable_failure_time', time() - start
             )
             return []
         results = self._to_results(results)
@@ -143,4 +151,7 @@ class ImageAnalysisWrapper(object):
                     'Exception writing analysis result to DB for %s: %s',
                     self._event, res, exc_info=True
                 )
+        statsd_send_time(
+            'analyze_event.success_time', time() - start
+        )
         return results

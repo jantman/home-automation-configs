@@ -68,10 +68,12 @@ from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
+from statsd_utils import statsd_increment_counter, statsd_send_time
 
 #: logger - this will be set in :py:func:`~.main` to log to either stdout/err
 #: or a file depending on options
 logger = None
+NODE_NAME = node()
 
 
 def parse_args(argv):
@@ -136,6 +138,7 @@ def send_to_hass(json_str, event_id):
     logger.info(json_str)
     url = '%s/events/%s' % (CONFIG['HASS_API_URL'], HASS_EVENT_NAME)
     count = 0
+    start = time.time()
     while count < 13:
         count += 1
         r = None
@@ -148,12 +151,24 @@ def send_to_hass(json_str, event_id):
             r.raise_for_status()
             assert 'message' in r.json()
             logger.info('Event successfully posted to HASS: %s', r.text)
+            statsd_send_time(
+                'zmevent_handler.send_to_hass.success',
+                time.time() - start
+            )
             return
         except Exception as exc:
+            statsd_send_time(
+                'zmevent_handler.send_to_hass.failures',
+                time.time() - start
+            )
             if r is not None:
                 logger.error('Error POSTing to HASS at %s: %s', url, r.text)
             else:
                 logger.error('Error POSTing to HASS at %s: %s', url, exc)
+    statsd_send_time(
+        'zmevent_handler.send_to_hass.unrecoverable_failure_time',
+        time.time() - start
+    )
     fname = os.path.join(
         os.path.dirname(LOG_PATH), 'event_%s.json' % event_id
     )
@@ -267,7 +282,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
     # run object detection on the event
     zones = []
     try:
-        analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], node())
+        analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], NODE_NAME)
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
         new_name, zones = update_event_name(
@@ -287,11 +302,11 @@ def run(args):
     result, zones = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
-    if args.monitor_id in HASS_IGNORE_MONITOR_IDS.get(node(), []):
+    if args.monitor_id in HASS_IGNORE_MONITOR_IDS.get(NODE_NAME, []):
         logger.info(
             'Not sending Event %s for monitor %s to HASS - MonitorId '
             'in HASS_IGNORE_MONITOR_IDS[%s]',
-            result['event'].EventId, args.monitor_id, node()
+            result['event'].EventId, args.monitor_id, NODE_NAME
         )
         return
     for r in HASS_IGNORE_EVENT_NAME_RES:
@@ -304,7 +319,7 @@ def run(args):
             )
             return
     ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(
-        node(), {}
+        NODE_NAME, {}
     ).get(args.monitor_id, set([]))
     if set(zones).issubset(ignored_zones):
         logger.info(
@@ -314,7 +329,7 @@ def run(args):
             zones, ignored_zones
         )
         return
-    result['hostname'] = node()
+    result['hostname'] = NODE_NAME
     res_json = json.dumps(
         result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
     )
