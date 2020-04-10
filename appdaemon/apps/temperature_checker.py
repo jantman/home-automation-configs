@@ -15,6 +15,7 @@ from pushover_notifier import PushoverNotifier
 
 MIN_THRESHOLD = 60
 MAX_THRESHOLD = 80
+FREEZER_THRESHOLD = 25
 
 #: Service to notify. Must take "title" and "message" kwargs.
 NOTIFY_SERVICE = 'notify/gmail'
@@ -26,9 +27,14 @@ LOG_DEBUG = False
 #: List of entity IDs to ignore
 IGNORE_IDS = [
     'sensor.porch_temp',
-    'sensor.chest_freezer_temp',
-    'sensor.kitchen_freezer_temp'
 ]
+
+#: List of entity IDs that are freezers
+FREEZER_IDS = [
+    'sensor.chest_freezer_temp',
+    'sensor.kitchen_freezer_temp',
+]
+
 
 class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
@@ -39,6 +45,24 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self.run_hourly(self._check_temperatures, time(0, 0, 0))
         self._log.info('Done initializing TemperatureChecker')
         self.listen_event(self._check_temperatures, event='TEMPERATURE_CHECKER')
+
+    def _check_freezer(self, ename, val):
+        if val >= FREEZER_THRESHOLD:
+            self._log.info('Found problem: entity=%s state=%s', ename, val)
+            return '%s: state of %s is above threshold of %s' % (
+                ename, val, FREEZER_THRESHOLD
+            )
+        return None
+
+    def _check_threshold(self, ename, val):
+        self._log.debug('Checking entity=%s state=%s', ename, val)
+        return self._check_freezer(ename, val)
+        if val < MIN_THRESHOLD or val > MAX_THRESHOLD:
+            self._log.info('Found problem: entity=%s state=%s', ename, val)
+            return '%s: state of %s is outside threshold of %s to %s' % (
+                ename, val, MIN_THRESHOLD, MAX_THRESHOLD
+            )
+        return None
 
     def _check_temperatures(self, *args, **kwargs):
         problems = []
@@ -57,14 +81,9 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 val = float(e.get('state', 0.0))
             except Exception:
                 val = 0.0
-            self._log.debug('Checking entity=%s state=%s', ename, val)
-            if val < MIN_THRESHOLD or val > MAX_THRESHOLD:
-                self._log.info('Found problem: entity=%s state=%s', ename, val)
-                problems.append(
-                    '%s: state of %s is outside threshold of %s to %s' % (
-                        ename, val, MIN_THRESHOLD, MAX_THRESHOLD
-                    )
-                )
+            res = self._check_threshold(ename, val)
+            if res is not None:
+                problems.append(res)
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
