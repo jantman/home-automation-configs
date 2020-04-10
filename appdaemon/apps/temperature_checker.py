@@ -56,7 +56,8 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _check_threshold(self, ename, val):
         self._log.debug('Checking entity=%s state=%s', ename, val)
-        return self._check_freezer(ename, val)
+        if ename in FREEZER_IDS:
+            return self._check_freezer(ename, val)
         if val < MIN_THRESHOLD or val > MAX_THRESHOLD:
             self._log.info('Found problem: entity=%s state=%s', ename, val)
             return '%s: state of %s is outside threshold of %s to %s' % (
