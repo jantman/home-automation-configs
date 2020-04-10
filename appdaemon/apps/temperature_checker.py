@@ -25,7 +25,9 @@ LOG_DEBUG = False
 
 #: List of entity IDs to ignore
 IGNORE_IDS = [
-    'sensor.porch_temp'
+    'sensor.porch_temp',
+    'sensor.chest_freezer_temp',
+    'sensor.kitchen_freezer_temp'
 ]
 
 class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
