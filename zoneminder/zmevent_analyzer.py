@@ -7,7 +7,9 @@ from random import uniform
 
 from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 from zmevent_models import ObjectDetectionResult, DetectedObject
-from statsd_utils import statsd_increment_counter, statsd_send_time
+from statsd_utils import (
+    statsd_increment_counter, statsd_send_time, statsd_set_gauge
+)
 
 
 logger = logging.getLogger(__name__)
@@ -115,6 +117,7 @@ class ImageAnalysisWrapper(object):
         logger.debug('POST data: %s', data)
         results = None
         start = time()
+        i = 0
         for i in range(0, NUM_TRIES):
             url = 'http://guarddog:8008/'
             try:
@@ -131,6 +134,7 @@ class ImageAnalysisWrapper(object):
                     'ERROR POSTing to zmevent_analysis_server', exc_info=True
                 )
                 sleep(uniform(0.25, 3.0))
+        statsd_set_gauge('analyze_event.num_posts', i + 1)
         if results is None:
             logger.critical(
                 'Analysis POST failed on all %d attempts!', NUM_TRIES

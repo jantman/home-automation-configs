@@ -19,6 +19,12 @@ def statsd_increment_counter(name):
     )
 
 
+def statsd_set_gauge(name, value):
+    _statsd_send(
+        'zmevent.%s.%s:%s|g' % (NODE_NAME, name, value)
+    )
+
+
 def statsd_send_time(name, value):
     # value should be seconds, as in time.time() - time.time()
     _statsd_send(
