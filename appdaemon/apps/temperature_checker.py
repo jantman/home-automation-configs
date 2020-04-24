@@ -6,7 +6,9 @@ NOTIFY_SERVICE, gmail, and Pushover.
 """
 
 import logging
-from datetime import time, timedelta, datetime
+from datetime import time, timedelta
+from datetime.datetime import now
+from datetime.timezone import utc
 import appdaemon.plugins.hass.hassapi as hass
 from email.message import EmailMessage
 from dateutil.parser import parse
@@ -91,7 +93,7 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             if res is not None:
                 problems.append(res)
             try:
-                updated = datetime.now() - parse(e['last_updated'])
+                updated = now(utc) - parse(e['last_updated'])
             except Exception as ex:
                 self._log.error(
                     'Error parsing date for entity %s: %s', e, ex
