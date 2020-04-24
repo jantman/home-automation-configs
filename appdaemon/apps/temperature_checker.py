@@ -6,9 +6,11 @@ NOTIFY_SERVICE, gmail, and Pushover.
 """
 
 import logging
-from datetime import time
+from datetime import time, timedelta, datetime
 import appdaemon.plugins.hass.hassapi as hass
 from email.message import EmailMessage
+from dateutil.parser import parse
+from humanize import naturaltime
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
@@ -16,6 +18,8 @@ from pushover_notifier import PushoverNotifier
 MIN_THRESHOLD = 60
 MAX_THRESHOLD = 80
 FREEZER_THRESHOLD = 25
+
+STALE_THRESHOLD = timedelta(hours=1)
 
 #: Service to notify. Must take "title" and "message" kwargs.
 NOTIFY_SERVICE = 'notify/gmail'
@@ -27,6 +31,7 @@ LOG_DEBUG = False
 #: List of entity IDs to ignore
 IGNORE_IDS = [
     'sensor.porch_temp',
+    'sensor.tv_temp'
 ]
 
 #: List of entity IDs that are freezers
@@ -85,6 +90,14 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             res = self._check_threshold(ename, val)
             if res is not None:
                 problems.append(res)
+            try:
+                updated = datetime.now() - parse(e['last_updated'])
+            except Exception:
+                updated = datetime.now() - datetime(2020, 1, 1, 1, 1, 1)
+            if updated > STALE_THRESHOLD:
+                problems.append('%s was lasted updated %s' % (
+                    ename, naturaltime(updated)
+                ))
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
