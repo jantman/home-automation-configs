@@ -92,7 +92,10 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 problems.append(res)
             try:
                 updated = datetime.now() - parse(e['last_updated'])
-            except Exception:
+            except Exception as ex:
+                self._log.error(
+                    'Error parsing date for entity %s: %s', e, ex
+                )
                 updated = datetime.now() - datetime(2020, 1, 1, 1, 1, 1)
             if updated > STALE_THRESHOLD:
                 problems.append('%s was lasted updated %s' % (
