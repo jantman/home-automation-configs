@@ -21,6 +21,13 @@ FREEZER_THRESHOLD = 25
 
 STALE_THRESHOLD = timedelta(hours=1)
 
+CHECK_STALE_IDS = [
+    'sensor.chest_freezer_temp',
+    'sensor.kitchen_freezer_temp',
+    'sensor.porch_temp',
+    'sensor.tv_temp',
+]
+
 #: Service to notify. Must take "title" and "message" kwargs.
 NOTIFY_SERVICE = 'notify/gmail'
 
@@ -77,6 +84,18 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 continue
             uom = e.get('attributes', {}).get('unit_of_measurement', '')
             ename = e['entity_id']
+            if ename in CHECK_STALE_IDS:
+                try:
+                    updated = datetime.now(timezone.utc) - parse(e['last_updated'])
+                except Exception as ex:
+                    self._log.error(
+                        'Error parsing date for entity %s: %s', e, ex
+                    )
+                    updated = datetime.now() - datetime(2020, 1, 1, 1, 1, 1)
+                if updated > STALE_THRESHOLD:
+                    problems.append('%s was lasted updated %s' % (
+                        ename, naturaltime(updated)
+                    ))
             if ename in IGNORE_IDS:
                 self._log.debug('Skipping ignored entity: %s', ename)
                 continue
@@ -90,17 +109,6 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             res = self._check_threshold(ename, val)
             if res is not None:
                 problems.append(res)
-            try:
-                updated = datetime.now(timezone.utc) - parse(e['last_updated'])
-            except Exception as ex:
-                self._log.error(
-                    'Error parsing date for entity %s: %s', e, ex
-                )
-                updated = datetime.now() - datetime(2020, 1, 1, 1, 1, 1)
-            if updated > STALE_THRESHOLD:
-                problems.append('%s was lasted updated %s' % (
-                    ename, naturaltime(updated)
-                ))
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
