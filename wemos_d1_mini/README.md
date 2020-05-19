@@ -22,15 +22,17 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [button_box_v2_schem.svg](button_box_v2_schem.svg) - SVG of ``button_box_v2.fzz``
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
+* [humidor.py](humidor.py) - The code for the temperature and humidity sensor in my humidor, using the [ACROBOTIC WeMos ESP8266 D1 Mini DHT-22 Temperature/Humidity Sensor Shield](https://www.amazon.com/gp/product/B07LCH3Q56/).
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
+* [main.py](main.py) - Sample script that just attempts to connect to WiFi.
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
 * [sync.py](sync.py) - Wrapper script around [rshell](https://github.com/dhylands/rshell) to automate syncing scripts to my boards.
-* [temp_sensor.py](temp_sensor.py) - A quick-and-dirty script to check the temperature of a DS18B20 temperature sensor and POST it to HomeAssistant (as a sensor value) every minute.
-* [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
-* [temp_sensor.png](temp_sensor.png) - PNG of Schematic
-* [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
 * [temp_sensor_box.jpg](temp_sensor_box.jpg) - Photo of installed temperature sensor box.
 * [temp_sensor_test.py](temp_sensor_test.py) - Script for testing new temperature sensors.
+* [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
+* [temp_sensor.png](temp_sensor.png) - PNG of Schematic
+* [temp_sensor.py](temp_sensor.py) - A quick-and-dirty script to check the temperature of a DS18B20 temperature sensor and POST it to HomeAssistant (as a sensor value) every minute.
+* [temp_sensor.svg](temp_sensor.svg) - SVG of Schematic
 * ``webrepl*`` and ``websocket_helper.py`` - Imported from https://github.com/micropython/webrepl @ 03492fef5c687e76057e6e93f6602b0a2dd5e660 because this isn't published to PyPI or as a real Python package.
 
 ## Materials
@@ -51,8 +53,8 @@ Follow the [Getting started with MicroPython on the ESP8266](https://docs.microp
 
 1. ``pip install esptool rshell``
 2. Plug the board in to your computer via USB and make sure your user has access to the tty.
-3. Use esptool to erase the flash.
-4. Flash MicroPython on to it; I'm currently using 1.11.
+3. Use esptool to erase the flash (``esptool.py erase_flash``).
+4. Flash MicroPython on to it; I'm currently using 1.11 (``esptool.py --port /dev/ttyUSB4 --baud 460800 write_flash --flash_size=detect 0 esp8266-20190529-v1.11.bin``).
 
 ## Quick Board Identity
 
