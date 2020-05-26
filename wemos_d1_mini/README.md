@@ -22,7 +22,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [button_box_v2_schem.svg](button_box_v2_schem.svg) - SVG of ``button_box_v2.fzz``
 * [button_test.py](button_test.py) - a simple test of momentary pushbutton input
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
-* [humidor.py](humidor.py) - The code for the temperature and humidity sensor in my humidor, using the [ACROBOTIC WeMos ESP8266 D1 Mini DHT-22 Temperature/Humidity Sensor Shield](https://www.amazon.com/gp/product/B07LCH3Q56/).
+* [humidor.py](humidor.py) - The code for the temperature and humidity sensor in my humidor, using the BME280 temperature/humidity/pressure sensor, specifically from [KeeYees 3pcs BME280 Compatible with BMP280 Digital 5V Temperature Humidity Sensor Atmospheric Barometric Pressure Board IIC I2C Breakout for Arduino: Amazon.com: Industrial & Scientific](https://www.amazon.com/gp/product/B07KYJNFMD/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1).
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
 * [main.py](main.py) - Sample script that just attempts to connect to WiFi.
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.

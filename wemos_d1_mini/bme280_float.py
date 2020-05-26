@@ -143,16 +143,11 @@ class BME280:
         result[1] = raw_press
         result[2] = raw_hum
 
-    def read_compensated_data(self, result=None):
+    def read_compensated_data(self):
         """ Reads the data from the sensor and returns the compensated data.
 
-            Args:
-                result: array of length 3 or alike where the result will be
-                stored, in temperature, pressure, humidity order. You may use
-                this to read out the sensor without allocating heap memory
-
             Returns:
-                array with temperature, pressure, humidity. Will be the one
+                3-tuple of temperature, pressure, humidity. Will be the one
                 from the result parameter if not None
         """
         self.read_raw_data(self._l3_resultarray)
@@ -188,13 +183,7 @@ class BME280:
         humidity = h * (1.0 - self.dig_H1 * h / 524288.0)
         # humidity = max(0, min(100, humidity))
 
-        if result:
-            result[0] = temp
-            result[1] = pressure
-            result[2] = humidity
-            return result
-
-        return array("f", (temp, pressure, humidity))
+        return temp, pressure, humidity
 
     @property
     def sealevel(self):

@@ -1,30 +1,33 @@
 """
 POST temperature and humidity to HomeAssistant every minute
 
-DHT-22 with data line on D4
+BME-280 with SCL on D4 / 2 and SDA on D3 / 0
 """
 
-from machine import Pin, reset
+from machine import Pin, reset, I2C
 import micropython
 import network
 import socket
 from time import sleep, sleep_ms
 from binascii import hexlify
-import dht
 import json
 micropython.alloc_emergency_exception_buf(100)
+from bme280_float import BME280
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
 # Pin mappings - board number to GPIO number
-D4 = micropython.const(2)
+D4 = Pin(micropython.const(2))
+D3 = Pin(micropython.const(0))
+SCL = D4
+SDA = D3
 
 ENTITIES = {
-    'f4cfa2d0a226': 'sensor.humidor',
+    'f4cfa2d0a962': 'sensor.humidor',
 }
 
 FRIENDLY_NAMES = {
-    'f4cfa2d0a226': 'Humidor',
+    'f4cfa2d0a962': 'Humidor',
 }
 
 
@@ -53,16 +56,18 @@ class HumidorSender:
 
     def send_data(self):
         print('measuring...')
-        d = None
+        temp_c = None
+        pressure = None
+        humidity = None
         try:
-            d = dht.DHT22(Pin(D4, Pin.IN))
-            d.measure()
+            i2c = I2C(scl=SCL, sda=SDA)
+            i2c.scan()
+            bme280 = BME280(i2c=i2c)
+            temp_c, pressure, humidity = bme280.read_compensated_data()
         except Exception as ex:
             print('exception measuring: %s' % ex)
             return
-        temp_c = d.temperature()
-        humidity = d.humidity()
-        print('temp_c=%s humidity=%s' % (temp_c, humidity))
+        print('temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         print('temp_f=%s' % temp_f)
         data = json.dumps({
@@ -81,6 +86,14 @@ class HumidorSender:
             }
         })
         self.http_post(data, 'humidity')
+        data = json.dumps({
+            'state': round(pressure, 2),
+            'attributes': {
+                'friendly_name': '%s Pressure' % self.friendly_name,
+                'unit_of_measurement': 'Pa'
+            }
+        })
+        self.http_post(data, 'pressure')
 
     def connect_wlan(self):
         self.wlan.active(True)
