@@ -73,7 +73,11 @@ class HumidorSender:
         except Exception as ex:
             print('exception measuring: %s' % ex)
             return
-        print('temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
+        print('UNCONVERTED VALUES: temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
+        temp_c = temp_c / 100.0
+        pressure = pressure / 256.0
+        humidity = humidity / 1024.0
+        print('CONVERTED: temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         print('temp_f=%s' % temp_f)
         data = json.dumps({
