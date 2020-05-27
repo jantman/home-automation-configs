@@ -12,7 +12,7 @@ from time import sleep, sleep_ms
 from binascii import hexlify
 import json
 micropython.alloc_emergency_exception_buf(100)
-from bme280_float import BME280
+from bme280 import BME280
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
@@ -68,7 +68,7 @@ class HumidorSender:
         try:
             i2c = I2C(scl=SCL, sda=SDA)
             i2c.scan()
-            bme280 = BME280(i2c=i2c, debug=True)
+            bme280 = BME280(i2c=i2c)
             temp_c, pressure, humidity = bme280.read_compensated_data()
         except Exception as ex:
             print('exception measuring: %s' % ex)
