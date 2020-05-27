@@ -44,7 +44,9 @@ PER_BOARD_FILES = {
         'temp_sensor.py': 'main.py'
     },
     'f4cfa2d0a226': HUMIDOR_FILES,
-    '500291c9b1a3': HUMIDOR_FILES,
+    '500291c9b1a3': {
+        'humidor_dht22.py': 'main.py',
+    },
     'f4cfa2d0a962': HUMIDOR_FILES,
     'f4cfa2d0de01': HUMIDOR_FILES
 }

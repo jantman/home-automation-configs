@@ -1,37 +1,30 @@
 """
 POST temperature and humidity to HomeAssistant every minute
 
-BME-280 with SCL on D4 / 2 and SDA on D3 / 0
+DHT-22 with data line on D4
 """
 
-from machine import Pin, reset, I2C
+from machine import Pin, reset
 import micropython
 import network
 import socket
 from time import sleep, sleep_ms
 from binascii import hexlify
+import dht
 import json
 micropython.alloc_emergency_exception_buf(100)
-from bme280 import BME280
 
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
 # Pin mappings - board number to GPIO number
-D4 = Pin(micropython.const(2))
-D3 = Pin(micropython.const(0))
-SCL = D4
-SDA = D3
+D4 = micropython.const(2)
 
 ENTITIES = {
-    'f4cfa2d0a962': 'sensor.humidor',
-    'f4cfa2d0de01': 'sensor.f4cfa2d0de01',
-    'f4cfa2d0a226': 'sensor.f4cfa2d0a226',
+    '500291c9b1a3': 'sensor.500291c9b1a3',
 }
 
 FRIENDLY_NAMES = {
-    'f4cfa2d0a962': 'Humidor',
-    'f4cfa2d0de01': 'f4cfa2d0de01',
-    'f4cfa2d0a226': 'f4cfa2d0a226',
+    '500291c9b1a3': '500291c9b1a3',
 }
 
 
@@ -51,9 +44,6 @@ class HumidorSender:
         ))
         self.post_path = '/api/states/' + self.entity_id
         print('POST path: %s' % self.post_path)
-        self.i2c = I2C(scl=SCL, sda=SDA)
-        self.i2c.scan()
-        self.bme280 = BME280(i2c=self.i2c)
 
     def run(self):
         print("Enter loop...")
@@ -63,19 +53,16 @@ class HumidorSender:
 
     def send_data(self):
         print('measuring...')
-        temp_c = None
-        pressure = None
-        humidity = None
+        d = None
         try:
-            temp_c, pressure, humidity = self.bme280.read_compensated_data()
+            d = dht.DHT22(Pin(D4, Pin.IN))
+            d.measure()
         except Exception as ex:
             print('exception measuring: %s' % ex)
             return
-        print('UNCONVERTED VALUES: temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
-        temp_c = temp_c / 100.0
-        pressure = pressure / 256.0
-        humidity = humidity / 1024.0
-        print('CONVERTED: temp_c=%s pressure=%s humidity=%s' % (temp_c, pressure, humidity))
+        temp_c = d.temperature()
+        humidity = d.humidity()
+        print('temp_c=%s humidity=%s' % (temp_c, humidity))
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         print('temp_f=%s' % temp_f)
         data = json.dumps({
@@ -94,14 +81,6 @@ class HumidorSender:
             }
         })
         self.http_post(data, 'humidity')
-        data = json.dumps({
-            'state': round(pressure, 2),
-            'attributes': {
-                'friendly_name': '%s Pressure' % self.friendly_name,
-                'unit_of_measurement': 'Pa'
-            }
-        })
-        self.http_post(data, 'pressure')
 
     def connect_wlan(self):
         self.wlan.active(True)
