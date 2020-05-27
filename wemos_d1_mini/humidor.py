@@ -53,6 +53,9 @@ class HumidorSender:
         ))
         self.post_path = '/api/states/' + self.entity_id
         print('POST path: %s' % self.post_path)
+        self.i2c = I2C(scl=SCL, sda=SDA)
+        self.i2c.scan()
+        self.bme280 = BME280(i2c=self.i2c)
 
     def run(self):
         print("Enter loop...")
@@ -66,10 +69,7 @@ class HumidorSender:
         pressure = None
         humidity = None
         try:
-            i2c = I2C(scl=SCL, sda=SDA)
-            i2c.scan()
-            bme280 = BME280(i2c=i2c)
-            temp_c, pressure, humidity = bme280.read_compensated_data()
+            temp_c, pressure, humidity = self.bme280.read_compensated_data()
         except Exception as ex:
             print('exception measuring: %s' % ex)
             return
