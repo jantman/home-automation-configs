@@ -68,6 +68,7 @@ class BME280:
                  mode=BME280_OSAMPLE_8,
                  address=BME280_I2CADDR,
                  i2c=None,
+                 debug=False,
                  **kwargs):
         # Check that mode is valid.
         if mode not in [BME280_OSAMPLE_1, BME280_OSAMPLE_2, BME280_OSAMPLE_4,
@@ -76,6 +77,7 @@ class BME280:
                 'Unexpected mode value {0}. Set mode to one of '
                 'BME280_OSAMPLE_1, BME280_OSAMPLE_2, BME280_OSAMPLE_4,'
                 'BME280_OSAMPLE_8, BME280_OSAMPLE_16'.format(mode))
+        self._debug = debug
         self._mode = mode
         self.address = address
         if i2c is None:
@@ -84,6 +86,7 @@ class BME280:
         self.__sealevel = 101325
 
         # load calibration data
+        self.debug('Reading calibration data')
         dig_88_a1 = self.i2c.readfrom_mem(self.address, 0x88, 26)
         dig_e1_e7 = self.i2c.readfrom_mem(self.address, 0xE1, 7)
 
@@ -108,6 +111,10 @@ class BME280:
                              self._l1_barray)
         self.t_fine = 0
 
+    def debug(self, msg):
+        if self._debug:
+            print('BME280: ' + msg)
+
     def read_raw_data(self, result):
         """ Reads the raw (uncompensated) data from the sensor.
 
@@ -117,7 +124,7 @@ class BME280:
             Returns:
                 None
         """
-
+        self.debug('Reading raw data')
         self._l1_barray[0] = self._mode
         self.i2c.writeto_mem(self.address, BME280_REGISTER_CONTROL_HUM,
                              self._l1_barray)
@@ -142,6 +149,7 @@ class BME280:
         result[0] = raw_temp
         result[1] = raw_press
         result[2] = raw_hum
+        self.debug('Raw data: temp=%s press=%s humidity=%s' % (raw_temp, raw_press, raw_hum))
 
     def read_compensated_data(self):
         """ Reads the data from the sensor and returns the compensated data.
@@ -150,6 +158,7 @@ class BME280:
                 3-tuple of temperature, pressure, humidity. Will be the one
                 from the result parameter if not None
         """
+        self.debug('Reading compensated data')
         self.read_raw_data(self._l3_resultarray)
         raw_temp, raw_press, raw_hum = self._l3_resultarray
         # temperature
@@ -157,7 +166,9 @@ class BME280:
         var2 = raw_temp/131072.0 - self.dig_T1/8192.0
         var2 = var2 * var2 * self.dig_T3
         self.t_fine = int(var1 + var2)
+        self.debug('self.t_fine=%s' % self.t_fine)
         temp = (var1 + var2) / 5120.0
+        self.debug('temp before max/min: %s', temp)
         temp = max(-40, min(85, temp))
 
         # pressure
@@ -183,6 +194,7 @@ class BME280:
         humidity = h * (1.0 - self.dig_H1 * h / 524288.0)
         # humidity = max(0, min(100, humidity))
 
+        self.debug('Final compensated data: temp=%s pressure=%s humidity=%s' % (temp, pressure, humidity))
         return temp, pressure, humidity
 
     @property

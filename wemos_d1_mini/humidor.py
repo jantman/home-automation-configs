@@ -68,7 +68,7 @@ class HumidorSender:
         try:
             i2c = I2C(scl=SCL, sda=SDA)
             i2c.scan()
-            bme280 = BME280(i2c=i2c)
+            bme280 = BME280(i2c=i2c, debug=True)
             temp_c, pressure, humidity = bme280.read_compensated_data()
         except Exception as ex:
             print('exception measuring: %s' % ex)
