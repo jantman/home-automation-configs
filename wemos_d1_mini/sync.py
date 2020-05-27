@@ -37,12 +37,22 @@ PER_BOARD_FILES = {
     'bcddc2b67528': {
         'temp_sensor.py': 'main.py'
     },
-    #f4cfa2d0a226
+    'f4cfa2d0a226': {
+        'humidor.py': 'main.py',
+        'bme280_float.py': 'bme280_float.py'
+    },
+    '500291c9b1a3': {
+        'humidor.py': 'main.py',
+        'bme280_float.py': 'bme280_float.py'
+    },
     'f4cfa2d0a962': {
         'humidor.py': 'main.py',
         'bme280_float.py': 'bme280_float.py'
+    },
+    'f4cfa2d0de01': {
+        'humidor.py': 'main.py',
+        'bme280_float.py': 'bme280_float.py'
     }
-    # f4cfa2d0de01
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"

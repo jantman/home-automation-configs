@@ -24,10 +24,16 @@ SDA = D3
 
 ENTITIES = {
     'f4cfa2d0a962': 'sensor.humidor',
+    'f4cfa2d0de01': 'sensor.f4cfa2d0de01',
+    'f4cfa2d0a226': 'sensor.f4cfa2d0a226',
+    '500291c9b1a3': 'sensor.500291c9b1a3',
 }
 
 FRIENDLY_NAMES = {
     'f4cfa2d0a962': 'Humidor',
+    'f4cfa2d0de01': 'f4cfa2d0de01',
+    'f4cfa2d0a226': 'f4cfa2d0a226',
+    '500291c9b1a3': '500291c9b1a3',
 }
 
 
