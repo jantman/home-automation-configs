@@ -38,7 +38,10 @@ LOG_DEBUG = False
 #: List of entity IDs to ignore
 IGNORE_IDS = [
     'sensor.porch_temp',
-    'sensor.tv_temp'
+    'sensor.tv_temp',
+    'sensor.humidor_temp',
+    'sensor.500291c9b1a3_temp',
+    'sensor.f4cfa2d0de01_temp',
 ]
 
 #: List of entity IDs that are freezers
