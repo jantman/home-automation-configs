@@ -146,9 +146,10 @@ class ZmFrameExporter(object):
         if event_objects:
             sql += ' AND Id IN (' \
                    'SELECT DISTINCT EventId FROM ' + ANALYSIS_TABLE_NAME + \
-                   ' WHERE Results '
+                   ' WHERE '
             sql += ' OR '.join([
-                ' LIKE \'%%"label": "' + x + '"%%\'' for x in event_objects
+                ' Results LIKE \'%%"label": "' + x + '"%%\''
+                for x in event_objects
             ])
             sql += ')'
         args = [start_dt, end_dt, start_dt, end_dt]
