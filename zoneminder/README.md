@@ -2,9 +2,14 @@
 
 ## What's Here?
 
+* [amcrest_profile_diff.py](amcrest_profile_diff.py) - Diff Normal/Day/Night profiles from an Amcrest camera config.json file.
 * [ensure_tables.py](ensure_tables.py) - Script that creates/ensures the existence of the tables used by [zmevent_handler.py](zmevent_handler.py) (for storing image analysis results) in ZoneMinder's MySQL database.
 * [logrotate-zmevent_handler](logrotate-zmevent_handler) - logrotate config for [zmevent_handler.py](zmevent_handler.py)
-* [zmevent_archiver.py](zmevent_archiver.py) - script I run nightly via cron; purges deleted events from the DB table populated by ``zmevent_handler.py`` and also deletes (via API) all non-archived events over 14 days old.
+* [statsd_utils.py](statsd_utils.py) - utility module for sending metrics to statsd
+* [zm_dir_lister.py](zm_dir_lister.py) - Print information on matching event IDs.
+* [zm_event_archiver.py](zm_event_archiver.py) - script I run nightly via cron; purges deleted events from the DB table populated by ``zmevent_handler.py`` and also deletes (via API) all non-archived events over 14 days old.
+* [zm_frame_exporter.py](zm_frame_exporter.py) - A script using MySQL to find all Events between a set of dates, matching a specific set of criteria, and export some frames from them to a temporary directory.
+* [zm_videoizer.py](zm_videoizer.py) - A script using MySQL and the ZoneMinder web UI to ensure videos exist for all events in a given timeframe (and optionally from a given monitor).
 * [zmevent_comparison.py](zmevent_comparison.py) - Companion to zmevent_handler.py. Runs in a different venv with a CPU (non-GPU) version of yolo3. Runs image analysis with this analyzer on all frames that don't have it (but do from the main yolo analyzer), saves the results to the DB, and sends an email with comparison information. Mainly intended to find out, for my use case, how much worse the -tiny variant is than the normal one.
 * [zmevent_config.py](zmevent_config.py) - configuration for these other modules.
 * [zmevent_filters.py](zmevent_filters.py) - code for filtering out unwanted events. May be unused.
@@ -14,7 +19,6 @@
 * [zmevent_object_filter.py](zmevent_object_filter.py) - Base classes instantiated in ``zmevent_config.py`` for filtering out certain object detections.
 * [zmeventnotification.pl](zmeventnotification.pl) - Simple Perl daemon based on https://github.com/pliablepixels/zmeventserver that checks ZoneMinder shared memory for new events every 3 seconds, and runs [zmevent_handler.py](zmevent_handler.py) when they are found.
 * [zmeventnotification.service](zmeventnotification.service) - systemd unit file for [zmeventnotification.pl](zmeventnotification.pl)
-* [zm_videoizer.py](zm_videoizer.py) - A script using MySQL and the ZoneMinder web UI to ensure videos exist for all events in a given timeframe (and optionally from a given monitor)
 
 __NOTE:__ I'm planning a major refactor to [zmevent_handler.py](zmevent_handler.py) and [zmevent_image_analysis.py](zmevent_image_analysis.py) in the near future, to clean them up and also integrate homeassistant.
 
