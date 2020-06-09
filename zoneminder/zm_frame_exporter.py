@@ -49,9 +49,9 @@ class ZmFrameExporter(object):
 
     def run(
         self, start_dt, end_dt, monitor_ids=[], object_names=[],
-        complete=False
+        complete=False, event_objects=[], min_score=None
     ):
-        event_ids = self._find_event_ids(start_dt, end_dt)
+        event_ids = self._find_event_ids(start_dt, end_dt, event_objects)
         logger.info('Found %d Events in specified timeframe', len(event_ids))
         logger.debug('Event IDs: %s', event_ids.keys())
         count = 0
@@ -67,6 +67,8 @@ class ZmFrameExporter(object):
                 count += 1
             elif object_names:
                 count += self._copy_with_objects(evt, object_names)
+            elif min_score:
+                count += self._copy_with_min_score(evt)
             else:
                 count += 1
                 self._copy_frame(eid, evt.Name, evt.AllFrames[evt.BestFrameId])
@@ -93,6 +95,20 @@ class ZmFrameExporter(object):
             self._conn.commit()
         return count
 
+    def _copy_with_min_score(self, evt, min_score):
+        count = 0
+        sql = 'SELECT * FROM `Frames` WHERE EventID=%s AND Score >= %s'
+        args = [evt.EventId, min_score]
+        with self._conn.cursor() as cursor:
+            logger.info('Executing: %s with args: %s', sql, args)
+            cursor.execute(sql, args)
+            for row in cursor.fetchall():
+                self._copy_frame(
+                    evt.EventId, evt.Name, evt.AllFrames[row['FrameId']]
+                )
+            self._conn.commit()
+        return count
+
     def _copy_frame(self, evt_id, ename, frame):
         src = frame.path
         dest = os.path.join(
@@ -114,10 +130,18 @@ class ZmFrameExporter(object):
         logger.debug('Recursively copy %s to %s', src, dest)
         copytree(src, dest)
 
-    def _find_event_ids(self, start_dt, end_dt):
+    def _find_event_ids(self, start_dt, end_dt, event_objects=[]):
         sql = 'SELECT `Id`,`StartTime`,`Name` FROM `Events` WHERE ' \
               '((`StartTime` >= %s AND `StartTime` <= %s) OR ' \
               '(`EndTime` >= %s AND `EndTime` <= %s))'
+        if event_objects:
+            sql += ' AND Id IN (' \
+                   'SELECT DISTINCT EventId FROM ' + ANALYSIS_TABLE_NAME + \
+                   ' WHERE Results '
+            sql += ' OR '.join([
+                ' LIKE \'%"label": "' + x + '"%\'' for x in event_objects
+            ])
+            sql += ')'
         args = [start_dt, end_dt, start_dt, end_dt]
         results = {}
         with self._conn.cursor() as cursor:
@@ -141,15 +165,24 @@ def parse_args(argv):
                         '(may be specified multiple times)')
     p.add_argument('-o', '--object-detection', dest='object_names',
                    action='append', type=str, default=[],
-                   help='limit to events with the given object detected. '
+                   help='limit to frames with the given object detected. '
                         'Can be specified multiple times.'
                    )
     p.add_argument('-c', '--complete', dest='complete', action='store_true',
                    default=False, help='copy complete event directory')
+    p.add_argument('-s', '--min-score', dest='min_score', action='store',
+                   type=int, default=None,
+                   help='Only export frames with score greater than or equal to'
+                   )
     p.add_argument('START_TIME', action='store', type=str,
                    help='start time (YYYY-MM-DD HH:MM:SS)')
     p.add_argument('END_TIME', action='store', type=str,
                    help='start time (YYYY-MM-DD HH:MM:SS)')
+    p.add_argument('-O', '--event-object', dest='event_objects',
+                   action='append', type=str, default=[],
+                   help='limit to events with the given object detected. '
+                        'Can be specified multiple times.'
+                   )
     args = p.parse_args(argv)
 
     return args
@@ -202,5 +235,6 @@ if __name__ == "__main__":
     )
     script.run(
         start_dt, end_dt, monitor_ids=args.monitor_ids,
-        object_names=args.object_names, complete=args.complete
+        object_names=args.object_names, complete=args.complete,
+        event_objects=args.event_objects, min_score=args.min_score
     )
