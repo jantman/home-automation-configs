@@ -134,16 +134,15 @@ class ZmFrameExporter(object):
         sql = 'SELECT `Id`,`StartTime`,`Name` FROM `Events` WHERE ' \
               '((`StartTime` >= %s AND `StartTime` <= %s) OR ' \
               '(`EndTime` >= %s AND `EndTime` <= %s))'
-        args = [start_dt, end_dt, start_dt, end_dt]
         if event_objects:
             sql += ' AND Id IN (' \
                    'SELECT DISTINCT EventId FROM ' + ANALYSIS_TABLE_NAME + \
                    ' WHERE Results '
             sql += ' OR '.join([
-                ' LIKE \'%%"label": "%s"%%\'' for x in event_objects
+                ' LIKE \'%%"label": "' + x + '"%%\'' for x in event_objects
             ])
             sql += ')'
-            args.extend(event_objects)
+        args = [start_dt, end_dt, start_dt, end_dt]
         results = {}
         with self._conn.cursor() as cursor:
             logger.info('Executing: %s; with args: %s', sql, args)
