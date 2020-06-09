@@ -37,7 +37,7 @@ for lname in ['urllib3']:
 
 class ZmFrameExporter(object):
 
-    def __init__(self, mysql_user, mysql_pass, mysql_db):
+    def __init__(self, mysql_user, mysql_pass, mysql_db, dry_run=False):
         logger.debug('Connecting to MySQL')
         self._conn = pymysql.connect(
             host='localhost', user=mysql_user,
@@ -46,6 +46,7 @@ class ZmFrameExporter(object):
         )
         self._outdir = mkdtemp()
         print('Output to: %s' % self._outdir)
+        self.dry_run = dry_run
 
     def run(
         self, start_dt, end_dt, monitor_ids=[], object_names=[],
@@ -115,6 +116,10 @@ class ZmFrameExporter(object):
             self._outdir, '%s_%s_%s' % (evt_id, ename, frame.filename)
         )
         logger.debug('copy %s to %s', src, dest)
+        if self.dry_run:
+            with open(os.path.join(self._outdir, 'frames.txt'), 'w') as fh:
+                fh.write(src + "\n")
+            return
         copy(src, dest)
 
     def _copy_complete(self, evt):
@@ -128,6 +133,10 @@ class ZmFrameExporter(object):
             )
         )
         logger.debug('Recursively copy %s to %s', src, dest)
+        if self.dry_run:
+            with open(os.path.join(self._outdir, 'frames.txt'), 'w') as fh:
+                fh.write(src + "\n")
+            return
         copytree(src, dest)
 
     def _find_event_ids(self, start_dt, end_dt, event_objects=[]):
@@ -183,6 +192,10 @@ def parse_args(argv):
                    help='limit to events with the given object detected. '
                         'Can be specified multiple times.'
                    )
+    p.add_argument('-D', '--dry-run', action='store_true', dest='dry_run',
+                   default=False,
+                   help='Instead of copying frames, write file with '
+                        'paths that would be copied.')
     args = p.parse_args(argv)
 
     return args
@@ -231,7 +244,7 @@ if __name__ == "__main__":
     end_dt = parse(args.END_TIME)
     script = ZmFrameExporter(
         os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'],
-        os.environ['MYSQL_DB']
+        os.environ['MYSQL_DB'], dry_run=args.dry_run
     )
     script.run(
         start_dt, end_dt, monitor_ids=args.monitor_ids,
