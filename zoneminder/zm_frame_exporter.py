@@ -68,7 +68,7 @@ class ZmFrameExporter(object):
             elif object_names:
                 count += self._copy_with_objects(evt, object_names)
             elif min_score:
-                count += self._copy_with_min_score(evt)
+                count += self._copy_with_min_score(evt, min_score)
             else:
                 count += 1
                 self._copy_frame(eid, evt.Name, evt.AllFrames[evt.BestFrameId])
