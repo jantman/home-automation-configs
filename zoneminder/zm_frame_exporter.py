@@ -117,7 +117,7 @@ class ZmFrameExporter(object):
         )
         logger.debug('copy %s to %s', src, dest)
         if self.dry_run:
-            with open(os.path.join(self._outdir, 'frames.txt'), 'w') as fh:
+            with open(os.path.join(self._outdir, 'frames.txt'), 'a') as fh:
                 fh.write(src + "\n")
             return
         copy(src, dest)
@@ -134,7 +134,7 @@ class ZmFrameExporter(object):
         )
         logger.debug('Recursively copy %s to %s', src, dest)
         if self.dry_run:
-            with open(os.path.join(self._outdir, 'frames.txt'), 'w') as fh:
+            with open(os.path.join(self._outdir, 'frames.txt'), 'a') as fh:
                 fh.write(src + "\n")
             return
         copytree(src, dest)
