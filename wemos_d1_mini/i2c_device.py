@@ -161,25 +161,12 @@ class I2CDevice:
             self.write(out_buffer, start=out_start, end=out_end, stop=False)
             self.readinto(in_buffer, start=in_start, end=in_end)
 
-    # pylint: enable-msg=too-many-arguments
-
-    def __enter__(self):
-        while not self.i2c.try_lock():
-            pass
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.i2c.unlock()
-        return False
-
     def __probe_for_device(self):
         """
         Try to read a byte from an address,
         if you get an OSError it means the device is not there
         or that the device does not support these means of probing
         """
-        while not self.i2c.try_lock():
-            pass
         try:
             self.i2c.writeto(self.device_address, b"")
         except OSError:
@@ -190,5 +177,3 @@ class I2CDevice:
                 self.i2c.readfrom_into(self.device_address, result)
             except OSError:
                 raise ValueError("No I2C device at address: %x" % self.device_address)
-        finally:
-            self.i2c.unlock()
