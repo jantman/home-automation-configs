@@ -4,16 +4,16 @@ POST temperature and humidity to HomeAssistant every minute
 SHT85 sensor wired according to sht85.md
 """
 
-from machine import Pin, reset
 import micropython
+micropython.alloc_emergency_exception_buf(100)
+from machine import Pin, reset, I2C
 import network
 import socket
 from time import sleep, sleep_ms
 from binascii import hexlify
-
+import time
+from sht85 import SHT31D
 import json
-micropython.alloc_emergency_exception_buf(100)
-
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
 
 # Pin mappings - board number to GPIO number
@@ -46,6 +46,11 @@ class HumidorSender:
         ))
         self.post_path = '/api/states/' + self.entity_id
         print('POST path: %s' % self.post_path)
+        print("Initializing i2c...")
+        self.i2c = I2C(scl=Pin(SCL), sda=Pin(SDA))
+        print("Initializing sensor...")
+        self.sensor = SHT31D(self.i2c)
+        print("Done initializing.")
 
     def run(self):
         """
@@ -55,6 +60,26 @@ class HumidorSender:
             sleep(60)
         """
         print("Run.")
+        print("Serial number: %s", self.sensor.serial_number)
+        stat = self.sensor.status
+        print("Status: %s", stat)
+        print("Status hex: %x", stat)
+        loopcount = 0
+        while True:
+            temp, rh = self.sensor._read()
+            print("\nTemperature: %0.1f C" % temp)
+            print("Humidity: %0.1f %%" % rh)
+            loopcount += 1
+            time.sleep(2)
+            # every 10 passes turn on the heater for 1 second
+            if loopcount == 10:
+                loopcount = 0
+                self.sensor.heater = True
+                print("Sensor Heater status =", self.sensor.heater)
+                time.sleep(1)
+                self.sensor.heater = False
+                print("Sensor Heater status =", self.sensor.heater)
+        print("Finish run.")
 
     def send_data(self):
         print('measuring...')
