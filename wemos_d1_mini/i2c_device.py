@@ -60,11 +60,10 @@ class I2CDevice:
     """
 
     def __init__(self, i2c, device_address, probe=True):
-
         self.i2c = i2c
         self._has_write_read = hasattr(self.i2c, "writeto_then_readfrom")
         self.device_address = device_address
-
+        print("I2CDevice.__init__() address=%s probe=%s", device_address, probe)
         if probe:
             self.__probe_for_device()
 
@@ -83,7 +82,7 @@ class I2CDevice:
         """
         if end is None:
             end = len(buf)
-        self.i2c.readfrom_into(self.device_address, buf, start=start, end=end)
+        self.i2c.readfrom_into(self.device_address, buf)
 
     def write(self, buf, *, start=0, end=None, stop=True):
         """
@@ -101,7 +100,7 @@ class I2CDevice:
         """
         if end is None:
             end = len(buf)
-        self.i2c.writeto(self.device_address, buf, start=start, end=end, stop=stop)
+        self.i2c.writeto(self.device_address, buf, stop)
 
     # pylint: disable-msg=too-many-arguments
     def write_then_readinto(
@@ -168,6 +167,7 @@ class I2CDevice:
         or that the device does not support these means of probing
         """
         try:
+            print("I2CDevice.__probe_for_device()")
             self.i2c.writeto(self.device_address, b"")
         except OSError:
             # some OS's dont like writing an empty bytesting...

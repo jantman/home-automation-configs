@@ -22,3 +22,25 @@ I soldered the ends of some breadboard jumpers to the 4-pin socket, providing an
 | 4         | Gray       | SDA (Data)  | D2        | 4        |
 
 See [humidor_sht85.py](humidor_sht85.py).
+
+## Notes
+
+As of this commit, it's not going well. Nothing was showing up on address 44, and when I run the current script, I just get:
+
+```
+Scanning I2C...
+
+ ets Jan  8 2013,rst cause:2, boot mode:(3,7)
+
+load 0x40100000, len 31024, room 16 
+tail 0
+chksum 0xb4
+load 0x3ffe8000, len 1104, room 8 
+tail 8
+chksum 0x74
+load 0x3ffe8450, len 824, room 0 
+tail 8
+chksum 0x45
+csum 0x45
+����'�s��n|�dl$l b��|{�$�'��'�d`��r�$�d�d`��r�$�d�d`��r�$���l$`rl��;d����c��c|lb���c|�Č�ldc��o��'��$o���d�d$���d`�o�����cld섏c���cl�crd;l{�n����cs���ld��Č�l{l#�c��g����cs����ld�����d{�
+```

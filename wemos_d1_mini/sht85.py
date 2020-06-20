@@ -181,8 +181,8 @@ class SHT31D:
         self._reset()
 
     def _command(self, command):
-        with self.i2c_device as i2c:
-            i2c.write(struct.pack(">H", command))
+        print("SHT31D._command(%s)" % command)
+        self.i2c_device.write(struct.pack(">H", command))
 
     def _reset(self):
         """
@@ -190,8 +190,10 @@ class SHT31D:
         The reset command is preceded by a break command as the
         device will not respond to a soft reset when in 'Periodic' mode.
         """
+        print("SHT31D._reset() Sending periodic break to device")
         self._command(_SHT31_PERIODIC_BREAK)
         time.sleep(0.001)
+        print("SHT31D._reset() Sending soft reset to device")
         self._command(_SHT31_SOFTRESET)
         time.sleep(0.0015)
 
@@ -225,8 +227,7 @@ class SHT31D:
                         time.sleep(delay[1])
             else:
                 time.sleep(0.001)
-        with self.i2c_device as i2c:
-            i2c.readinto(data)
+        self.i2c_device.readinto(data)
         word = _unpack(data)
         length = len(word)
         temperature = [None] * (length // 2)
@@ -386,8 +387,7 @@ class SHT31D:
         data = bytearray(2)
         self._command(_SHT31_READSTATUS)
         time.sleep(0.001)
-        with self.i2c_device as i2c:
-            i2c.readinto(data)
+        self.i2c_device.readinto(data)
         status = data[0] << 8 | data[1]
         return status
 
@@ -398,7 +398,6 @@ class SHT31D:
         data[0] = 0xFF
         self._command(_SHT31_READSERIALNBR)
         time.sleep(0.001)
-        with self.i2c_device as i2c:
-            i2c.readinto(data)
+        self.i2c_device.readinto(data)
         word = _unpack(data)
         return (word[0] << 16) | word[1]

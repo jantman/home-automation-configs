@@ -6,7 +6,7 @@ SHT85 sensor wired according to sht85.md
 
 import micropython
 micropython.alloc_emergency_exception_buf(100)
-from machine import Pin, reset, I2C
+from machine import Pin, I2C
 import network
 import socket
 from time import sleep, sleep_ms
@@ -47,51 +47,28 @@ class HumidorSender:
         self.post_path = '/api/states/' + self.entity_id
         print('POST path: %s' % self.post_path)
         print("Initializing i2c...")
-        self.i2c = I2C(scl=Pin(SCL), sda=Pin(SDA))
+        self.i2c = I2C(
+            scl=Pin(SCL, mode=Pin.IN, pull=Pin.PULL_UP),
+            sda=Pin(SDA, mode=Pin.IN, pull=Pin.PULL_UP),
+            freq=1000
+        )
         print("Initializing sensor...")
         self.sensor = SHT31D(self.i2c)
-        print("Done initializing.")
-
-    def run(self):
-        """
-        print("Enter loop...")
-        while True:
-            self.send_data()
-            sleep(60)
-        """
-        print("Run.")
         print("Serial number: %s", self.sensor.serial_number)
         stat = self.sensor.status
         print("Status: %s", stat)
         print("Status hex: %x", stat)
-        loopcount = 0
+        print("Done initializing.")
+
+    def run(self):
+        print("Enter loop...")
         while True:
-            temp, rh = self.sensor._read()
-            print("\nTemperature: %0.1f C" % temp)
-            print("Humidity: %0.1f %%" % rh)
-            loopcount += 1
-            time.sleep(2)
-            # every 10 passes turn on the heater for 1 second
-            if loopcount == 10:
-                loopcount = 0
-                self.sensor.heater = True
-                print("Sensor Heater status =", self.sensor.heater)
-                time.sleep(1)
-                self.sensor.heater = False
-                print("Sensor Heater status =", self.sensor.heater)
-        print("Finish run.")
+            self.send_data()
+            sleep(60)
 
     def send_data(self):
         print('measuring...')
-        d = None
-        try:
-            d = dht.DHT22(Pin(D4, Pin.IN))
-            d.measure()
-        except Exception as ex:
-            print('exception measuring: %s' % ex)
-            return
-        temp_c = d.temperature()
-        humidity = d.humidity()
+        temp_c, humidity = self.sensor._read()
         print('temp_c=%s humidity=%s' % (temp_c, humidity))
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         print('temp_f=%s' % temp_f)
