@@ -36,7 +36,7 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _check_state(self, entity_id, min_val, max_val):
         problems = []
-        state = self.get_state(entity_id)
+        state = self.get_state(entity_id, attribute='all')
         self._log.debug('%s state: %s', entity_id, state)
         if state is None:
             return ["No state for: %s" % entity_id]
