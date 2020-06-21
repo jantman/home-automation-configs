@@ -43,3 +43,9 @@ unioncam_time_setter:
   class: UnionCamTimeSetter
   global_dependencies:
     - sane_app_logging
+humidor_checker:
+  module: humidor_checker
+  class: HumidorChecker
+  global_dependencies:
+    - sane_app_logging
+    - pushover_notifier
