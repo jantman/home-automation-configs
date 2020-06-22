@@ -342,6 +342,34 @@
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Home
+- alias: Arm after living room light is shut off, at night, when home
+  trigger:
+    platform: state
+    entity_id: light.ge_45606_2way_dimmer_switch_level_3
+    to: 'off'
+  condition:
+    # device must be home
+    - condition: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      state: 'home'
+    # it must be dark out
+    - condition: or  # 'when dark' condition: either after sunset or before sunrise
+      conditions:
+        - condition: sun
+          after: sunset
+        - condition: sun
+          before: sunrise
+    # it must be after 7pm or before 5am
+    - condition: or
+      conditions:
+        - condition: time
+          after: '19:00:00'
+        - condition: time
+          before: '05:00:00'
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
 ################################################################################
 # BEGIN Button box handling                                                    #
 ################################################################################
