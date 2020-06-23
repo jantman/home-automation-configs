@@ -69,18 +69,18 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         self._log.warning('Problems: %s', problems)
         self.call_service(
-            'logbook/log', name='TemperatureChecker Problem',
+            'logbook/log', name='HumidorChecker Problem',
             message=' | '.join(problems)
         )
         self.call_service(
-            NOTIFY_SERVICE, title='TemperatureChecker Found Problems',
+            NOTIFY_SERVICE, title='HumidorChecker Found Problems',
             message='\n'.join(problems)
         )
         self.call_service(
             'persistent_notification/create',
-            title='TemperatureChecker Problems',
+            title='HumidorChecker Problems',
             message='\n'.join(problems)
         )
         self._do_notify_pushover(
-            'TemperatureChecker Problems', '; '.join(problems), sound='falling'
+            'HumidorChecker Problems', '; '.join(problems), sound='falling'
         )
