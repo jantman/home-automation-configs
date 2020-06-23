@@ -57,7 +57,7 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         except Exception:
             val = 0.0
         if val <= min_val or val >= max_val:
-            problems.append('%s value is %s', entity_id, val)
+            problems.append('%s value is %s' % (entity_id, val))
         return problems
 
     def _check_sensors(self, *args, **kwargs):
