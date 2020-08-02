@@ -31,7 +31,7 @@
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
     - service: homeassistant.turn_off
-      entity_id: zwave.inovelli_unknown_type_ff00_id_ff07
+      entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights Off During Day When Away
   trigger:
       platform: sun
@@ -59,7 +59,7 @@
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
     - service: homeassistant.turn_off
-      entity_id: zwave.inovelli_unknown_type_ff00_id_ff07
+      entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights On 30m Before Sunset When Away and Randomlights Off
   trigger:
     platform: sun

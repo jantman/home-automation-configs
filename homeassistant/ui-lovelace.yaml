@@ -75,7 +75,7 @@ views:
               # deck string lights
               tap_action:
                 action: toggle
-              entity: zwave.inovelli_unknown_type_ff00_id_ff07
+              entity: switch.inovelli_unknown_type_ff00_id_ff07_switch
               style:
                 top: 22%
                 left: 20%
@@ -307,7 +307,7 @@ views:
             # Office
             - light.ge_45606_2way_dimmer_switch_level_2
             # string lights
-            - zwave.inovelli_unknown_type_ff00_id_ff07
+            - switch.inovelli_unknown_type_ff00_id_ff07_switch
         - type: entities
           show_header_toggle: false
           title: Alarm Controls
