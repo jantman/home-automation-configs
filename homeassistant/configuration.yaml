@@ -335,6 +335,8 @@ alexa:
         name: 'Living Room Lights'
       switch.livingroomlight_switch:
         name: 'TV Light'
+      zwave.inovelli_unknown_type_ff00_id_ff07:
+        name: 'String Lights'
     filter:
       include_entities:
         # Bedroom Motion

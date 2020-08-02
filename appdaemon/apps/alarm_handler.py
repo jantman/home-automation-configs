@@ -130,7 +130,9 @@ LIGHT_ENTITIES = [
     # Bedroom
     'light.ge_45606_2way_dimmer_switch_level',
     # Office
-    'light.ge_45606_2way_dimmer_switch_level_2'
+    'light.ge_45606_2way_dimmer_switch_level_2',
+    # Deck string lights
+    'zwave.inovelli_unknown_type_ff00_id_ff07',
 ]
 
 #: List of RGB light entities that should react to an alarm. Right now they

@@ -71,6 +71,14 @@ views:
               style:
                 top: 80%
                 left: 62%
+            - type: state-icon
+              # deck string lights
+              tap_action:
+                action: toggle
+              entity: zwave.inovelli_unknown_type_ff00_id_ff07
+              style:
+                top: 22%
+                left: 20%
             # DOORS
             - type: state-icon
               title: Crawlspace Door
@@ -298,6 +306,8 @@ views:
             - light.ge_45606_2way_dimmer_switch_level
             # Office
             - light.ge_45606_2way_dimmer_switch_level_2
+            # string lights
+            - zwave.inovelli_unknown_type_ff00_id_ff07
         - type: entities
           show_header_toggle: false
           title: Alarm Controls
