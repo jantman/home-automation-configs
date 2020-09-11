@@ -75,3 +75,11 @@ I now have three of these; two are the IP2M-852W models which have WiFi and wire
 9. Once motion detection starts running and alerting, add ``IgnoredObject`` instances to [/zoneminder/zmevent_config.py](/zoneminder/zmevent_config.py) ``IGNORED_OBJECTS`` as needed.
 
 After that, I added the wireless MAC address for the camera to my access point's ACL and then set up a static IP, local DNS, and outbound traffic reject the same way I did for the wired MAC. I then configured the WiFi connection in the camera's Setup UI, ensured it connected to the network properly, and unplugged the wired Ethernet.
+
+## Writing Alarm Analysis Images
+
+### Telescreen (ZoneMinder 1.32.3)
+
+* Ensure that the Monitor configuration has ``Storage`` -> ``Save JPEGs`` -> ``Frames + Amalysis images (if available)`` set.
+* Ensure that the ZM config has ``Config`` -> ``CREATE_ANALYSIS_IMAGES`` checked.
+* Analysis images will **only** be written for Zones that are configured with an Alarm Check Method of ``Blobs``!!
