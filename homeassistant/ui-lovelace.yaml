@@ -240,8 +240,8 @@ views:
               style:
                 top: 74%
                 left: 72%
-            - type: sensor.octoprint_current_state
-              entity: foo
+            - type: state-label
+              entity: sensor.octoprint_current_state
               style:
                 top: 71%
                 left: 59%
