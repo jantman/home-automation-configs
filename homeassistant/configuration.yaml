@@ -407,3 +407,9 @@ alexa:
         - switch.livingroomlight_switch
         # Living Room Light
         - light.ge_45606_2way_dimmer_switch_level_3
+
+octoprint:
+  host: 3dpi
+  api_key: !secret octoprint_api_key
+  bed: true
+  number_of_tools: 1

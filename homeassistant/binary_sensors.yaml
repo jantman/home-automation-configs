@@ -16,3 +16,7 @@
       value_template: "{{ states('sensor.bedroomsensor_burglar')|float > 0 }}"
       friendly_name: "Bedroom Motion"
       device_class: motion
+- platform: octoprint
+  monitored_conditions:
+    - Printing
+    - Printing Error
