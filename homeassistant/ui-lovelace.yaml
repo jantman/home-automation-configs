@@ -234,6 +234,17 @@ views:
               style:
                 top: 96%
                 left: 34%
+            # octoprint
+            - type: state-icon
+              entity: camera.octopi
+              style:
+                top: 74%
+                left: 72%
+            - type: sensor.octoprint_current_state
+              entity: foo
+              style:
+                top: 71%
+                left: 59%
         - type: picture-entity
           entity: switch.side_state
           camera_image: camera.side
@@ -264,6 +275,17 @@ views:
             - zwave.lrmotion
             - zwave.officesensor
             - zwave.zipato_bulb_2
+        - type: entities
+          title: OctoPrint
+          entities:
+            - sensor.octoprint_current_state
+            - sensor.octoprint_job_percentage
+            - binary_sensor.octoprint_printing
+            - binary_sensor.octoprint_printing_error
+            - sensor.octoprint_actual_bed_temp
+            - sensor.octoprint_actual_tool0_temp
+            - sensor.octoprint_time_remaining
+            - sensor.octoprint_time_elapsed
       # CENTER COLUMN
       - type: vertical-stack
         cards:
@@ -359,6 +381,9 @@ views:
         - type: picture-entity
           entity: switch.south_state
           camera_image: camera.south
+        - type: picture-entity
+          entity: switch.octopi_state
+          camera_image: camera.octopi
         - type: entities
           show_header_toggle: false
           title: Cameras
@@ -399,4 +424,7 @@ views:
             - sensor.gate_events
             - sensor.gate_status
             - switch.gate_state
+            - sensor.octopi_events
+            - sensor.octopi_state
+            - switch.octopi_state
       # END RIGHT COLUMN - NO MORE COLUMNS!
