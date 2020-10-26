@@ -62,7 +62,7 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _check_sensors(self, *args, **kwargs):
         problems = []
-        problems.extend(self._check_state('sensor.500291c9b1a3_humidity', 67, 73))
+        problems.extend(self._check_state('sensor.500291c9b1a3_humidity', 66, 73))
         problems.extend(self._check_state('sensor.500291c9b1a3_temp', 65, 79))
         if len(problems) < 1:
             self._log.info('No problems found.')
