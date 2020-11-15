@@ -4,6 +4,7 @@ Requires=zoneminder.service
 After=zoneminder.service
 
 [Service]
+EnvironmentFile=/etc/zmeventnotification.env
 ExecStart=/usr/local/bin/zmeventnotification.pl --config /opt/home-automation-configs/zoneminder/zmeventnotification.ini
 Type=simple
 User=www-data
