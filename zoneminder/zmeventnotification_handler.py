@@ -31,6 +31,10 @@ async def handle():
         # {"type":"","event":"auth","status":"Success","version":"6.0.6","reason":""}
         if rj['event'] != 'auth' or rj['status'] != 'Success':
             raise RuntimeError("ERROR: Bad auth")
+        logger.info('sending version request')
+        await websocket.send('{"event":"control","data":{"type":"version"}}')
+        response = await websocket.recv()
+        logger.info('Version response: %s', response)
         logger.indo('Listening for messages...')
         while True:
             message = await websocket.recv()
