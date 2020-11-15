@@ -1,7 +1,7 @@
 [Unit]
 Description=zmeventnotification_handler - ZoneMinder event notification handler
-Requires=zoneminder.service
-After=zoneminder.service
+Requires=zoneminder.service zmeventnotification.service
+After=zoneminder.service zmeventnotification.service
 
 [Service]
 EnvironmentFile=/etc/zmeventnotification.env
