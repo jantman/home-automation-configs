@@ -13,6 +13,7 @@ Event examples:
 
 """
 
+import os
 import json
 import asyncio
 import websockets
@@ -22,6 +23,7 @@ FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.INFO, format=FORMAT)
 logger = logging.getLogger()
 
+HANDLER = '/opt/home-automation-configs/zoneminder/zmevent_handler.py '
 
 async def handle():
     uri = "ws://localhost:9000"
@@ -46,6 +48,14 @@ async def handle():
         while True:
             message = await websocket.recv()
             logger.info('Got message: %s', message)
+            msg = json.loads(message)
+            logger.info('Deserialized message: %s', msg)
+            for evt in msg.get('events', []):
+                cmd += "%s -E %s -M %s -C '%s' &" % (
+                    HANDLER, evt['EventId'], evt['MonitorId'], evt['Cause']
+                )
+                logger.info('Execute: %s', cmd)
+                os.system(cmd)
 
 while True:
     logger.info('Running outer loop...')
