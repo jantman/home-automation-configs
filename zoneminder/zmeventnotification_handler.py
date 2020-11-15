@@ -35,7 +35,7 @@ async def handle():
         await websocket.send('{"event":"control","data":{"type":"version"}}')
         response = await websocket.recv()
         logger.info('Version response: %s', response)
-        logger.indo('Listening for messages...')
+        logger.info('Listening for messages...')
         while True:
             message = await websocket.recv()
             logger.info('Got message: %s', message)
