@@ -22,6 +22,8 @@ async def handle():
         """
         auth = '{"event":"auth","data":{"user":"u","password":"p"}}'
         print('Sending auth message: %s', auth)
+        await websocket.send(auth)
+        print('Waiting for auth response...')
         response = await websocket.recv()
         print('Auth response: %s' % response)
         print('Listening for messages...')
@@ -29,4 +31,6 @@ async def handle():
             message = await websocket.recv()
             print('Got message: %s' % message)
 
-asyncio.get_event_loop().run_until_complete(handle())
+while True:
+    print('Running outer loop...')
+    asyncio.get_event_loop().run_until_complete(handle())
