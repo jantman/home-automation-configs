@@ -11,13 +11,14 @@ import websockets
 
 async def handle():
     uri = "ws://localhost:9000"
+    print(f'Connecting to: {uri}')
     async with websockets.connect(uri) as websocket:
-        name = input("What's your name? ")
-
-        await websocket.send(name)
-        print(f"> {name}")
-
-        greeting = await websocket.recv()
-        print(f"< {greeting}")
+        print('Connected; sending version request')
+        await websocket.send('{"event":"control","data":{"type":"version"}}')
+        response = await websocket.recv()
+        print(f'Version response: {response}')
+        print('Listening for messages...')
+        async for message in websocket:
+            print(f'Got message: {message}')
 
 asyncio.get_event_loop().run_until_complete(handle())
