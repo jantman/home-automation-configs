@@ -9,33 +9,33 @@ every event.
 import json
 import asyncio
 import websockets
+import logging
+
+FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
+logging.basicConfig(level=logging.INFO, format=FORMAT)
+logger = logging.getLogger()
+
 
 async def handle():
     uri = "ws://localhost:9000"
-    print('Connecting to: %s' % uri)
+    logger.info('Connecting to: %s', uri)
     async with websockets.connect(uri) as websocket:
-        print('Connected')
-        """
-        print('Connected; sending version request')
-        await websocket.send('{"event":"control","data":{"type":"version"}}')
-        response = await websocket.recv()
-        print('Version response: %s' % response)
-        """
+        logger.info('Connected')
         auth = '{"event":"auth","data":{"user":"u","password":"p"}}'
-        print('Sending auth message: %s', auth)
+        logger.info('Sending auth message: %s', auth)
         await websocket.send(auth)
-        print('Waiting for auth response...')
+        logger.info('Waiting for auth response...')
         response = await websocket.recv()
-        print('Auth response: %s' % response)
+        logger.info('Auth response: %s', response)
         rj = json.loads(response)
         # {"type":"","event":"auth","status":"Success","version":"6.0.6","reason":""}
         if rj['event'] != 'auth' or rj['status'] != 'Success':
             raise RuntimeError("ERROR: Bad auth")
-        print('Listening for messages...')
+        logger.indo('Listening for messages...')
         while True:
             message = await websocket.recv()
-            print('Got message: %s' % message)
+            logger.info('Got message: %s', message)
 
 while True:
-    print('Running outer loop...')
+    logger.info('Running outer loop...')
     asyncio.get_event_loop().run_until_complete(handle())
