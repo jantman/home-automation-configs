@@ -19,7 +19,7 @@ logger = logging.getLogger()
 async def handle():
     uri = "ws://localhost:9000"
     logger.info('Connecting to: %s', uri)
-    async with websockets.connect(uri) as websocket:
+    async with websockets.connect(uri, ping_interval=10, ping_timeout=30) as websocket:
         logger.info('Connected')
         auth = '{"event":"auth","data":{"user":"u","password":"p"}}'
         logger.info('Sending auth message: %s', auth)
@@ -37,7 +37,7 @@ async def handle():
         logger.info('Version response: %s', response)
         logger.info('Listening for messages...')
         while True:
-            message = await websocket.recv()
+            message = await asyncio.wait_for(websocket.recv(), timeout=60)
             logger.info('Got message: %s', message)
 
 while True:
