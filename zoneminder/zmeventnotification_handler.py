@@ -51,7 +51,7 @@ async def handle():
             msg = json.loads(message)
             logger.info('Deserialized message: %s', msg)
             for evt in msg.get('events', []):
-                cmd += "%s -E %s -M %s -C '%s' &" % (
+                cmd = "%s -E %s -M %s -C '%s' &" % (
                     HANDLER, evt['EventId'], evt['MonitorId'], evt['Cause']
                 )
                 logger.info('Execute: %s', cmd)
