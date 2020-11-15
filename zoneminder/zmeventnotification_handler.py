@@ -6,6 +6,7 @@ Connects to the zmeventnotification websocket server and executes a command for
 every event.
 """
 
+import json
 import asyncio
 import websockets
 
@@ -26,6 +27,10 @@ async def handle():
         print('Waiting for auth response...')
         response = await websocket.recv()
         print('Auth response: %s' % response)
+        rj = json.loads(response)
+        # {"type":"","event":"auth","status":"Success","version":"6.0.6","reason":""}
+        if rj['event'] != 'auth' or rj['status'] != 'Success':
+            raise RuntimeError("ERROR: Bad auth")
         print('Listening for messages...')
         while True:
             message = await websocket.recv()
