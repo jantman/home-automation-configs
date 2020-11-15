@@ -44,7 +44,7 @@ async def handle():
         logger.info('Version response: %s', response)
         logger.info('Listening for messages...')
         while True:
-            message = await asyncio.wait_for(websocket.recv(), timeout=60)
+            message = await websocket.recv()
             logger.info('Got message: %s', message)
 
 while True:
