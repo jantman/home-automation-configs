@@ -6,7 +6,7 @@ After=zoneminder.service
 [Service]
 # This EnvironmentFile sets the variables defined in zmevent_handler.py CONFIG
 EnvironmentFile=/etc/zmeventnotification.env
-ExecStart=/usr/local/bin/zmeventnotification.pl
+ExecStart=/usr/local/bin/zmeventnotification.pl --config /opt/home-automation-configs/zoneminder/zmeventnotification.ini
 Type=simple
 User=www-data
 
