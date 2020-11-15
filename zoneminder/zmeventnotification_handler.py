@@ -38,4 +38,7 @@ async def handle():
 
 while True:
     logger.info('Running outer loop...')
-    asyncio.get_event_loop().run_until_complete(handle())
+    try:
+        asyncio.get_event_loop().run_until_complete(handle())
+    except websockets.exceptions.ConnectionClosed:
+        logger.error('ERROR: Connection closed', exc_info=True)
