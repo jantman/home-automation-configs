@@ -17,7 +17,11 @@
 * [zmevent_image_analysis.py](zmevent_image_analysis.py) - Class to run ZoneMinder event frames through darknet yolo3 for object detection.
 * [zmevent_models.py](zmevent_models.py) - Classes to retrieve Event and related information from the ZoneMinder database and represent them in the application.
 * [zmevent_object_filter.py](zmevent_object_filter.py) - Base classes instantiated in ``zmevent_config.py`` for filtering out certain object detections.
-* [zmeventnotification.pl](zmeventnotification.pl) - Simple Perl daemon based on https://github.com/pliablepixels/zmeventserver that checks ZoneMinder shared memory for new events every 3 seconds, and runs [zmevent_handler.py](zmevent_handler.py) when they are found.
+* [zmeventnotification_handler.py](zmeventnotification_handler.py) - Python3 daemon which listens to zmeventnotification websocket server and starts a [zmevent_handler.py](zmevent_handler.py) process for each event that comes in.
+* [zmeventnotification_handler.service](zmeventnotification_handler.service) - systemd unit file for [zmeventnotification_handler.py](zmeventnotification_handler.py)
+* [zmeventnotification_secrets.ini](zmeventnotification_secrets.ini) - Secrets for zmeventnotification.pl; empty, since my setup doesn't need any.
+* [zmeventnotification.ini](zmeventnotification.ini) - Config file for zmeventnotification.pl; configured for websocket server **only**.
+* [zmeventnotification.pl](zmeventnotification.pl) - Version 6.0.6 of https://github.com/pliablepixels/zmeventnotification
 * [zmeventnotification.service](zmeventnotification.service) - systemd unit file for [zmeventnotification.pl](zmeventnotification.pl)
 
 __NOTE:__ I'm planning a major refactor to [zmevent_handler.py](zmevent_handler.py) and [zmevent_image_analysis.py](zmevent_image_analysis.py) in the near future, to clean them up and also integrate homeassistant.

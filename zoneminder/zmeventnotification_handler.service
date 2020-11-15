@@ -1,0 +1,14 @@
+[Unit]
+Description=zmeventnotification_handler - ZoneMinder event notification handler
+Requires=zoneminder.service
+After=zoneminder.service
+
+[Service]
+EnvironmentFile=/etc/zmeventnotification.env
+ExecStart=/opt/home-automation-configs/zoneminder/zmeventnotification_handler.py
+Type=simple
+User=www-data
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
