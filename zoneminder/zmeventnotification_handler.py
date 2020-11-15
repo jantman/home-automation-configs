@@ -13,7 +13,7 @@ Event examples:
 
 """
 
-import os
+import subprocess
 import json
 import asyncio
 import websockets
@@ -55,7 +55,10 @@ async def handle():
                     HANDLER, evt['EventId'], evt['MonitorId'], evt['Cause']
                 )
                 logger.info('Execute: %s', cmd)
-                os.system(cmd)
+                p = subprocess.Popen(
+                    cmd, shell=True, start_new_session=True
+                )
+                logger.info('Started process %s', p.pid)
 
 while True:
     logger.info('Running outer loop...')
