@@ -4,6 +4,13 @@ ZoneMinder event handler client. This is a BAD retrofit to my previous code.
 
 Connects to the zmeventnotification websocket server and executes a command for
 every event.
+
+Event examples:
+{"event":"alarm","type":"","status":"Success","events":[{"MonitorId":"2","Cause":"","EventId":"457722","Name":"SOUTH","RulesObject":{},"DetectionJson":[]}]}
+{"status":"Success","events":[{"Name":"NORTH","DetectionJson":[],"RulesObject":{},"Cause":"","MonitorId":"1","EventId":"457723"}],"type":"","event":"alarm"}
+{"type":"","event":"alarm","events":[{"DetectionJson":[],"RulesObject":{},"Name":"SOUTH","EventId":"457722","Cause":"End:Motion: All","MonitorId":"2"}],"status":"Success"}
+{"status":"Success","events":[{"MonitorId":"1","Cause":"End:Motion: All","EventId":"457723","Name":"NORTH","RulesObject":{},"DetectionJson":[]}],"event":"alarm","type":""}
+
 """
 
 import json
@@ -19,7 +26,7 @@ logger = logging.getLogger()
 async def handle():
     uri = "ws://localhost:9000"
     logger.info('Connecting to: %s', uri)
-    async with websockets.connect(uri, ping_interval=10, ping_timeout=30) as websocket:
+    async with websockets.connect(uri, ping_interval=10, ping_timeout=None) as websocket:
         logger.info('Connected')
         auth = '{"event":"auth","data":{"user":"u","password":"p"}}'
         logger.info('Sending auth message: %s', auth)
