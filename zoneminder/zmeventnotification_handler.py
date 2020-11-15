@@ -18,7 +18,8 @@ async def handle():
         response = await websocket.recv()
         print('Version response: %s' % response)
         print('Listening for messages...')
-        async for message in websocket:
+        while True:
+            message = await websocket.recv()
             print('Got message: %s' % message)
 
 asyncio.get_event_loop().run_until_complete(handle())
