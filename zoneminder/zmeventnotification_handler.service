@@ -9,6 +9,11 @@ ExecStart=/opt/home-automation-configs/zoneminder/zmeventnotification_handler.py
 Type=simple
 User=www-data
 Restart=always
+# Disable all unit start rate limiting
+StartLimitIntervalSec=0
+StartLimitBurst=999
+# Disable stopping unit if it doesn't start up in some timeout
+TimeoutStartSec=infinity
 
 [Install]
 WantedBy=multi-user.target
