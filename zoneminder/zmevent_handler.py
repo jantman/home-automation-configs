@@ -244,7 +244,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
     if os.geteuid() != evt_owner:
         raise RuntimeError(
             'This command may only be run by the user that owns %s: UID %s'
-            ' (not UID %s)', event.path, evt_owner, os.geteuid()
+            ' (not UID %s)' % (event.path, evt_owner, os.geteuid())
         )
     logger.debug('Loaded event: %s', event.as_json)
     # wait for the event to finish - we wait up to 30s then continue
