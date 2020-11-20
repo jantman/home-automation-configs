@@ -1,4 +1,5 @@
 import time
+import os
 import logging
 from shapely.geometry.polygon import LinearRing, Polygon
 from zmevent_config import IGNORED_OBJECTS
@@ -10,6 +11,38 @@ from statsd_utils import statsd_send_time
 logger = logging.getLogger(__name__)
 
 
+class suppress_stdout_stderr:
+    """
+    Context manager to do "deep suppression" of stdout and stderr.
+    from: https://stackoverflow.com/q/11130156/211734
+    A context manager for doing a "deep suppression" of stdout and stderr in
+    Python, i.e. will suppress all print, even if the print originates in a
+    compiled C/Fortran sub-function.
+       This will not suppress raised exceptions, since exceptions are printed
+    to stderr just before a script exits, and after the context manager has
+    exited (at least, I think that is why it lets exceptions through).
+    """
+
+    def __init__(self):
+        # Open a pair of null files
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+        # Save the actual stdout (1) and stderr (2) file descriptors.
+        self.save_fds = [os.dup(1), os.dup(2)]
+
+    def __enter__(self):
+        # Assign the null pointers to stdout and stderr.
+        os.dup2(self.null_fds[0],1)
+        os.dup2(self.null_fds[1],2)
+
+    def __exit__(self, *_):
+        # Re-assign the real stdout/stderr back to (1) and (2)
+        os.dup2(self.save_fds[0],1)
+        os.dup2(self.save_fds[1],2)
+        # Close all file descriptors
+        for fd in self.null_fds + self.save_fds:
+            os.close(fd)
+
+
 class YoloAnalyzer:
 
     def __init__(self):
@@ -17,12 +50,13 @@ class YoloAnalyzer:
         cfg = '/opt/darknet/yolov4-512.cfg'
         logger.info('Instantiating YOLO Detector with cfg=%s...', cfg)
         s = time.time()
-        self._network, self._names, self._colors = darknet.load_network(
-            cfg,
-            '/opt/darknet/coco.data',
-            '/opt/darknet/yolov4.weights',
-            batch_size=1
-        )
+        with suppress_stdout_stderr():
+            self._network, self._names, self._colors = darknet.load_network(
+                cfg,
+                '/opt/darknet/coco.data',
+                '/opt/darknet/yolov4.weights',
+                batch_size=1
+            )
         e = time.time()
         logger.info('Instantiated YOLO detector in %s seconds', e - s)
         statsd_send_time('darknet.init_time', e - s)
@@ -41,11 +75,12 @@ class YoloAnalyzer:
         logger.debug('Copying image to darknet')
         darknet.copy_image_from_bytes(darknet_image, image_resized.tobytes())
         logger.debug('Running darknet.detect_image()')
-        detections = darknet.detect_image(
-            self._network, self._names, darknet_image, thresh=thresh
-        )
+        with suppress_stdout_stderr():
+            detections = darknet.detect_image(
+                self._network, self._names, darknet_image, thresh=thresh
+            )
         darknet.free_image(darknet_image)
-        logger.debug('Darknet result: %s', detections)
+        logger.info('Darknet result: %s', detections)
         #image = darknet.draw_boxes(detections, image_resized, class_colors)
         #return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), detections
         return detections
@@ -92,6 +127,7 @@ class ImageAnalyzer:
         logger.debug('Raw Results: %s', results)
         retval = {'detections': [], 'ignored_detections': []}
         for cat, score, bounds in results:
+            score = float(score)
             if not isinstance(cat, str):
                 cat = cat.decode()
             x, y, w, h = bounds
