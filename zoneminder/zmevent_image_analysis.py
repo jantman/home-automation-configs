@@ -130,7 +130,7 @@ class ImageAnalyzer:
             score = float(score)
             if not isinstance(cat, str):
                 cat = cat.decode()
-            x, y, w, h = bounds
+            x, y, w, h = self.convert2relative(img, bounds)
             zones = self._zones_for_object(x, y, w, h)
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
@@ -191,6 +191,14 @@ class ImageAnalyzer:
                 ) * 100
                 res[zone.Name] = amt
         return res
+
+    def convert2relative(self, image, bbox):
+        """
+        YOLO format use relative coordinates for annotation
+        """
+        x, y, w, h = bbox
+        height, width, _ = image.shape
+        return x / width, y / height, w / width, h / height
 
     def analyze(self, event_id, frame_id, frame_path):
         _start = time.time()
