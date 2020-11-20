@@ -184,6 +184,7 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
     logger.debug('Getting network boxes')
     detections = get_network_boxes(network, image.w, image.h,
                                    thresh, hier_thresh, None, 0, pnum, 0)
+    logger.debug('Detections: %s', detections)
     num = pnum[0]
     if nms:
         logger.debug('Doing nms sort')
@@ -194,7 +195,7 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
     predictions = decode_detection(predictions)
     logger.debug('Freeing detections')
     free_detections(detections, num)
-    logger.debug('Returning result')
+    logger.debug('Returning result: %s', predictions)
     return sorted(predictions, key=lambda x: x[1])
 
 
