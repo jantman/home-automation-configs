@@ -23,39 +23,42 @@ class suppress_stdout_stderr:
     exited (at least, I think that is why it lets exceptions through).
     """
 
-    def __init__(self):
-        # Open a pair of null files
-        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
-        # Save the actual stdout (1) and stderr (2) file descriptors.
-        self.save_fds = [os.dup(1), os.dup(2)]
+    def __init__(self, suppress=True):
+        self.suppress = suppress
+        if self.suppress:
+            # Open a pair of null files
+            self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+            # Save the actual stdout (1) and stderr (2) file descriptors.
+            self.save_fds = [os.dup(1), os.dup(2)]
 
     def __enter__(self):
-        # Assign the null pointers to stdout and stderr.
-        os.dup2(self.null_fds[0],1)
-        os.dup2(self.null_fds[1],2)
+        if self.suppress:
+            # Assign the null pointers to stdout and stderr.
+            os.dup2(self.null_fds[0],1)
+            os.dup2(self.null_fds[1],2)
 
     def __exit__(self, *_):
-        # Re-assign the real stdout/stderr back to (1) and (2)
-        os.dup2(self.save_fds[0],1)
-        os.dup2(self.save_fds[1],2)
-        # Close all file descriptors
-        for fd in self.null_fds + self.save_fds:
-            os.close(fd)
+        if self.suppress:
+            # Re-assign the real stdout/stderr back to (1) and (2)
+            os.dup2(self.save_fds[0],1)
+            os.dup2(self.save_fds[1],2)
+            # Close all file descriptors
+            for fd in self.null_fds + self.save_fds:
+                os.close(fd)
 
 
 class YoloAnalyzer:
 
-    def __init__(self):
-        # cfg = '/opt/darknet/yolov4-608.cfg'
-        cfg = '/opt/darknet/yolov4-512.cfg'
+    def __init__(
+        self, cfg='/opt/darknet/yolov4-512.cfg', data='/opt/darknet/coco.data',
+        weights='/opt/darknet/yolov4.weights', debug=False
+    ):
+        self.debug = debug
         logger.info('Instantiating YOLO Detector with cfg=%s...', cfg)
         s = time.time()
-        with suppress_stdout_stderr():
+        with suppress_stdout_stderr(suppress=not self.debug):
             self._network, self._names, self._colors = darknet.load_network(
-                cfg,
-                '/opt/darknet/coco.data',
-                '/opt/darknet/yolov4.weights',
-                batch_size=1
+                cfg, data, weights, batch_size=1
             )
         e = time.time()
         logger.info('Instantiated YOLO detector in %s seconds', e - s)
@@ -75,7 +78,7 @@ class YoloAnalyzer:
         logger.debug('Copying image to darknet')
         darknet.copy_image_from_bytes(darknet_image, image_resized.tobytes())
         logger.debug('Running darknet.detect_image()')
-        with suppress_stdout_stderr():
+        with suppress_stdout_stderr(suppress=not self.debug):
             detections = darknet.detect_image(
                 self._network, self._names, darknet_image, thresh=thresh
             )
@@ -130,7 +133,8 @@ class ImageAnalyzer:
             score = float(score)
             if not isinstance(cat, str):
                 cat = cat.decode()
-            x, y, w, h = self.convert2relative(img, bounds)
+            #x, y, w, h = self.convert2relative(img, bounds)
+            x, y, w, h = bounds
             zones = self._zones_for_object(x, y, w, h)
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
