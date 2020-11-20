@@ -88,6 +88,7 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
             cls = ImageAnalyzer(
+                a,
                 {
                     x: MonitorZone(**msg['monitor_zones'][x])
                     for x in msg['monitor_zones'].keys()
