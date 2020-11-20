@@ -16,7 +16,7 @@ from zmevent_models import MonitorZone
 
 
 FORMAT = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
-logging.basicConfig(level=logging.INFO, format=FORMAT)
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 logger = logging.getLogger()
 
 ANALYZERS = [YoloAnalyzer()]
