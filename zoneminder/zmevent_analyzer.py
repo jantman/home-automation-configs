@@ -7,9 +7,7 @@ from random import uniform
 
 from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 from zmevent_models import ObjectDetectionResult, DetectedObject
-from statsd_utils import (
-    statsd_increment_counter, statsd_send_time, statsd_set_gauge
-)
+from statsd_utils import statsd_send_time, statsd_set_gauge
 
 
 logger = logging.getLogger(__name__)

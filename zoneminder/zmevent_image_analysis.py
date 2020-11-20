@@ -5,6 +5,7 @@ from zmevent_config import IGNORED_OBJECTS
 from zmevent_models import DetectedObject, ObjectDetectionResult
 import darknet
 import cv2
+from statsd_utils import statsd_send_time
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class YoloAnalyzer:
         )
         e = time.time()
         logger.info('Instantiated YOLO detector in %s seconds', e - s)
+        statsd_send_time('darknet.init_time', e - s)
 
     def _image_detection(self, image, thresh):
         # Darknet doesn't accept numpy images.
@@ -54,6 +56,7 @@ class YoloAnalyzer:
         detections = self._image_detection(img, 0.25)
         e = time.time()
         logger.info('Done running detection in %s', e - s)
+        statsd_send_time('darknet.detect_time', e - s)
         return detections
 
 
@@ -153,7 +156,7 @@ class ImageAnalyzer:
     def analyze(self, event_id, frame_id, frame_path):
         _start = time.time()
         # get all the results
-        output_path = frame_path.replace('.jpg', '.yolo3.jpg')
+        output_path = frame_path.replace('.jpg', '.yolo4.jpg')
         res = self._do_image(event_id, frame_id, frame_path, output_path)
         _end = time.time()
         return ObjectDetectionResult(
