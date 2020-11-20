@@ -52,6 +52,7 @@ class DETECTION(Structure):
                 ("sim", c_float),
                 ("track_id", c_int)]
 
+
 class DETNUMPAIR(Structure):
     _fields_ = [("num", c_int),
                 ("dets", POINTER(DETECTION))]
@@ -191,11 +192,12 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
         do_nms_sort(detections, num, len(class_names), nms)
     logger.debug('Removing negatives')
     predictions = remove_negatives(detections, class_names, num)
+    logger.debug('Predictions: %s', predictions)
     logger.debug('Decoding detection')
     predictions = decode_detection(predictions)
+    logger.debug('Result: %s', predictions)
     logger.debug('Freeing detections')
     free_detections(detections, num)
-    logger.debug('Returning result: %s', predictions)
     return sorted(predictions, key=lambda x: x[1])
 
 
