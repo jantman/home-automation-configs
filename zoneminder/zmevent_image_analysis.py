@@ -1,156 +1,71 @@
-import os
 import time
 import logging
-from textwrap import dedent
-import requests
 from shapely.geometry.polygon import LinearRing, Polygon
 from zmevent_config import IGNORED_OBJECTS
 from zmevent_models import DetectedObject, ObjectDetectionResult
-
-
-try:
-    import cv2
-except ImportError:
-    raise SystemExit(
-        'could not import cv2 - please "pip install opencv-python"'
-    )
-try:
-    from pydarknet import Detector, Image
-except ImportError:
-    raise SystemExit(
-        'could not import pydarknet - please "pip install yolo34py" or '
-        '"pip install yolo34py-gpu"'
-    )
-
+import darknet
+import cv2
 
 logger = logging.getLogger(__name__)
 
-#: Path on disk where darknet yolo configs/weights will be stored
-YOLO_CFG_PATH = '/var/cache/zoneminder/yolo'
-YOLO_ALT_CFG_PATH = '/var/cache/zoneminder/yolo-alt'
 
-
-class suppress_stdout_stderr(object):
-    """
-    Context manager to do "deep suppression" of stdout and stderr.
-
-    from: https://stackoverflow.com/q/11130156/211734
-
-    A context manager for doing a "deep suppression" of stdout and stderr in
-    Python, i.e. will suppress all print, even if the print originates in a
-    compiled C/Fortran sub-function.
-       This will not suppress raised exceptions, since exceptions are printed
-    to stderr just before a script exits, and after the context manager has
-    exited (at least, I think that is why it lets exceptions through).
-    """
+class YoloAnalyzer:
 
     def __init__(self):
-        # Open a pair of null files
-        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
-        # Save the actual stdout (1) and stderr (2) file descriptors.
-        self.save_fds = [os.dup(1), os.dup(2)]
+        # cfg = '/opt/darknet/yolov4-608.cfg'
+        cfg = '/opt/darknet/yolov4-512.cfg'
+        logger.info('Instantiating YOLO Detector with cfg=%s...', cfg)
+        s = time.time()
+        self._network, self._names, self._colors = darknet.load_network(
+            cfg,
+            '/opt/darknet/coco.data',
+            '/opt/darknet/yolov4.weights',
+            batch_size=1
+        )
+        e = time.time()
+        logger.info('Instantiated YOLO detector in %s seconds', e - s)
 
-    def __enter__(self):
-        # Assign the null pointers to stdout and stderr.
-        os.dup2(self.null_fds[0],1)
-        os.dup2(self.null_fds[1],2)
+    def _image_detection(self, image, thresh):
+        # Darknet doesn't accept numpy images.
+        # Create one with image we reuse for each detect
+        width = darknet.network_width(self._network)
+        height = darknet.network_height(self._network)
+        darknet_image = darknet.make_image(width, height, 3)
 
-    def __exit__(self, *_):
-        # Re-assign the real stdout/stderr back to (1) and (2)
-        os.dup2(self.save_fds[0],1)
-        os.dup2(self.save_fds[1],2)
-        # Close all file descriptors
-        for fd in self.null_fds + self.save_fds:
-            os.close(fd)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_resized = cv2.resize(image_rgb, (width, height),
+                                   interpolation=cv2.INTER_LINEAR)
 
+        darknet.copy_image_from_bytes(darknet_image, image_resized.tobytes())
+        detections = darknet.detect_image(
+            self._network, self._names, darknet_image, thresh=thresh
+        )
+        darknet.free_image(darknet_image)
+        #image = darknet.draw_boxes(detections, image_resized, class_colors)
+        #return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), detections
+        return detections
 
-class ImageAnalyzer(object):
-    """
-    Base class for specific object detection algorithms/packages.
-    """
-
-    def __init__(self, monitor_zones, hostname):
-        """
-        Initialize an image analyzer.
-
-        :param monitor_zones: dict of string zone names to MonitorZone objects,
-          for the monitor this event happened on
-        :type monitor_zones: dict
-        """
-        self._monitor_zones = monitor_zones
-        self._hostname = hostname
-
-    def analyze(self, event_id, frame_id, frame_path):
-        """
-        Analyze a frame; return an ObjectDetectionResult.
-        """
-        raise NotImplementedError('Implement in subclass!')
+    def detect(self, fname, img):
+        s = time.time()
+        logger.info('Running detection on %s' % fname)
+        # image, detections = self._image_detection(
+        #    img, self._network, self._names, self._colors, 0.25
+        # )
+        detections = self._image_detection(img, 0.25)
+        e = time.time()
+        logger.info('Done running detection in %s', e - s)
+        return detections
 
 
-class YoloAnalyzer(ImageAnalyzer):
+class ImageAnalyzer:
     """Object detection using yolo34py and yolov3-tiny"""
 
-    def __init__(self, monitor_zones, hostname):
-        super(YoloAnalyzer, self).__init__(monitor_zones, hostname)
-        self._ensure_configs()
-        logger.info('Instantiating YOLO3 Detector...')
-        with suppress_stdout_stderr():
-            self._net = Detector(
-                bytes(self._config_path("yolov3.cfg"), encoding="utf-8"),
-                bytes(self._config_path("yolov3.weights"), encoding="utf-8"),
-                0,
-                bytes(self._config_path("coco.data"), encoding="utf-8")
-            )
-        logger.debug('Done instantiating YOLO3 Detector.')
+    def __init__(self, detector, monitor_zones, hostname):
+        self._monitor_zones = monitor_zones
+        self._hostname = hostname
+        self._detector = detector
 
-    def _ensure_configs(self):
-        """Ensure that yolov3-tiny configs and data are in place."""
-        # This uses the yolov3-tiny, because I only have a 1GB GPU
-        if not os.path.exists(YOLO_CFG_PATH):
-            logger.warning('Creating directory: %s', YOLO_CFG_PATH)
-            os.mkdir(YOLO_CFG_PATH)
-        configs = {
-            'yolov3.cfg': 'https://raw.githubusercontent.com/pjreddie/darknet/'
-                          'master/cfg/yolov3-tiny.cfg',
-            'coco.names': 'https://raw.githubusercontent.com/pjreddie/darknet/'
-                          'master/data/coco.names',
-            'yolov3.weights': 'https://pjreddie.com/media/files/'
-                              'yolov3-tiny.weights'
-        }
-        for fname, url in configs.items():
-            path = self._config_path(fname)
-            if os.path.exists(path):
-                continue
-            logger.warning('%s does not exist; downloading', path)
-            logger.info('Download %s to %s', url, path)
-            r = requests.get(url)
-            logger.info('Writing %d bytes to %s', len(r.content), path)
-            with open(path, 'wb') as fh:
-                fh.write(r.content)
-            logger.debug('Wrote %s', path)
-        # coco.data is special because we change it
-        path = self._config_path('coco.data')
-        if not os.path.exists(path):
-            content = dedent("""
-            classes= 80
-            train  = /home/pjreddie/data/coco/trainvalno5k.txt
-            valid = %s
-            names = %s
-            backup = /home/pjreddie/backup/
-            eval=coco
-            """)
-            logger.warning('%s does not exist; writing', path)
-            with open(path, 'w') as fh:
-                fh.write(content % (
-                    self._config_path('coco_val_5k.list'),
-                    self._config_path('coco.names')
-                ))
-            logger.debug('Wrote %s', path)
-
-    def _config_path(self, f):
-        return os.path.join(YOLO_CFG_PATH, f)
-
-    def do_image_yolo(self, event_id, frame_id, fname, detected_fname):
+    def _do_image(self, event_id, frame_id, fname, detected_fname):
         """
         Analyze a single image using yolo34py.
 
@@ -165,10 +80,9 @@ class YoloAnalyzer(ImageAnalyzer):
         :return: yolo3 detection results
         :rtype: list of DetectedObject instances
         """
-        logger.info('Analyzing: %s', fname)
         img = cv2.imread(fname)
-        img2 = Image(img)
-        results = self._net.detect(img2, thresh=0.2, hier_thresh=0.3, nms=0.4)
+        logger.info('Analyzing: %s', fname)
+        results = self._detector.detect(fname, img)
         logger.debug('Raw Results: %s', results)
         retval = {'detections': [], 'ignored_detections': []}
         for cat, score, bounds in results:
@@ -240,78 +154,7 @@ class YoloAnalyzer(ImageAnalyzer):
         _start = time.time()
         # get all the results
         output_path = frame_path.replace('.jpg', '.yolo3.jpg')
-        res = self.do_image_yolo(event_id, frame_id, frame_path, output_path)
-        _end = time.time()
-        return ObjectDetectionResult(
-            self.__class__.__name__,
-            event_id,
-            frame_id,
-            frame_path,
-            output_path,
-            res['detections'],
-            res['ignored_detections'],
-            _end - _start
-        )
-
-
-class AlternateYoloAnalyzer(YoloAnalyzer):
-    """
-    This is used when I run from a script in a separate venv to compare CPU and
-    GPU results.
-    """
-
-    def _config_path(self, f):
-        return os.path.join(YOLO_ALT_CFG_PATH, f)
-
-    def _ensure_configs(self):
-        """Ensure that yolov3-tiny configs and data are in place."""
-        # This uses the yolov3-tiny, because I only have a 1GB GPU
-        if not os.path.exists(YOLO_ALT_CFG_PATH):
-            logger.warning('Creating directory: %s', YOLO_ALT_CFG_PATH)
-            os.mkdir(YOLO_ALT_CFG_PATH)
-        configs = {
-            'yolov3.cfg': 'https://raw.githubusercontent.com/pjreddie/darknet/'
-                          'master/cfg/yolov3.cfg',
-            'coco.names': 'https://raw.githubusercontent.com/pjreddie/darknet/'
-                          'master/data/coco.names',
-            'yolov3.weights': 'https://pjreddie.com/media/files/'
-                              'yolov3.weights'
-        }
-        for fname, url in configs.items():
-            path = self._config_path(fname)
-            if os.path.exists(path):
-                continue
-            logger.warning('%s does not exist; downloading', path)
-            logger.info('Download %s to %s', url, path)
-            r = requests.get(url)
-            logger.info('Writing %d bytes to %s', len(r.content), path)
-            with open(path, 'wb') as fh:
-                fh.write(r.content)
-            logger.debug('Wrote %s', path)
-        # coco.data is special because we change it
-        path = self._config_path('coco.data')
-        if not os.path.exists(path):
-            content = dedent("""
-            classes= 80
-            train  = /home/pjreddie/data/coco/trainvalno5k.txt
-            valid = %s
-            names = %s
-            backup = /home/pjreddie/backup/
-            eval=coco
-            """)
-            logger.warning('%s does not exist; writing', path)
-            with open(path, 'w') as fh:
-                fh.write(content % (
-                    self._config_path('coco_val_5k.list'),
-                    self._config_path('coco.names')
-                ))
-            logger.debug('Wrote %s', path)
-
-    def analyze(self, event_id, frame_id, frame_path):
-        _start = time.time()
-        # get all the results
-        output_path = frame_path.replace('.jpg', '.yolo3alt.jpg')
-        res = self.do_image_yolo(event_id, frame_id, frame_path, output_path)
+        res = self._do_image(event_id, frame_id, frame_path, output_path)
         _end = time.time()
         return ObjectDetectionResult(
             self.__class__.__name__,
