@@ -84,21 +84,17 @@ class YoloAnalyzer:
             )
         darknet.free_image(darknet_image)
         logger.info('Darknet result: %s', detections)
-        #image = darknet.draw_boxes(detections, image_resized, class_colors)
-        #return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), detections
-        return detections
+        image = darknet.draw_boxes(detections, image_resized, self._colors)
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), detections
 
     def detect(self, fname, img):
         s = time.time()
         logger.info('Running detection on %s' % fname)
-        # image, detections = self._image_detection(
-        #    img, self._network, self._names, self._colors, 0.25
-        # )
-        detections = self._image_detection(img, 0.25)
+        img, detections = self._image_detection(img, 0.25)
         e = time.time()
         logger.info('Done running detection in %s', e - s)
         statsd_send_time('darknet.detect_time', e - s)
-        return detections
+        return img, detections
 
 
 class ImageAnalyzer:
@@ -108,6 +104,26 @@ class ImageAnalyzer:
         self._monitor_zones = monitor_zones
         self._hostname = hostname
         self._detector = detector
+
+    def _convert_bbox(self, image, darkimg, bounds):
+        """
+        Convert the bounding box returned by darknet, which is scaled down,
+        to the bounding box for the full-size image.
+
+        :param bounds: darknet bounds
+        :return: x, y, w, h for full-size image
+        """
+        x, y, w, h = bounds
+        height, width, _ = darkimg.shape
+        full_height, full_width, _ = image.shape
+        x_pct = x / width
+        y_pct = y / width
+        w_pct = w / width
+        h_pct = h / height
+        return (
+            x_pct * full_width, y_pct * full_height,
+            w_pct * full_width, h_pct * full_height
+        )
 
     def _do_image(self, event_id, frame_id, fname, detected_fname):
         """
@@ -126,15 +142,14 @@ class ImageAnalyzer:
         """
         img = cv2.imread(fname)
         logger.info('Analyzing: %s', fname)
-        results = self._detector.detect(fname, img)
+        newimg, results = self._detector.detect(fname, img)
         logger.debug('Raw Results: %s', results)
         retval = {'detections': [], 'ignored_detections': []}
         for cat, score, bounds in results:
             score = float(score)
             if not isinstance(cat, str):
                 cat = cat.decode()
-            #x, y, w, h = self.convert2relative(img, bounds)
-            x, y, w, h = bounds
+            x, y, w, h = self._convert_bbox(img, newimg, bounds)
             zones = self._zones_for_object(x, y, w, h)
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
@@ -195,14 +210,6 @@ class ImageAnalyzer:
                 ) * 100
                 res[zone.Name] = amt
         return res
-
-    def convert2relative(self, image, bbox):
-        """
-        YOLO format use relative coordinates for annotation
-        """
-        x, y, w, h = bbox
-        height, width, _ = image.shape
-        return x / width, y / height, w / width, h / height
 
     def analyze(self, event_id, frame_id, frame_path):
         _start = time.time()
