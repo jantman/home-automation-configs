@@ -177,12 +177,12 @@ class ImageAnalyzer:
                 ))
             cv2.rectangle(
                 img, (int(x - w / 2), int(y - h / 2)),
-                (int(x + w / 2), int(y + h / 2)), rect_color, thickness=2
+                (int(x + w / 2), int(y + h / 2)), text_color, thickness=2
             )
             cv2.putText(
                 img, '%s (%.2f)' % (cat, score),
-                (int(x), int(y)),
-                cv2.FONT_HERSHEY_COMPLEX, 1, text_color
+                (int(x - w / 2) - 5, int(y - h / 2) - 5),
+                cv2.FONT_HERSHEY_COMPLEX, 1, text_color, 2
             )
         logger.info('Writing: %s', detected_fname)
         cv2.imwrite(detected_fname, img)
