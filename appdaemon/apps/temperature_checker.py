@@ -25,7 +25,7 @@ CHECK_STALE_IDS = [
     'sensor.chest_freezer_temp',
     'sensor.kitchen_freezer_temp',
     'sensor.porch_temp',
-    'sensor.tv_temp',
+    # 'sensor.tv_temp',
 ]
 
 #: Service to notify. Must take "title" and "message" kwargs.
