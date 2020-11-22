@@ -282,7 +282,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
     # run object detection on the event
     zones = []
     try:
-        analyzer = ImageAnalysisWrapper(event, ['YoloAnalyzer'], NODE_NAME)
+        analyzer = ImageAnalysisWrapper(event, ['Yolo4Analyzer'], NODE_NAME)
         analysis = analyzer.analyze_event()
         result['object_detections'] = analysis
         new_name, zones = update_event_name(

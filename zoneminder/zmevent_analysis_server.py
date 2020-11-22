@@ -11,28 +11,15 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 from zmevent_config import DateSafeJsonEncoder
-from zmevent_image_analysis import YoloAnalyzer
+from zmevent_image_analysis import Yolo4Analyzer, ImageAnalyzer
 from zmevent_models import MonitorZone
 
-try:
-    import cv2
-except ImportError:
-    raise SystemExit(
-        'could not import cv2 - please "pip install opencv-python"'
-    )
-try:
-    from pydarknet import Detector, Image
-except ImportError:
-    raise SystemExit(
-        'could not import pydarknet - please "pip install yolo34py" or '
-        '"pip install yolo34py-gpu"'
-    )
 
 FORMAT = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
 logger = logging.getLogger()
 
-ANALYZERS = [YoloAnalyzer]
+ANALYZERS = [Yolo4Analyzer()]
 
 
 class ZMEventAnalysisServer(BaseHTTPRequestHandler):
@@ -100,7 +87,8 @@ class ZMEventAnalysisServer(BaseHTTPRequestHandler):
         results = []
         for a in ANALYZERS:
             logger.debug('Running object detection with: %s', a)
-            cls = a(
+            cls = ImageAnalyzer(
+                a,
                 {
                     x: MonitorZone(**msg['monitor_zones'][x])
                     for x in msg['monitor_zones'].keys()

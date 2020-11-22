@@ -128,26 +128,9 @@ IGNORED_OBJECTS = {
             ],
             monitor_num=2
         ),
-        # yolo3-tiny seems to randomly be classifying my kitchen window, wire
-        # metal shelving and rice cooker as a person, with < 30% confidence.
-        # ignore that.
-        IgnoredObject(
-            'KitchenShelvesAsPerson',
-            ['person'],
-            bounding_box=(385, 635, 15, 15),
-            min_score=0.3,
-            monitor_num=2
-        ),
         #
         # MONITOR 3 - PORCH
         #
-        # False detection for porch railing
-        IgnoredObject(
-            'FrontPorchLeftRailing',
-            ['bench', 'chair', 'zebra'],
-            monitor_num=3
-        ),
-        # front
         IgnoredObject(
             'Front',
             # yolo3-tiny often sees shadows on my front as strange things...
@@ -155,53 +138,9 @@ IGNORED_OBJECTS = {
             monitor_num=3,
             bounding_box=(1447, 574, 500, 500)
         ),
-        # yolo3-tiny thinks this tree stump in my yard is a sheep or cow...
-        IgnoredObject(
-            'FrontTreeStump',
-            ['sheep', 'cow'],
-            bounding_box=(1540, 335, 50, 50),
-            monitor_num=3
-        ),
-        # it also gets confused about a bush in my yard
-        IgnoredObject(
-            'FrontShrub',
-            ['sheep', 'cow', 'pottedplant'],
-            bounding_box=(1300, 150, 100, 100),
-            monitor_num=3
-        ),
         #
         # MONITOR 4 - BACK
         #
-        # grill in back yard
-        IgnoredObject(
-            'Grill',
-            [
-                'surfboard', 'suitcase', 'umbrella', 'kite', 'backpack',
-                'handbag', 'toilet', 'boat',
-            ],
-            monitor_num=4,
-            bounding_box=(840, 560, 100, 100)
-        ),
-        # other grill
-        IgnoredObject(
-            'WeberGrill',
-            ['toilet', 'surfboard', 'boat', 'sports ball'],
-            monitor_num=4,
-            bounding_box=(1100, 830, 30, 30)
-        ),
-        # shadows on the storage box in the yard get recognized as weird things
-        IgnoredObject(
-            'BackStorageBox',
-            ['toilet'],
-            monitor_num=4,
-            bounding_box=(700, 250, 100, 100)
-        ),
-        IgnoredObject(
-            'BackFenceBox',
-            ['pottedplant'],
-            monitor_num=4,
-            bounding_box=(425, 180, 150, 150)
-        ),
         IgnoredObject(
             'BackStreetCar',
             ['car', 'truck', 'bus', 'train', 'kite'],
@@ -211,33 +150,6 @@ IGNORED_OBJECTS = {
         #
         # MONITOR 5 - SIDE
         #
-        # ignore all the giraffes on the side of the house...
-        IgnoredObject(
-            'SideAnimals',
-            ['giraffe', 'cow', 'sports ball'],
-            monitor_num=5
-        ),
-        IgnoredObject(
-            'SIDEperson', ['person'],
-            monitor_num=5,
-            callable=is_person_rectangle
-        ),
-        IgnoredObject(
-            'SIDEhalfFrameHighPerson', ['person'],
-            monitor_num=5,
-            callable=is_person_over_600px_high
-        ),
-        IgnoredObject(
-            'MikesShrubAsCar', ['car'],
-            monitor_num=5,
-            bounding_box=[255, 370, 20, 20]
-        ),
-        IgnoredObject(
-            'SIDEtrailer',
-            ['pottedplant'],
-            monitor_num=5,
-            bounding_box=(260, 520, 100, 100)
-        ),
         # Ignore cars off my property...
         IgnoredObject(
             'SideStreetCar',
@@ -248,15 +160,11 @@ IGNORED_OBJECTS = {
         #
         # MONITOR 6 - OFFICE
         #
-        IgnoredObject(
-            'OFFICEJunk', ['traffic light'],
-            monitor_num=6
-        ),
         #
         # MONITOR 7 - BEDRM
         #
         IgnoredObject(
-            'BEDRMJunk', ['bed', 'oven'],
+            'BEDRMJunk', ['bed'],
             monitor_num=7
         ),
         #
@@ -278,7 +186,7 @@ IGNORED_OBJECTS = {
         # front camera front street
         IgnoredObject(
             'FrontCamFrontStreet',
-            ['sheep', 'car', 'truck', 'train', 'pottedplant'],
+            ['car', 'truck', 'train'],
             monitor_num=9,
             zone_names=['Street']
         ),
@@ -288,26 +196,6 @@ IGNORED_OBJECTS = {
             ['car', 'truck', 'bicycle'],
             monitor_num=9,
             bounding_box=(1000, 95, 180, 50)
-        ),
-        # front camera SideYardNear
-        IgnoredObject(
-            'FrontCamSideYardNear',
-            ['pottedplant'],
-            monitor_num=9,
-            zone_names=['SideYardNear']
-        ),
-        # garage
-        IgnoredObject(
-            'GarageFrontCam',
-            ['boat'],
-            monitor_num=9,
-            zone_names=['GarageSide']
-        ),
-        # garage identified as person
-        IgnoredObject(
-            'GARAGEasPerson', ['person'],
-            monitor_num=9,
-            callable=is_garage_as_person
         ),
     ]
 }
