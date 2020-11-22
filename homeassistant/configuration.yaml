@@ -277,6 +277,8 @@ input_boolean:
     name: Silence GARAGE ZM Alarms
   silence_monitor_gate:
     name: Silence GATE ZM Alarms
+  silence_monitor_hall:
+    name: Silence HALL ZM Alarms
   silence_bedroom_motion:
     name: Silence Bedroom Motion
   silence_ecolink_doorwindow_sensor_sensor_3:
