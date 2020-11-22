@@ -172,7 +172,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'HallStuff',
-            ['parking meter', 'toilet', 'cake', 'handbag', 'teddy bear'],
+            ['parking meter', 'toilet', 'cake', 'handbag', 'teddy bear', 'backpack'],
             monitor_num=8
         ),
         IgnoredObject(
@@ -197,6 +197,11 @@ IGNORED_OBJECTS = {
             monitor_num=9,
             bounding_box=(1000, 95, 180, 50)
         ),
+        IgnoredObject(
+            'FrontJunk',
+            ['pottedplant'],
+            monitor_num=9,
+        )
     ]
 }
 
