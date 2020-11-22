@@ -7,9 +7,7 @@ from random import uniform
 
 from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
 from zmevent_models import ObjectDetectionResult, DetectedObject
-from statsd_utils import (
-    statsd_increment_counter, statsd_send_time, statsd_set_gauge
-)
+from statsd_utils import statsd_send_time, statsd_set_gauge
 
 
 logger = logging.getLogger(__name__)
@@ -65,23 +63,23 @@ class ImageAnalysisWrapper(object):
                 )
 
     def _to_framepath(self, p):
-        if self._hostname == 'telescreen':
+        if self._hostname == 'guarddog':
             return p.replace(
                 '/var/cache/zoneminder/events/',
-                '/mnt/telescreen/telescreen-events/'
+                '/mnt/guarddog/guarddog-events/'
             )
         return p
 
     def _to_results(self, d):
         result = []
         for item in d:
-            if self._hostname == 'telescreen':
+            if self._hostname == 'guarddog':
                 item['frame_path'] = item['frame_path'].replace(
-                    '/mnt/telescreen/telescreen-events/',
+                    '/mnt/guarddog/guarddog-events/',
                     '/var/cache/zoneminder/events/'
                 )
                 item['output_path'] = item['output_path'].replace(
-                    '/mnt/telescreen/telescreen-events/',
+                    '/mnt/guarddog/guarddog-events/',
                     '/var/cache/zoneminder/events/'
                 )
             item['detections'] = [
@@ -119,7 +117,7 @@ class ImageAnalysisWrapper(object):
         start = time()
         i = 0
         for i in range(0, NUM_TRIES):
-            url = 'http://guarddog:8008/'
+            url = 'http://192.168.0.103:8008/'  # telescreen
             try:
                 logger.info('POST to %s', url)
                 r = requests.post(url, json=data, timeout=20.0)
