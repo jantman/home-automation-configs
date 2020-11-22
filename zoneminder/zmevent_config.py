@@ -267,6 +267,11 @@ IGNORED_OBJECTS = {
             ['parking meter', 'toilet', 'cake', 'handbag', 'teddy bear'],
             monitor_num=8
         ),
+        IgnoredObject(
+            'HallWaterBottle',
+            ['person'], bounding_box=(1503, 288, 20, 20),
+            monitor_num=8
+        ),
         #
         # MONITOR 9 - FRONT
         #
