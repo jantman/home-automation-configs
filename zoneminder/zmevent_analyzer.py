@@ -63,11 +63,25 @@ class ImageAnalysisWrapper(object):
                 )
 
     def _to_framepath(self, p):
+        if self._hostname == 'guarddog':
+            return p.replace(
+                '/var/cache/zoneminder/events/',
+                '/mnt/guarddog/guarddog-events/'
+            )
         return p
 
     def _to_results(self, d):
         result = []
         for item in d:
+            if self._hostname == 'guarddog':
+                item['frame_path'] = item['frame_path'].replace(
+                    '/mnt/guarddog/guarddog-events/',
+                    '/var/cache/zoneminder/events/'
+                )
+                item['output_path'] = item['output_path'].replace(
+                    '/mnt/guarddog/guarddog-events/',
+                    '/var/cache/zoneminder/events/'
+                )
             item['detections'] = [
                 DetectedObject(**x) for x in item['detections']
             ]
@@ -103,7 +117,7 @@ class ImageAnalysisWrapper(object):
         start = time()
         i = 0
         for i in range(0, NUM_TRIES):
-            url = 'http://localhost:8008/'
+            url = 'http://192.168.0.103:8008/'  # telescreen
             try:
                 logger.info('POST to %s', url)
                 r = requests.post(url, json=data, timeout=20.0)
