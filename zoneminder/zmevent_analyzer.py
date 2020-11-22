@@ -63,7 +63,7 @@ class ImageAnalysisWrapper(object):
                 )
 
     def _to_framepath(self, p):
-        if self._hostname == 'guarddog':
+        if self._hostname != 'telescreen':
             return p.replace(
                 '/var/cache/zoneminder/events/',
                 '/mnt/guarddog/guarddog-events/'
@@ -73,7 +73,7 @@ class ImageAnalysisWrapper(object):
     def _to_results(self, d):
         result = []
         for item in d:
-            if self._hostname == 'guarddog':
+            if self._hostname != 'telescreen':
                 item['frame_path'] = item['frame_path'].replace(
                     '/mnt/guarddog/guarddog-events/',
                     '/var/cache/zoneminder/events/'
