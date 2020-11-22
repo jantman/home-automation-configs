@@ -305,6 +305,10 @@ input_boolean:
     name: Silence KitchenSensor Sensor
   silence_ecolink_doorwindow_sensor_sensor:
     name: Silence FrontDoor
+  silence_temperature_checker:
+    name: Silence Temperature Checker
+  silence_humidor_checker:
+    name: Silence Humidor Checker
 
 input_select:
   alarmstate:

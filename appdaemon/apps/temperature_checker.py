@@ -54,6 +54,9 @@ FREEZER_IDS = [
     'sensor.kitchen_freezer_temp',
 ]
 
+#: Name of input boolean to silence this
+SILENCE_INPUT = 'input_boolean.silence_temperature_checker'
+
 
 class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
@@ -61,6 +64,7 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing TemperatureChecker...")
         self._hass_secrets = self._get_hass_secrets()
+        self.turn_off(SILENCE_INPUT)
         self.run_hourly(self._check_temperatures, time(0, 0, 0))
         self._log.info('Done initializing TemperatureChecker')
         self.listen_event(self._check_temperatures, event='TEMPERATURE_CHECKER')
@@ -120,6 +124,15 @@ class TemperatureChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.info('No problems found.')
             return
         self._log.warning('Problems: %s', problems)
+        try:
+            input_state = self.get_state(SILENCE_INPUT)
+        except Exception:
+            input_state = 'off'
+        if input_state == 'on':
+            self._log.warning(
+                'Suppressing notification - %s is on', SILENCE_INPUT
+            )
+            return
         self.call_service(
             'logbook/log', name='TemperatureChecker Problem',
             message=' | '.join(problems)

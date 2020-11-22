@@ -342,6 +342,7 @@ views:
             - input_boolean.silence_monitor_back
             - input_boolean.silence_monitor_side
             - input_boolean.silence_monitor_gate
+            - input_boolean.silence_monitor_hall
             - input_boolean.silence_bedroom_motion
             - input_boolean.silence_ecolink_doorwindow_sensor_sensor_3
             - input_boolean.silence_kitchen_motion
@@ -355,6 +356,8 @@ views:
             - input_boolean.silence_lrmotion_sensor
             - input_boolean.silence_kitchensensor_sensor
             - input_boolean.silence_ecolink_doorwindow_sensor_sensor
+            - input_boolean.silence_temperature_checker
+            - input_boolean.silence_humidor_checker
       # RIGHT COLUMN
       - type: vertical-stack
         cards:

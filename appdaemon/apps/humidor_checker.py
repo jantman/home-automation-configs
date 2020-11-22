@@ -23,6 +23,9 @@ NOTIFY_SERVICE = 'notify/gmail'
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
 
+#: Name of input boolean to silence this
+SILENCE_INPUT = 'input_boolean.silence_humidor_checker'
+
 
 class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
@@ -30,6 +33,7 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._setup_logging(self.__class__.__name__, LOG_DEBUG)
         self._log.info("Initializing HumidorChecker...")
         self._hass_secrets = self._get_hass_secrets()
+        self.turn_off(SILENCE_INPUT)
         self.run_hourly(self._check_sensors, time(0, 0, 0))
         self._log.info('Done initializing HumidorChecker')
         self.listen_event(self._check_sensors, event='HUMIDOR_CHECKER')
@@ -68,6 +72,15 @@ class HumidorChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._log.info('No problems found.')
             return
         self._log.warning('Problems: %s', problems)
+        try:
+            input_state = self.get_state(SILENCE_INPUT)
+        except Exception:
+            input_state = 'off'
+        if input_state == 'on':
+            self._log.warning(
+                'Suppressing notification - %s is on', SILENCE_INPUT
+            )
+            return
         self.call_service(
             'logbook/log', name='HumidorChecker Problem',
             message=' | '.join(problems)
