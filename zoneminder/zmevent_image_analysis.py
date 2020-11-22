@@ -47,7 +47,7 @@ class suppress_stdout_stderr:
                 os.close(fd)
 
 
-class YoloAnalyzer:
+class Yolo4Analyzer:
 
     def __init__(
         self, cfg='/opt/darknet/yolov4-512.cfg', data='/opt/darknet/coco.data',

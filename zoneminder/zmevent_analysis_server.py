@@ -11,7 +11,7 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 from zmevent_config import DateSafeJsonEncoder
-from zmevent_image_analysis import YoloAnalyzer, ImageAnalyzer
+from zmevent_image_analysis import Yolo4Analyzer, ImageAnalyzer
 from zmevent_models import MonitorZone
 
 
@@ -19,7 +19,7 @@ FORMAT = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
 logger = logging.getLogger()
 
-ANALYZERS = [YoloAnalyzer()]
+ANALYZERS = [Yolo4Analyzer()]
 
 
 class ZMEventAnalysisServer(BaseHTTPRequestHandler):
