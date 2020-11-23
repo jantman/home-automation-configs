@@ -201,7 +201,7 @@ IGNORED_OBJECTS = {
             'FrontJunk',
             ['pottedplant'],
             monitor_num=9,
-        )
+        ),
     ]
 }
 
