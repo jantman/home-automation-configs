@@ -121,7 +121,8 @@ IGNORED_OBJECTS = {
             [
                 'cup', 'dog', 'cat', 'book', 'tvmonitor', 'remote', 'sofa',
                 'sink', 'bowl', 'refrigerator', 'laptop', 'chair',
-                'diningtable', 'bottle', 'umbrella', 'bird', 'cow', 'elephant'
+                'diningtable', 'bottle', 'umbrella', 'bird', 'cow', 'elephant',
+                'bench',
             ],
             monitor_num=2
         ),
@@ -160,9 +161,19 @@ IGNORED_OBJECTS = {
             monitor_num=5,
             callable=is_person_rectangle,
         ),
+        IgnoredObject(
+            'SideCrap',
+            ['toothbrush', 'traffic light',],
+            monitor_num=5,
+        ),
         #
         # MONITOR 6 - OFFICE
         #
+        IgnoredObject(
+            'OfficeCrap',
+            ['bicycle',],
+            monitor_num=6,
+        ),
         #
         # MONITOR 7 - BEDRM
         #
@@ -175,7 +186,10 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'HallStuff',
-            ['parking meter', 'toilet', 'cake', 'handbag', 'teddy bear', 'backpack'],
+            [
+                'parking meter', 'toilet', 'cake', 'handbag', 'teddy bear',
+                'backpack', 'bench',
+            ],
             monitor_num=8
         ),
         IgnoredObject(
@@ -208,8 +222,13 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'FrontJunk',
-            ['pottedplant'],
+            ['pottedplant', 'bench',],
             monitor_num=9,
+        ),
+        IgnoredObject(
+            'FrontRoadCamera',
+            ['person'],
+            zone_names=['RoadCamera'],
         ),
     ]
 }
