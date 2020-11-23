@@ -412,7 +412,7 @@ class EmailNotifier(object):
         s += td % (
             '',
             '%s (%.2f%%) %s (x=%d y=%d w=%d h=%d)' % (
-                dets[0]['label'], dets[0]['score'] * 100,
+                dets[0]['label'], dets[0]['score'],
                 '/'.join(zoneinfo),
                 dets[0]['x'], dets[0]['y'], dets[0]['w'], dets[0]['h']
             )
