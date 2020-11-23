@@ -8,7 +8,7 @@ class IgnoredObject(object):
 
     def __init__(
         self, name, labels, monitor_num=None, bounding_box=None,
-        zone_names=None, min_score=None, callable=None
+        zone_names=None, min_score=None, callable=None, no_zone=False
     ):
         """
         Initialize an IgnoredObject instance. When object detection is run on
@@ -41,6 +41,8 @@ class IgnoredObject(object):
         :param callable: a custom callable to execute; if this returns True,
           ignore the Frame. This will be passed one argument, a reference to
           an instance of this class as well as the label, x, y, zones, and score
+        :param no_zone: Ignore this object if it was found outside of all
+          defined zones.
         """
         assert isinstance(labels, type([])) or labels is None
         self.name = name
@@ -50,6 +52,7 @@ class IgnoredObject(object):
         self._zone_names = zone_names
         self._min_score = min_score
         self._callable = callable
+        self._no_zone = no_zone
 
     def should_ignore(self, label, x, y, w, h, zones, score):
         """
@@ -102,4 +105,6 @@ class IgnoredObject(object):
             not self._callable(self, label, x, y, w, h, zones, score)
         ):
             return False
+        if self._no_zone and self._zone_names is None:
+            return True
         return True
