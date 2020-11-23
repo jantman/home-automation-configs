@@ -85,10 +85,7 @@ def is_person_rectangle(i, label, x, y, w, h, zones, score):
     Returns True if object should be ignored.
     """
     if (
-        150 < x < 250 and
-        475 < y < 570 and
         h > 900 and
-        350 < w < 460 and
         label == 'person'
     ):
         return True
@@ -156,6 +153,11 @@ IGNORED_OBJECTS = {
             ['car', 'truck', 'bus', 'train'],
             monitor_num=5,
             zone_names=['Street1']
+        ),
+        IgnoredObject(
+            'SideGiantPerson',
+            monitor_num=5,
+            callable=is_person_rectangle,
         ),
         #
         # MONITOR 6 - OFFICE

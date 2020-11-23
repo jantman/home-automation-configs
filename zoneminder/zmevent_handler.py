@@ -298,6 +298,13 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
 
 
 def run(args):
+    if args.cause != 'End:':
+        logger.info(
+            'Not handling un-ended event: %s (Cause: %s)' % (
+                args.event_id, args.cause
+            )
+        )
+        return
     # populate the event from ZoneMinder DB
     result, zones = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
