@@ -156,6 +156,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'SideGiantPerson',
+            ['person'],
             monitor_num=5,
             callable=is_person_rectangle,
         ),
