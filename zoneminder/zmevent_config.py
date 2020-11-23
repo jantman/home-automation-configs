@@ -230,6 +230,14 @@ IGNORED_OBJECTS = {
             ['person'],
             zone_names=['RoadCamera'],
         ),
+        #
+        # MONITOR 10 - GARAGE
+        #
+        IgnoredObject(
+            'GarageCrap',
+            ['aeroplane',],
+            monitor_num=10,
+        ),
     ]
 }
 
