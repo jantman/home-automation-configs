@@ -230,7 +230,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             img['detections'], key=lambda x: x['score'], reverse=True
         ):
             s.append('%s (%d%%; %s)' % (
-                d['label'], d['score'] * 100,
+                d['label'], d['score'],
                 '/'.join(
                     sorted(
                         d['zones'], key=lambda x: d['zones'][x], reverse=True
