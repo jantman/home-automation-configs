@@ -163,7 +163,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'SideCrap',
-            ['toothbrush', 'traffic light',],
+            ['toothbrush', 'traffic light', 'giraffe',],
             monitor_num=5,
         ),
         #
