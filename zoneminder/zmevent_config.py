@@ -188,7 +188,7 @@ IGNORED_OBJECTS = {
             'HallStuff',
             [
                 'parking meter', 'toilet', 'cake', 'handbag', 'teddy bear',
-                'backpack', 'bench',
+                'backpack', 'bench', 'suitcase',
             ],
             monitor_num=8
         ),
