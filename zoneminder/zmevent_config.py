@@ -141,7 +141,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'BackStreetCar',
-            ['car', 'truck', 'bus', 'train', 'kite'],
+            ['car', 'truck', 'bus', 'train', 'kite', 'boat'],
             monitor_num=4,
             zone_names=['BackFence']
         ),
