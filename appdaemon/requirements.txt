@@ -21,7 +21,7 @@ idna-ssl==1.1.0
 iso8601==0.1.12
 isodate==0.6.0
 Jinja2==2.10.1
-lxml==4.3.4
+lxml==4.6.2
 MarkupSafe==1.1.1
 multidict==4.5.2
 numpy==1.16.4
