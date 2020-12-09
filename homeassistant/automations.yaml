@@ -23,9 +23,9 @@
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
-      entity_id: light.zipato_bulb_2_level
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level
     - service: homeassistant.turn_off
@@ -51,9 +51,9 @@
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level_3
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
-      entity_id: light.zipato_bulb_2_level
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_off
       entity_id: light.ge_45606_2way_dimmer_switch_level
     - service: homeassistant.turn_off
@@ -128,9 +128,9 @@
         before: sunrise
   action:
     - service: homeassistant.turn_on
-      entity_id: light.zipato_bulb_2_level
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
 - alias: Turn Porch Light Off 10 Minutes After Door Open After Sunset
   id: PorchLightFrontDoorOff
   trigger:
@@ -152,9 +152,9 @@
       state: 'home'
   action:
     - service: homeassistant.turn_off
-      entity_id: light.zipato_bulb_2_level
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level_3
+      entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
 - id: PorchLightOnDimWhenAwayAtSunset
   alias: Turn Porch Light On Dim When Away At Sunset
   trigger:
@@ -169,7 +169,7 @@
     service: light.turn_on
     data:
       entity_id:
-        - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+        - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
       white_value: 127
 - id: PorchLightOnDimWhenSunsetAndAway
   alias: Turn Porch Light On Dim When Sunset and Away
@@ -189,7 +189,7 @@
     service: light.turn_on
     data:
       entity_id:
-        - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+        - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
       white_value: 127
 - id: PorchLightsOffAtSunrise
   alias: Turn Porch Lights Off At Sunrise
@@ -201,11 +201,11 @@
     - service: light.turn_off
       data:
         entity_id:
-          - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+          - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: light.turn_off
       data:
         entity_id:
-          - light.zipato_bulb_2_level
+          - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
 - id: PorchLightOnFullWhenArrivingHomeAfterSunset
   alias: Porch Light On Full When Arriving Home After Sunset
   trigger:
@@ -223,12 +223,12 @@
     - service: light.turn_on
       data:
         entity_id:
-          - light.zipato_bulb_2_level
+          - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
         white_value: 255
     - service: light.turn_on
       data:
         entity_id:
-          - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+          - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
         white_value: 255
 ################################################################################
 # Living Room Light                                                            #

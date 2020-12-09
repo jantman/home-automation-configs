@@ -28,8 +28,8 @@ porchlights:
   name: Porch Lights
   view: no
   entities:
-    - light.zipato_bulb_2_level
-    - light.linear_lb60z1_dimmable_led_light_bulb_level_3
+    - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
+    - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
 kitchenlights:
   name: Kitchen Lights
   view: no

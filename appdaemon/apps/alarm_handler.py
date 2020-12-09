@@ -122,7 +122,8 @@ LIGHT_ENTITIES = [
     'light.linear_lb60z1_dimmable_led_light_bulb_level',
     'light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level',
     # Porch
-    'light.linear_lb60z1_dimmable_led_light_bulb_level_3',
+    'light.cree_connected_a_19_60w_equivalent_fe0b0886_10',
+    'light.cree_connected_a_19_60w_equivalent_fe0afc46_10',
     # TV
     'switch.livingroomlight_switch',
     # Living Room
@@ -138,9 +139,7 @@ LIGHT_ENTITIES = [
 #: List of RGB light entities that should react to an alarm. Right now they
 #: act the same way as LIGHT_ENTITIES, but at some point I may make them flash
 #: colors.
-RGB_LIGHT_ENTITIES = [
-    'light.zipato_bulb_2_level',  # Porch
-]
+RGB_LIGHT_ENTITIES = []
 
 #: If an alarm is triggered based on state change of one of these entity IDs,
 #: a snapshot from the specified ZoneMinder Monitor ID will be attached.

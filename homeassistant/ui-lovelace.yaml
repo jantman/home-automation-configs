@@ -30,14 +30,14 @@ views:
             - type: state-icon
               tap_action:
                 action: toggle
-              entity: light.zipato_bulb_2_level # Porch bulb
+              entity: light.cree_connected_a_19_60w_equivalent_fe0afc46_10 # Porch bulb
               style:
                 top: 84%
                 left: 7%
             - type: state-icon
               tap_action:
                 action: toggle
-              entity: light.linear_lb60z1_dimmable_led_light_bulb_level_3 # Porch bulb 2
+              entity: light.cree_connected_a_19_60w_equivalent_fe0b0886_10 # Porch bulb 2
               style:
                 top: 84%
                 left: 2%
@@ -320,8 +320,8 @@ views:
             - light.linear_lb60z1_dimmable_led_light_bulb_level
             - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
             # porch
-            - light.linear_lb60z1_dimmable_led_light_bulb_level_3
-            - light.zipato_bulb_2_level
+            - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
+            - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
             # Living Room
             - switch.livingroomlight_switch
             - light.ge_45606_2way_dimmer_switch_level_3
