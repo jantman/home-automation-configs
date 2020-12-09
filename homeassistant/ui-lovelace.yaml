@@ -254,7 +254,7 @@ views:
           entity: switch.hall_state
           camera_image: camera.hall
         - type: entities
-          title: Z-Wave
+          title: Z-Wave and Zigbee
           entities:
             - zwave.aeotec_zw090_zstick_gen5_us
             - zwave.2gig_technologies_ct101_thermostat_iris
@@ -271,10 +271,10 @@ views:
             - zwave.kitchensensor
             - zwave.linear_lb60z1_dimmable_led_light_bulb
             - zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb
-            - zwave.linear_lb60z1_dimmable_led_light_bulb_3
             - zwave.lrmotion
             - zwave.officesensor
-            - zwave.zipato_bulb_2
+            - zha.cree_connected_a_19_60w_equivalent
+            - zha.cree_connected_a_19_60w_equivalent_2
         - type: entities
           title: OctoPrint
           entities:
