@@ -28,7 +28,7 @@ numpy==1.16.4
 onvif-zeep==0.2.12
 opencv-python==4.1.0.25
 paho-mqtt==1.4.0
-Pillow==6.0.0
+Pillow==7.1.0
 pycparser==2.19
 PyMySQL==0.9.3
 python-dateutil==2.8.0
