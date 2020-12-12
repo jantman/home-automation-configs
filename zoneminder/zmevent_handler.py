@@ -298,7 +298,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
 
 
 def run(args):
-    if args.cause != 'End:':
+    if 'End:' not in args.cause:
         logger.info(
             'Not handling un-ended event: %s (Cause: %s)' % (
                 args.event_id, args.cause
