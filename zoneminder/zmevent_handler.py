@@ -146,7 +146,10 @@ def send_to_hass(json_str, event_id):
             logger.debug('Try POST to: %s', url)
             r = requests.post(
                 url, data=json_str, timeout=5,
-                headers={'Content-Type': 'application/json'}
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer %s' % CONFIG['HASS_TOKEN']
+                }
             )
             r.raise_for_status()
             assert 'message' in r.json()

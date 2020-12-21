@@ -48,6 +48,7 @@ CONFIG = {
     'BASE_URL': 'http://redirect.jasonantman.com/zm/',
     'LOCAL_ZM_URL': 'http://localhost/zm/',
     'HASS_API_URL': 'http://localhost:8123/api',
+    'HASS_TOKEN': None,
 }
 
 if node() == 'telescreen':
