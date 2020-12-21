@@ -171,7 +171,7 @@ class ButtonSender:
         print('POST to: %s' % path)
         s.send(bytes(
             'POST %s HTTP/1.0\r\nHost: %s\r\n'
-            'Authentication: Bearer %s\r\n\r\n' % (
+            'Authorization: Bearer %s\r\n\r\n' % (
                 path, HOOK_HOST, HASS_TOKEN
             ),
             'utf8'

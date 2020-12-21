@@ -128,7 +128,7 @@ class TempSender:
         print('POST to: %s: %s' % (self.post_path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
             'Content-Type: application/json\r\n' \
-            'Authentication: Bearer %s\r\n' \
+            'Authorization: Bearer %s\r\n' \
             'Content-Length: %d\r\n\r\n%s' % (
                 self.post_path, HOOK_HOST, HASS_TOKEN,
                 len(bytes(data, 'utf8')), data
