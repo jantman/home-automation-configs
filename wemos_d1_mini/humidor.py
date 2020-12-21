@@ -14,7 +14,7 @@ import json
 micropython.alloc_emergency_exception_buf(100)
 from bme280 import BME280
 
-from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
+from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH, HASS_TOKEN
 
 # Pin mappings - board number to GPIO number
 D4 = Pin(micropython.const(2))
@@ -127,8 +127,9 @@ class HumidorSender:
         print('POST to: %s: %s' % (path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
             'Content-Type: application/json\r\n' \
+            'Authentication: Bearer %s\r\n' \
             'Content-Length: %d\r\n\r\n%s' % (
-                path, HOOK_HOST, len(bytes(data, 'utf8')), data
+                path, HOOK_HOST, HASS_TOKEN, len(bytes(data, 'utf8')), data
             )
         print('SEND:\n%s' % b)
         s.send(bytes(b, 'utf8'))

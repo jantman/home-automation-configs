@@ -18,7 +18,7 @@ from binascii import hexlify
 import json
 micropython.alloc_emergency_exception_buf(100)
 
-from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH
+from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH, HASS_TOKEN
 
 # Pin mappings - board number to GPIO number
 D0 = micropython.const(16)
@@ -170,8 +170,9 @@ class ButtonSender:
         s.connect(addr)
         print('POST to: %s' % path)
         s.send(bytes(
-            'POST %s HTTP/1.0\r\nHost: %s\r\n\r\n' % (
-                path, HOOK_HOST
+            'POST %s HTTP/1.0\r\nHost: %s\r\n'
+            'Authentication: Bearer %s\r\n\r\n' % (
+                path, HOOK_HOST, HASS_TOKEN
             ),
             'utf8'
         ))
