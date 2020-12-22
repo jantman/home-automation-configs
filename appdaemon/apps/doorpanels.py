@@ -77,7 +77,7 @@ class DoorPanelHandler(hass.Hass, SaneLoggingApp):
         # get HASS configuration from its API
         apiconf = self.get_plugin_config()
         # formulate the absolute path to HASS secrets.yaml
-        conf_path = os.path.join(apiconf['config_dir'], 'secrets.yaml')
+        conf_path = '/hass-secrets.yaml'
         self._log.debug('Reading hass secrets from: %s', conf_path)
         # load the YAML
         with open(conf_path, 'r') as fh:
