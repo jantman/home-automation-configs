@@ -1,8 +1,8 @@
+secrets: /secrets.yaml
 log:
   logfile: STDOUT
   errorfile: STDERR
 appdaemon:
-  secrets: /secrets.yaml
   threads: 10
   missing_app_warnings: 1
   production_mode: True
