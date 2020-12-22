@@ -1,3 +1,6 @@
+log:
+  logfile: STDOUT
+  errorfile: STDERR
 appdaemon:
   threads: 10
   missing_app_warnings: 1
@@ -7,3 +10,5 @@ appdaemon:
       type: hass
       ha_url: http://hass:8123
       token: !secret hass_token
+hadashboard:
+  dash_url: http://guarddog:5050
