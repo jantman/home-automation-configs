@@ -198,7 +198,7 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 
 zoneminder:
-  - host: localhost
+  - host: 172.17.0.1
   - host: telescreen
 
 camera:
