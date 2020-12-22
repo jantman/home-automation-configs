@@ -13,12 +13,6 @@ homeassistant:
   # Customization file
   customize: !include customize.yaml
   auth_providers:
-    - type: trusted_networks
-      trusted_networks:
-        - 192.168.0.0/24
-        - 127.0.0.1
-        - ::1
-      allow_bypass_login: true
     - type: homeassistant
 
 lovelace:
