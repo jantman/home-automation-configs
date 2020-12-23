@@ -17,6 +17,9 @@ homeassistant:
 
 lovelace:
   mode: yaml
+  resources:
+    - url: /local/mm2-clock-card.js
+      type: module
 
 zone:
   - name: Work
