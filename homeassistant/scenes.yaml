@@ -1,39 +1,38 @@
-scene:
-  - name: DinnerMovie
-    icon: "mdi:food-fork-drink"
-    entities:
-      switch.livingroomlight_switch: "off"
-      light.ge_45606_2way_dimmer_switch_level_3:
-        state: "on"
-        brightness: 149
-      light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
-      light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
-      light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "off"
-      light.linear_lb60z1_dimmable_led_light_bulb_level: "off"
-      switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
-      light.ge_45606_2way_dimmer_switch_level_2: "off"
-      light.ge_45606_2way_dimmer_switch_level: "off"
-  - name: Movies
-    icon: "mdi:projector-screen"
-    entities:
-      switch.livingroomlight_switch: "off"
-      light.ge_45606_2way_dimmer_switch_level_3: "off"
-      light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
-      light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
-      light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "off"
-      light.linear_lb60z1_dimmable_led_light_bulb_level: "off"
-      switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
-      light.ge_45606_2way_dimmer_switch_level_2: "off"
-      light.ge_45606_2way_dimmer_switch_level: "off"
-  - name: AllInterior
-    icon: "mdi:home-lightbulb"
-    entities:
-      switch.livingroomlight_switch: "on"
-      light.ge_45606_2way_dimmer_switch_level_3: "on"
-      light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "on"
-      light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "on"
-      light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
-      light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
-      switch.inovelli_unknown_type_ff00_id_ff07_switch: "on"
-      light.ge_45606_2way_dimmer_switch_level_2: "on"
-      light.ge_45606_2way_dimmer_switch_level: "on"
+- name: DinnerMovie
+  icon: "mdi:food-fork-drink"
+  entities:
+    switch.livingroomlight_switch: "off"
+    light.ge_45606_2way_dimmer_switch_level_3:
+      state: "on"
+      brightness: 149
+    light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
+    light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "off"
+    light.linear_lb60z1_dimmable_led_light_bulb_level: "off"
+    switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
+    light.ge_45606_2way_dimmer_switch_level_2: "off"
+    light.ge_45606_2way_dimmer_switch_level: "off"
+- name: Movies
+  icon: "mdi:projector-screen"
+  entities:
+    switch.livingroomlight_switch: "off"
+    light.ge_45606_2way_dimmer_switch_level_3: "off"
+    light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
+    light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "off"
+    light.linear_lb60z1_dimmable_led_light_bulb_level: "off"
+    switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
+    light.ge_45606_2way_dimmer_switch_level_2: "off"
+    light.ge_45606_2way_dimmer_switch_level: "off"
+- name: AllInterior
+  icon: "mdi:home-lightbulb"
+  entities:
+    switch.livingroomlight_switch: "on"
+    light.ge_45606_2way_dimmer_switch_level_3: "on"
+    light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "on"
+    light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "on"
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
+    light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
+    switch.inovelli_unknown_type_ff00_id_ff07_switch: "on"
+    light.ge_45606_2way_dimmer_switch_level_2: "on"
+    light.ge_45606_2way_dimmer_switch_level: "on"
