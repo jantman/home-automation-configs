@@ -84,10 +84,6 @@ history:
 logbook:
   exclude:
     entities:
-      - group.all_automations
-      - group.all_devices
-      - group.all_lights
-      - group.all_switches
       - group.doors
       - group.motion
       - sensor.bedroomsensor_alarm_level
@@ -232,14 +228,6 @@ notify:
     platform: pushover
     api_key: !secret pushover_api_key
     user_key: !secret pushover_user_key
-  - name: tvpi
-    platform: kodi
-    host: tvpi
-
-media_player:
-  - platform: kodi
-    host: tvpi
-    name: tvpi
 
 input_boolean:
   alarm_duress:
@@ -314,7 +302,6 @@ input_select:
       - Disarmed
 
 climate:
-  platform: zwave
 
 alexa:
   smart_home:

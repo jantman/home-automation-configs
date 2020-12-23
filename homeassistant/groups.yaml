@@ -1,7 +1,5 @@
 doors:
   name: Doors
-  view: no
-  control: hidden
   entities:
     - binary_sensor.ecolink_doorwindow_sensor_sensor_2
     - binary_sensor.ecolink_doorwindow_sensor_sensor_3
@@ -9,8 +7,6 @@ doors:
     - binary_sensor.ecolink_doorwindow_sensor_sensor
 motion:
   name: Interior Motion
-  view: no
-  control: hidden
   entities:
     - binary_sensor.office_motion
     - binary_sensor.ecolink_motion_detector_sensor
@@ -19,31 +15,32 @@ motion:
     - binary_sensor.bedroom_motion
 lights:
   name: Lights
-  view: no
   entities:
-    - group.all_lights
+    - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
+    - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
+    - light.ge_45606_2way_dimmer_switch_level
+    - light.ge_45606_2way_dimmer_switch_level_2
+    - light.ge_45606_2way_dimmer_switch_level_3
+    - light.linear_lb60z1_dimmable_led_light_bulb_level
+    - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - switch.livingroomlight_switch
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
 porchlights:
   name: Porch Lights
-  view: no
   entities:
     - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
 kitchenlights:
   name: Kitchen Lights
-  view: no
   entities:
     - light.linear_lb60z1_dimmable_led_light_bulb_level
     - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
 lrlights:
   name: Living Room Lights
-  view: no
   entities:
     - switch.livingroomlight_switch
     - light.ge_45606_2way_dimmer_switch_level_3
 tvlight:
   name: TV Light
-  view: no
   entities:
     - switch.livingroomlight_switch
