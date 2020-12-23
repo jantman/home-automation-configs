@@ -49,21 +49,4 @@ I [originally](https://github.com/jantman/home-automation-configs/blob/dec867a6a
    1. ``./bin/run_r10k_puppet.sh``
       * If you get a "host key verification failed" message, then ``echo -e "Host github.com\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null\n" >> ~/.ssh/config && chmod 0600 ~/.ssh/config`` and retry
    1. ``reboot``
-1. ``sudo su -`` and ``bin/run_r10k_puppet.sh``
-
-Original install:
-
-1. ``sudo apt-get install unclutter chromium-browser``
-1. ``nano ~/.config/lxsession/LXDE-pi/autostart`` and set the contents to:
-```
-@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
-@chromium-browser --noerrdialogs --kiosk http://guarddog:8123/local/doorpanels/index.html --incognito --disable-translate
-```
-1. ``sudo reboot`` - if all worked well, when the reboot is complete the system should be showing the doorpanel display full-screen.
-1. For the touchscreen installation (this code is awful, but it seems safe on a new system):
-    1. ``git clone https://github.com/jantman/LCD-show.git && cd LCD-show`` - it's probably worth looking at everything this does, since it seems to be pretty poorly written and has _lots_ of open issues. When I did this work, master was at [b8c10906a8501b484f98ce410b5dcc8d7aacaa73](https://github.com/goodtft/LCD-show/commit/b8c10906a8501b484f98ce410b5dcc8d7aacaa73) and had just been updated four days ago.
-    1. ``cat /boot/cmdline.txt`` and record the contents, since this isn't backed up. Mine was: ``dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=PARTUUID=509867d5-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles``
-    1. ``bash -ex LCD35-show``
-1. When prompted, reboot the system. If everything works well, it should eventually boot into Chrome and show the "doorpanel" display fullscreen. If the display appears upside-down:
-    1. ``sudo nano /boot/config.txt`` and change ``dtoverlay=tft35a`` to ``dtoverlay=tft35a:rotate=270``
-    1. ``sudo nano /etc/X11/xorg.conf.d/99-calibration.conf`` and before the ``EndSection`` line add lines for ``Option "InvertY" "true"`` and ``Option "InvertX" "true"``
+1. ``sudo su -`` and ``bin/run_r10k_puppet.sh``; reboot once that's done
