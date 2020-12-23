@@ -17,3 +17,7 @@ RaspberryPi touchscreen-based remote control on the end table next to my living 
 1. ``touch ssh`` to enable SSH access
 1. write ``wpa_supplicant.conf`` to it
 1. unmount
+1. Place SD in the pi; assemble display and case
+1. Log in with keyboard and monitor, get MAC address, add to wifi. Reboot. Should join the wifi. SSH in.
+1. ``sudo apt-get update && sudo apt-get upgrade && reboot`` - this upgrades to Debian 10.7 and kernel 5.4.79
+
