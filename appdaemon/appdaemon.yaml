@@ -6,7 +6,7 @@ appdaemon:
   latitude: 33.753790
   longitude: -84.245627
   elevation: 299
-  timezone: America/New_York
+  time_zone: America/New_York
   plugins:
     HASS:
       type: hass
