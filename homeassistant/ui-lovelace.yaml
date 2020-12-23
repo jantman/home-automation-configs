@@ -1,7 +1,4 @@
 # see: https://github.com/ciotlosm/docs-lovelace
-resources:
-  - url: /local/mm2-clock-card.js
-    type: module
 name: Non-Shitty UI
 views:
   - name: Main
