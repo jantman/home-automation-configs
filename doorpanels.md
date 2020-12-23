@@ -37,7 +37,7 @@ I [originally](https://github.com/jantman/home-automation-configs/blob/dec867a6a
 1. Configure WiFi and let the installer run updates.
 1. Finish and reboot.
 1. SSH to the instance. Assuming this works, you can log out on the console, unplug the keyboard and HDMI, and continue over SSH.
-1. ``sudo raspi-config`` - Boot Options -> Wait for Network at Boot.
+1. ``sudo raspi-config`` - Boot Options -> Wait for Network at Boot. Also set to automatic graphical login
 1. ``sudo apt-get install puppet git ruby``
 1. ``sudo gem install --no-user-install r10k``
 1. ``sudo ln -s /usr/local/bin/r10k /usr/bin/r10k``
