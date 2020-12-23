@@ -1,6 +1,5 @@
 doors:
   name: Doors
-  control: hidden
   entities:
     - binary_sensor.ecolink_doorwindow_sensor_sensor_2
     - binary_sensor.ecolink_doorwindow_sensor_sensor_3
@@ -8,7 +7,6 @@ doors:
     - binary_sensor.ecolink_doorwindow_sensor_sensor
 motion:
   name: Interior Motion
-  control: hidden
   entities:
     - binary_sensor.office_motion
     - binary_sensor.ecolink_motion_detector_sensor
