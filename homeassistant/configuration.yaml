@@ -414,3 +414,5 @@ octoprint:
   api_key: !secret octoprint_api_key
   bed: true
   number_of_tools: 1
+
+scene: !include scenes.yaml
