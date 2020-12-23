@@ -84,10 +84,6 @@ history:
 logbook:
   exclude:
     entities:
-      - group.all_automations
-      - group.all_devices
-      - group.all_lights
-      - group.all_switches
       - group.doors
       - group.motion
       - sensor.bedroomsensor_alarm_level

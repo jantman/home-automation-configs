@@ -18,7 +18,13 @@ motion:
 lights:
   name: Lights
   entities:
-    - group.all_lights
+    - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
+    - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
+    - light.ge_45606_2way_dimmer_switch_level
+    - light.ge_45606_2way_dimmer_switch_level_2
+    - light.ge_45606_2way_dimmer_switch_level_3
+    - light.linear_lb60z1_dimmable_led_light_bulb_level
+    - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - switch.livingroomlight_switch
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
 porchlights:
