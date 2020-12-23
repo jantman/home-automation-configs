@@ -11,8 +11,8 @@ RaspberryPi touchscreen-based remote control on the end table next to my living 
 
 ## Installation
 
-1. Download [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) Lite, 2020-12-02, kernel 5.4.
-1. Write to the microSD card with: ``dd bs=4M if=2020-12-02-raspios-buster-armhf-lite.img of=/dev/sdg conv=fsync status=progress``
+1. Download [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) with Desktop, 2020-12-02, kernel 5.4.
+1. Write to the microSD card with: ``dd bs=4M if=2020-12-02-raspios-buster-armhf.img of=/dev/sdX conv=fsync status=progress``
 1. mount the boot partition, ``cd`` to it
 1. ``touch ssh`` to enable SSH access
 1. write ``wpa_supplicant.conf`` to it
@@ -20,4 +20,3 @@ RaspberryPi touchscreen-based remote control on the end table next to my living 
 1. Place SD in the pi; assemble display and case
 1. Log in with keyboard and monitor, get MAC address, add to wifi. Reboot. Should join the wifi. SSH in.
 1. ``sudo apt-get update && sudo apt-get upgrade && reboot`` - this upgrades to Debian 10.7 and kernel 5.4.79
-
