@@ -273,8 +273,6 @@ views:
             - zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb
             - zwave.lrmotion
             - zwave.officesensor
-            - zha.cree_connected_a_19_60w_equivalent
-            - zha.cree_connected_a_19_60w_equivalent_2
         - type: entities
           title: OctoPrint
           entities:
