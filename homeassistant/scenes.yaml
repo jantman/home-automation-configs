@@ -24,8 +24,8 @@
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
     light.ge_45606_2way_dimmer_switch_level_2: "off"
     light.ge_45606_2way_dimmer_switch_level: "off"
-- name: AllInterior
-  icon: "mdi:home-lightbulb"
+- name: AllLightsOn
+  icon: "mdi:lightbulb-group"
   entities:
     switch.livingroomlight_switch: "on"
     light.ge_45606_2way_dimmer_switch_level_3: "on"
@@ -34,5 +34,13 @@
     light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
     light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "on"
+    light.ge_45606_2way_dimmer_switch_level_2: "on"
+    light.ge_45606_2way_dimmer_switch_level: "on"
+- name: AllInterior
+  icon: "mdi:home-lightbulb"
+  entities:
+    light.ge_45606_2way_dimmer_switch_level_3: "on"
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
+    light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
     light.ge_45606_2way_dimmer_switch_level_2: "on"
     light.ge_45606_2way_dimmer_switch_level: "on"
