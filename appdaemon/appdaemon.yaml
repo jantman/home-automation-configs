@@ -1,7 +1,4 @@
 secrets: /secrets.yaml
-log:
-  logfile: STDOUT
-  errorfile: STDERR
 appdaemon:
   threads: 10
   missing_app_warnings: 1
