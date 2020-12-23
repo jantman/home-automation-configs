@@ -310,7 +310,7 @@ views:
           camera_image: camera.bedrm
         - type: thermostat
           name: Climate
-          entity: climate.2gig_technologies_ct101_thermostat_iris_cooling_1
+          entity: climate.officelightswitch_mode
         - type: entities
           title: Lights
           entities:
