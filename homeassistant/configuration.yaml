@@ -186,6 +186,15 @@ switch:
   - platform: zoneminder
     command_on: Modect
     command_off: Monitor
+  - platform: rest
+    name: couchpi_display
+    resource: http://couchpi/
+    body_on: '{"state": true}'
+    body_off: '{"state": false}'
+    is_on_template: '{{ value_json.is_on }}'
+    headers:
+      Content-Type: application/json
+    verify_ssl: false
 
 # Cloud
 # cloud:
