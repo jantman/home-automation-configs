@@ -254,26 +254,6 @@ views:
           entity: switch.hall_state
           camera_image: camera.hall
         - type: entities
-          title: Z-Wave and Zigbee
-          entities:
-            - zwave.aeotec_zw090_zstick_gen5_us
-            - zwave.2gig_technologies_ct101_thermostat_iris
-            - zwave.bedroomsensor
-            - zwave.ecolink_doorwindow_sensor
-            - zwave.ecolink_doorwindow_sensor_2
-            - zwave.ecolink_doorwindow_sensor_3
-            - zwave.ecolink_doorwindow_sensor_4
-            - zwave.ecolink_motion_detector
-            - zwave.ge_45606_2way_dimmer_switch
-            - zwave.ge_45606_2way_dimmer_switch_2
-            - zwave.inovelli_unknown_type2400_id2400
-            - zwave.ecolink_motion_detector_2
-            - zwave.kitchensensor
-            - zwave.linear_lb60z1_dimmable_led_light_bulb
-            - zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb
-            - zwave.lrmotion
-            - zwave.officesensor
-        - type: entities
           title: OctoPrint
           entities:
             - sensor.octoprint_current_state
