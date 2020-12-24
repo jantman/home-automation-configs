@@ -966,7 +966,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         monitor_id = kwargs['monitor_id']
         self._log.info('Trigger ZM alarm on monitor: %s', monitor_id)
-        url = 'http://localhost/zm/api/monitors/alarm' \
+        url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:on.json' % monitor_id
         self._log.debug('GET %s', url)
         r = requests.get(url)
@@ -978,7 +978,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         monitor_id = kwargs['monitor_id']
         self._log.info('Untrigger ZM alarm on monitor: %s', monitor_id)
-        url = 'http://localhost/zm/api/monitors/alarm' \
+        url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:off.json' % monitor_id
         self._log.debug('GET %s', url)
         r = requests.get(url)
@@ -989,7 +989,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Return the JPEG byte array of the current snapshot from the specified
         ZoneMonitor Monitor ID.
         """
-        url = 'http://localhost/zm/cgi-bin/nph-zms?' \
+        url = 'http://172.19.0.1/zm/cgi-bin/nph-zms?' \
               'mode=single&monitor=%s&scale=100' % monitor_id
         self._log.debug('GET %s', url)
         r = requests.get(url)
