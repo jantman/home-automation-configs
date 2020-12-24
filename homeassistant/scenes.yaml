@@ -28,19 +28,43 @@
   icon: "mdi:lightbulb-group"
   entities:
     switch.livingroomlight_switch: "on"
-    light.ge_45606_2way_dimmer_switch_level_3: "on"
-    light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "on"
-    light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "on"
-    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
-    light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
+    light.ge_45606_2way_dimmer_switch_level_3:
+      state: "on"
+      brightness: 255
+    light.cree_connected_a_19_60w_equivalent_fe0afc46_10:
+      state: "on"
+      brightness: 255
+    light.cree_connected_a_19_60w_equivalent_fe0b0886_10:
+      state: "on"
+      brightness: 255
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level:
+      state: "on"
+      brightness: 255
+    light.linear_lb60z1_dimmable_led_light_bulb_level:
+      state: "on"
+      brightness: 255
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "on"
-    light.ge_45606_2way_dimmer_switch_level_2: "on"
-    light.ge_45606_2way_dimmer_switch_level: "on"
+    light.ge_45606_2way_dimmer_switch_level_2:
+      state: "on"
+      brightness: 255
+    light.ge_45606_2way_dimmer_switch_level:
+      state: "on"
+      brightness: 255
 - name: AllInterior
   icon: "mdi:home-lightbulb"
   entities:
-    light.ge_45606_2way_dimmer_switch_level_3: "on"
-    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "on"
-    light.linear_lb60z1_dimmable_led_light_bulb_level: "on"
-    light.ge_45606_2way_dimmer_switch_level_2: "on"
-    light.ge_45606_2way_dimmer_switch_level: "on"
+    light.ge_45606_2way_dimmer_switch_level_3:
+      state: "on"
+      brightness: 255
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level:
+      state: "on"
+      brightness: 255
+    light.linear_lb60z1_dimmable_led_light_bulb_level:
+      state: "on"
+      brightness: 255
+    light.ge_45606_2way_dimmer_switch_level_2:
+      state: "on"
+      brightness: 255
+    light.ge_45606_2way_dimmer_switch_level:
+      state: "on"
+      brightness: 255
