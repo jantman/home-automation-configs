@@ -702,7 +702,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         self._log.info('Turning on all lights')
         for e_id in LIGHT_ENTITIES + RGB_LIGHT_ENTITIES:
-            self._light_states[e_id] = self.get_state(entity=e_id)
+            self._light_states[e_id] = self.get_state(e_id)
             self.turn_on(e_id)
         self._log.info(
             'All lights turned on. Previous state: %s', self._light_states
