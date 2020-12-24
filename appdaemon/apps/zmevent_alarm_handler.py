@@ -258,8 +258,14 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             data['event']['EventId']
         )
         image = primary_image['output_path']
+        try:
+            img = open(image, 'rb')
+        except FileNotFoundError:
+            img = None
+            self._log.error('ERROR: Unable to open %s', image)
+            message += '\nERROR - Unable to open image: %s' % image
         self._do_notify_pushover(
-            subject, message, sound='siren', image=open(image, 'rb'),
+            subject, message, sound='siren', image=img,
             image_name=os.path.basename(image), url=url
         )
 
@@ -373,17 +379,23 @@ class EmailNotifier(object):
                 html += self._analyzer_table_row(f)
             html += '</table>\n'
         # END image analysis
-        html += '</body></html>\n'
-        msg.attach(MIMEText(html, 'html'))
+        attachments = []
         for d in sorted(
             self.data['object_detections'], key=lambda x: x['FrameId']
         ):
-            msg.attach(
-                MIMEImage(
-                    open(d['output_path'], 'rb').read(),
-                    name=os.path.basename(d['output_path'])
+            try:
+                attachments.append(
+                    MIMEImage(
+                        open(d['output_path'], 'rb').read(),
+                        name=os.path.basename(d['output_path'])
+                    )
                 )
-            )
+            except FileNotFoundError:
+                html += '<h1>ERROR: Unable to open %s</h1>\n' % d['output_path']
+        html += '</body></html>\n'
+        msg.attach(MIMEText(html, 'html'))
+        for a in attachments:
+            msg.attach(a)
         return msg.as_string()
 
     def _analyzer_table_row(self, frame):
