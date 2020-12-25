@@ -14,7 +14,7 @@ from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
 
 #: Threshold below which battery level will trigger an alert.
-BATTERY_THRESHOLD = 50
+BATTERY_THRESHOLD = 60
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
@@ -37,26 +37,38 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._log.info('Done initializing ZWaveChecker')
         self.listen_event(self._check_zwave, event='ZWAVE_CHECKER')
 
+    def _check_zwave_entity(self, e):
+        if e is None:
+            return []
+        a = e.get('attributes', {})
+        ename = '%s (%s)' % (e['entity_id'], a['friendly_name'])
+        failed = a.get('is_failed', False)
+        batt = a.get('battery_level', 100)
+        prob = []
+        if failed:
+            prob.append('Failed')
+        if batt <= BATTERY_THRESHOLD:
+            prob.append('Battery Level: %d' % batt)
+        if len(prob) == 0:
+            self._log.debug(
+                '%s - failed=%s battery_level=%s', ename, failed, batt
+            )
+            return []
+        return ['%s: %s' % (ename, '; '.join(prob))]
+
     def _check_zwave(self, *args, **kwargs):
         problems = []
         for e in self.get_state('zwave').values():
-            if e is None:
+            problems.extend(self._check_zwave_entity(e))
+        for e in self.get_state('sensor').values():
+            if not e['entity_id'].endswith('_battery_level'):
                 continue
-            a = e.get('attributes', {})
-            ename = '%s (%s)' % (e['entity_id'], a['friendly_name'])
-            failed = a.get('is_failed', False)
-            batt = a.get('battery_level', 100)
-            prob = []
-            if failed:
-                prob.append('Failed')
-            if batt <= BATTERY_THRESHOLD:
-                prob.append('Battery Level: %d' % batt)
-            if len(prob) == 0:
-                self._log.debug(
-                    '%s - failed=%s battery_level=%s', ename, failed, batt
-                )
-                continue
-            problems.append('%s: %s' % (ename, '; '.join(prob)))
+            try:
+                val = float(e.get('state', 0.0))
+            except Exception:
+                val = 0.0
+            if val <= BATTERY_THRESHOLD:
+                problems.append('%s - state=%s' % (e['entity_id'], val))
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
