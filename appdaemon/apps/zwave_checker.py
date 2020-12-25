@@ -67,6 +67,9 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 val = float(e.get('state', 0.0))
             except Exception:
                 val = 0.0
+            self._log.debug(
+                '%s - battery_level=%s', e['entity_id'], val
+            )
             if val <= BATTERY_THRESHOLD:
                 problems.append('%s - state=%s' % (e['entity_id'], val))
         if len(problems) < 1:
