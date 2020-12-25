@@ -59,11 +59,24 @@ HOME_IGNORE_MONITORS = {
     'guarddog': ['LRKitchen', 'OFFICE', 'BEDRM', 'HALL']
 }
 
+#: List of monitor names to ignore when the alarm state is HOME
+ALWAYS_IGNORE_MONITORS = {
+    'telescreen': ['NORTH', 'SOUTH', 'CAM12']
+}
+
 #: Path of a file that's touched every time the alarm changes state.
 TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
 
 #: Hoe many seconds to suppress ZM alarms after alarm state transition
 TRANSITION_DELAY_SECONDS = 75
+
+
+def image_path_for_host(hostname, path):
+    if hostname == 'telescreen':
+        return path.replace(
+            '/var/cache/zoneminder/events/', '/telescreen-events/'
+        )
+    return path
 
 
 class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
@@ -151,6 +164,18 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'Ignoring ZM_ALARM for Event %s - current time is within %d '
                 'seconds of last alarm state transition.',
                 data['event']['EventId'], TRANSITION_DELAY_SECONDS
+            )
+            return
+        if (
+            data['event']['Monitor']['Name'] in ALWAYS_IGNORE_MONITORS.get(
+                data.get('hostname', ''), []
+            )
+        ):
+            self._log.info(
+                'Ignoring ZM_ALARM for Event %s on Monitor %s; '
+                'monitor is in ALWAYS_IGNORE_MONITORS[%s]',
+                data['event']['EventId'], data['event']['Monitor']['Name'],
+                data.get('hostname', '')
             )
             return
         if (
@@ -257,7 +282,9 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._index_url(data),
             data['event']['EventId']
         )
-        image = primary_image['output_path']
+        image = image_path_for_host(
+            data.get('hostname', 'guarddog'), primary_image['output_path']
+        )
         try:
             img = open(image, 'rb')
         except FileNotFoundError:
@@ -383,15 +410,18 @@ class EmailNotifier(object):
         for d in sorted(
             self.data['object_detections'], key=lambda x: x['FrameId']
         ):
+            ipath = image_path_for_host(
+                self.data.get('hostname', 'guarddog'), d['output_path']
+            )
             try:
                 attachments.append(
                     MIMEImage(
-                        open(d['output_path'], 'rb').read(),
+                        open(ipath, 'rb').read(),
                         name=os.path.basename(d['output_path'])
                     )
                 )
             except FileNotFoundError:
-                html += '<h1>ERROR: Unable to open %s</h1>\n' % d['output_path']
+                html += '<h1>ERROR: Unable to open %s</h1>\n' % ipath
         html += '</body></html>\n'
         msg.attach(MIMEText(html, 'html'))
         for a in attachments:
