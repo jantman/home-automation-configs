@@ -17,6 +17,12 @@ homeassistant:
 
 lovelace:
   mode: yaml
+  dashboards:
+    lovelace-couch:
+      mode: yaml
+      filename: lovelace-couch.yaml
+      title: Couch
+      show_in_sidebar: true
 
 zone:
   - name: Work
