@@ -43,6 +43,12 @@ views:
             entity: switch.couchpi_display
             icon: 'mdi:tablet-dashboard'
             name: Display Off
+          - type: button
+            tap_action:
+              action: toggle
+            entity: switch.projector
+            icon: 'mdi:projector'
+            name: Projector
   - title: Kodi
     path: kodi
     badges: []
