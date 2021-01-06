@@ -1,0 +1,378 @@
+views:
+  - title: Home
+    path: home
+    badges: []
+    cards:
+      - type: media-control
+        entity: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+      - type: grid
+        cards:
+          - type: button
+            entity: scene.movies
+            tap_action:
+              action: call-service
+              service: scene.turn_on
+              service_data:
+                entity_id: scene.movies
+          - type: button
+            entity: scene.dinnermovie
+            tap_action:
+              action: call-service
+              service: scene.turn_on
+              service_data:
+                entity_id: scene.dinnermovie
+          - type: button
+            entity: scene.allinterior
+            tap_action:
+              action: call-service
+              service: scene.turn_on
+              service_data:
+                entity_id: scene.allinterior
+      - type: entity
+        entity: sensor.time
+      - type: entity
+        entity: sensor.porch_temp
+      - type: grid
+        cards:
+          - type: button
+            tap_action:
+              action: call-service
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.couchpi_display
+            entity: switch.couchpi_display
+            icon: 'mdi:tablet-dashboard'
+            name: Display Off
+  - title: Kodi
+    path: kodi
+    badges: []
+    cards:
+      - type: grid
+        columns: 5
+        cards:
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.ShowOSD
+            entity: binary_sensor.172_17_0_1
+            hold_action:
+              action: none
+            name: Menu
+            icon: 'mdi:menu'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Home
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Home
+            icon: 'mdi:home'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Up
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Up
+            icon: 'mdi:arrow-up-bold'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.media_play_pause
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Play/Pause
+            icon: 'mdi:play-pause'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.media_stop
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Stop
+            icon: 'mdi:stop'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Player.SetSubtitle
+                playerid: 1
+                subtitle: 'on'
+            entity: binary_sensor.172_17_0_1
+            show_name: true
+            hold_action:
+              action: none
+            name: Subtitles
+            icon: 'mdi:subtitles-outline'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Left
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Left
+            icon: 'mdi:arrow-left-bold'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Select
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Ok
+            icon: 'mdi:check-circle-outline'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Right
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Right
+            icon: 'mdi:arrow-right-bold'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: VideoLibrary.Scan
+            entity: binary_sensor.172_17_0_1
+            show_name: true
+            hold_action:
+              action: none
+            name: Scan Media
+            icon: 'mdi:magnify'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.media_previous_track
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Skip Back
+            icon: 'mdi:skip-previous'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Player.SetSpeed
+                playerid: 1
+                speed: decrement
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Rewind
+            icon: 'mdi:rewind'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Down
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Down
+            icon: 'mdi:arrow-down-bold'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Player.SetSpeed
+                playerid: 1
+                speed: increment
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: FastForward
+            icon: 'mdi:fast-forward'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.media_next_track
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Skip Fwd
+            icon: 'mdi:skip-next'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Input.Back
+            entity: binary_sensor.172_17_0_1
+            show_name: true
+            hold_action:
+              action: none
+            name: Back
+            icon: 'mdi:backburger'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Player.Seek
+                playerid: 1
+                value: bigbackward
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Back 30s
+            icon: 'mdi:rewind-30'
+          - type: button
+            tap_action:
+              action: call-service
+              service: kodi.call_method
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                method: Player.Seek
+                playerid: 1
+                value: bigforward
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Fwd 30s
+            icon: 'mdi:fast-forward-30'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.volume_up
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Volume Up
+            icon: 'mdi:volume-plus'
+          - type: button
+            tap_action:
+              action: call-service
+              service: media_player.volume_down
+              service_data:
+                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+            entity: binary_sensor.172_17_0_1
+            show_name: false
+            hold_action:
+              action: none
+            name: Volume Down
+            icon: 'mdi:volume-minus'
+  - title: Cameras
+    path: cameras
+    badges: []
+    cards:
+      - type: grid
+        columns: 4
+        cards:
+          - type: picture-entity
+            entity: camera.front
+          - type: picture-entity
+            entity: camera.porch
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.side
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.garage
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.back
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.gate
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.north
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+          - type: picture-entity
+            entity: camera.south
+            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - title: Lights
+    path: lights
+    badges: []
+    cards:
+      - type: light
+        entity: light.ge_45606_2way_dimmer_switch_level_3
+      - type: entities
+        entities:
+          - entity: light.ge_45606_2way_dimmer_switch_level_2
+          - entity: light.linear_lb60z1_dimmable_led_light_bulb_level
+          - entity: >-
+              light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+          - entity: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
+          - entity: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
+  - title: Climate
+    path: climate
+    badges: []
+    cards:
+      - type: thermostat
+        entity: climate.officelightswitch_mode
+      - type: weather-forecast
+        entity: weather.dark_sky
+  - title: Alarm
+    path: alarm
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - entity: input_select.alarmstate
+          - entity: input_boolean.alarm_duress
+          - entity: input_boolean.enable_motion
+          - entity: input_boolean.cameras_silent
+title: Couch
