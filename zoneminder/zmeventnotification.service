@@ -2,6 +2,8 @@
 Description=zmeventnotification - ZoneMinder event notification handler
 Requires=zoneminder.service
 After=zoneminder.service
+StartLimitIntervalSec=0
+StartLimitBurst=999
 
 [Service]
 EnvironmentFile=/etc/zmeventnotification.env
@@ -10,8 +12,6 @@ Type=simple
 User=www-data
 Restart=always
 # Disable all unit start rate limiting
-StartLimitIntervalSec=0
-StartLimitBurst=999
 # Disable stopping unit if it doesn't start up in some timeout
 TimeoutStartSec=infinity
 
