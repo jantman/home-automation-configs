@@ -1,7 +1,5 @@
 [Unit]
 Description=zmeventnotification_handler - ZoneMinder event notification handler
-Requires=zoneminder.service zmeventnotification.service
-After=zoneminder.service zmeventnotification.service
 # Disable all unit start rate limiting
 StartLimitIntervalSec=0
 StartLimitBurst=999
