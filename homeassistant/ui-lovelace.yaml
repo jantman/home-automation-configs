@@ -232,8 +232,8 @@ views:
             - type: state-label
               entity: sensor.tv_temp
               style:
-                top: 96%
-                left: 34%
+                top: 72%
+                left: 30%
             # octoprint
             - type: state-icon
               entity: camera.octopi
