@@ -28,7 +28,7 @@ LIGHT_ENTITIES = [
     'switch.livingroomlight_switch',
     'light.ge_45606_2way_dimmer_switch_level',
     'light.ge_45606_2way_dimmer_switch_level_2',
-    'light.ge_45606_2way_dimmer_switch_level_3'
+    'light.jasco_products_45606_2_way_dimmer_switch_level'
 ]
 
 

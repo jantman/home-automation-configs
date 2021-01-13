@@ -343,7 +343,7 @@ alexa:
         name: 'Bedroom Light'
       light.ge_45606_2way_dimmer_switch_level_2:
         name: 'Office Light'
-      light.ge_45606_2way_dimmer_switch_level_3:
+      light.jasco_products_45606_2_way_dimmer_switch_level:
         name: 'Living Room Lights'
       switch.livingroomlight_switch:
         name: 'TV Light'
@@ -418,7 +418,7 @@ alexa:
         # LivingRoomLight Switch
         - switch.livingroomlight_switch
         # Living Room Light
-        - light.ge_45606_2way_dimmer_switch_level_3
+        - light.jasco_products_45606_2_way_dimmer_switch_level
 
 octoprint:
   host: 3dpi

@@ -21,7 +21,7 @@
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
@@ -49,7 +49,7 @@
     - service: homeassistant.turn_off
       entity_id: switch.livingroomlight_switch
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
@@ -76,7 +76,7 @@
         state: 'off'
   action:
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_on
       entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
@@ -248,7 +248,7 @@
         before: sunrise
   action:
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
 ################################################################################
 # BEGIN "first morning" routine                                                #
 # from https://www.home-assistant.io/cookbook/automation_first_light/          #
@@ -294,7 +294,7 @@
     - service: homeassistant.turn_on
       entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_3
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
@@ -349,7 +349,7 @@
 - alias: Arm after living room light is shut off, at night, when home
   trigger:
     platform: state
-    entity_id: light.ge_45606_2way_dimmer_switch_level_3
+    entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     to: 'off'
   condition:
     # device must be home

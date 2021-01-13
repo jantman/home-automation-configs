@@ -127,7 +127,7 @@ LIGHT_ENTITIES = [
     # TV
     'switch.livingroomlight_switch',
     # Living Room
-    'light.ge_45606_2way_dimmer_switch_level_3',
+    'light.jasco_products_45606_2_way_dimmer_switch_level',
     # Bedroom
     'light.ge_45606_2way_dimmer_switch_level',
     # Office

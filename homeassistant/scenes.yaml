@@ -2,7 +2,7 @@
   icon: "mdi:food-fork-drink"
   entities:
     switch.livingroomlight_switch: "off"
-    light.ge_45606_2way_dimmer_switch_level_3:
+    light.jasco_products_45606_2_way_dimmer_switch_level:
       state: "on"
       brightness: 149
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
@@ -16,7 +16,7 @@
   icon: "mdi:projector-screen"
   entities:
     switch.livingroomlight_switch: "off"
-    light.ge_45606_2way_dimmer_switch_level_3: "off"
+    light.jasco_products_45606_2_way_dimmer_switch_level: "off"
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
     light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
     light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level: "off"
@@ -28,7 +28,7 @@
   icon: "mdi:lightbulb-group"
   entities:
     switch.livingroomlight_switch: "on"
-    light.ge_45606_2way_dimmer_switch_level_3:
+    light.jasco_products_45606_2_way_dimmer_switch_level:
       state: "on"
       brightness: 255
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10:
@@ -53,7 +53,7 @@
 - name: AllInterior
   icon: "mdi:home-lightbulb"
   entities:
-    light.ge_45606_2way_dimmer_switch_level_3:
+    light.jasco_products_45606_2_way_dimmer_switch_level:
       state: "on"
       brightness: 255
     light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level:

@@ -20,7 +20,7 @@ lights:
     - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - light.ge_45606_2way_dimmer_switch_level
     - light.ge_45606_2way_dimmer_switch_level_2
-    - light.ge_45606_2way_dimmer_switch_level_3
+    - light.jasco_products_45606_2_way_dimmer_switch_level
     - light.linear_lb60z1_dimmable_led_light_bulb_level
     - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - switch.livingroomlight_switch
@@ -39,7 +39,7 @@ lrlights:
   name: Living Room Lights
   entities:
     - switch.livingroomlight_switch
-    - light.ge_45606_2way_dimmer_switch_level_3
+    - light.jasco_products_45606_2_way_dimmer_switch_level
 tvlight:
   name: TV Light
   entities:
