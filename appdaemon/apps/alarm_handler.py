@@ -211,6 +211,12 @@ AWAY_DELAY_ENTITIES = [
 #: Path of a file to "touch" whenever the alarm changes state.
 TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
 
+#: Number of seconds to timeout for requests to ZM API
+ZM_API_TIMEOUT = 5
+
+#: Number of seconds to timeout for PTZ requests to cameras
+PTZ_TIMEOUT = 2
+
 
 def fmt_entity(entity, kwargs):
     """
@@ -902,10 +908,22 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
           :py:meth:`~._get_camera_capture` for ``monitor_id``.
         """
         # Trigger manual alarms on monitors for 30s, after a short delay
-        self._trigger_zm_alarm({'monitor_id': monitor_id})
+        try:
+            self._trigger_zm_alarm({'monitor_id': monitor_id})
+        except Exception:
+            self._log.critical(
+                'Error triggering ZM alarm on monitor %s', monitor_id,
+                exc_info=True
+            )
         self.run_in(self._untrigger_zm_alarm, 30, monitor_id=monitor_id)
         if second_monitor_id is not None:
-            self._trigger_zm_alarm({'monitor_id': second_monitor_id})
+            try:
+                self._trigger_zm_alarm({'monitor_id': second_monitor_id})
+            except Exception:
+                self._log.critical(
+                    'Error triggering ZM alarm on monitor %s',
+                    second_monitor_id, exc_info=True
+                )
             self.run_in(
                 self._untrigger_zm_alarm, 30, monitor_id=second_monitor_id
             )
@@ -969,7 +987,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:on.json' % monitor_id
         self._log.debug('GET %s', url)
-        r = requests.get(url)
+        r = requests.get(url, timeout=ZM_API_TIMEOUT)
         self._log.debug('Got HTTP %d: %s', r.status_code, r.text)
 
     def _untrigger_zm_alarm(self, kwargs):
@@ -981,7 +999,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:off.json' % monitor_id
         self._log.debug('GET %s', url)
-        r = requests.get(url)
+        r = requests.get(url, timeout=ZM_API_TIMEOUT)
         self._log.debug('Got HTTP %d: %s', r.status_code, r.text)
 
     def _get_camera_capture(self, monitor_id):
@@ -992,7 +1010,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         url = 'http://172.19.0.1/zm/cgi-bin/nph-zms?' \
               'mode=single&monitor=%s&scale=100' % monitor_id
         self._log.debug('GET %s', url)
-        r = requests.get(url)
+        r = requests.get(url, timeout=ZM_API_TIMEOUT)
         r.raise_for_status()
         self._log.debug('Got %d byte response', len(r.content))
         return r.content
@@ -1036,7 +1054,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._hass_secrets['amcrest_password']
         )
         # GET the URL to tell the camera to move
-        r = requests.get(url, auth=da)
+        r = requests.get(url, auth=da, timeout=PTZ_TIMEOUT)
         # ensure it returned a HTTP 2xx
         r.raise_for_status()
         self._log.debug('PTZ response: %s', r.text)
@@ -1045,7 +1063,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._log.info('PTZ status check: %s', conf_url)
         # request the confirmation URL. This seems to not return until the
         # movement is complete.
-        r = requests.get(url, auth=da)
+        r = requests.get(url, auth=da, timeout=PTZ_TIMEOUT)
         # ensure HTTP 2xx
         r.raise_for_status()
         self._log.debug('PTZ response: %s', r.text)
