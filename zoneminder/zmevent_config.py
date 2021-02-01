@@ -247,7 +247,7 @@ IGNORED_OBJECTS = {
         IgnoredObject(
             'GateCrap',
             # yolo4 often sees shadows on my front as strange things...
-            ['boat', 'bench', 'baseball bat', 'frisbee'],
+            ['boat', 'bench', 'baseball bat', 'frisbee', 'sports ball'],
             monitor_num=3,
         ),
     ]
