@@ -99,7 +99,7 @@ class ImageAnalysisWrapper(object):
 
     def analyze_event(self):
         """returns a list of ObjectDetectionResult instances"""
-        NUM_TRIES = 10
+        NUM_TRIES = 15
         data = {
             'hostname': self._hostname,
             'EventId': self._event.EventId,
