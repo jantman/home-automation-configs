@@ -39,6 +39,9 @@ STATSD_HOST = '192.168.0.24'
 #: statsd port
 STATSD_PORT = 8125
 
+#: Directory to store retry files in
+RETRY_DIR = '/var/cache/zoneminder/analysis-retries'
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {

@@ -62,7 +62,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
     HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets,
-    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES
+    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES, RETRY_DIR
 )
 from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -240,7 +240,25 @@ def update_event_name(event, analysis, filters, dry_run=False):
     return name, zones
 
 
-def handle_event(event_id, monitor_id, cause, dry_run=False):
+def set_retry(event_id, monitor_id, cause, dry_run=False, num_retries=0):
+    if dry_run:
+        return
+    fpath = os.path.join(RETRY_DIR, f'{event_id}.json')
+    try:
+        logger.debug('Writing retry data to: %s', fpath)
+        with open(fpath, 'w') as fh:
+            fh.write(json.dumps({
+                'event_id': event_id,
+                'monitor_id': monitor_id,
+                'cause': cause,
+                'num_retries': num_retries
+            }))
+        logger.info('Wrote retry data to: %s', fpath)
+    except Exception:
+        logger.critical('Error setting retry data to %s', fpath, exc_info=True)
+
+
+def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
     event = ZMEvent(event_id, monitor_id, cause)
     # ensure that this command is run by the user that owns the event
     evt_owner = os.stat(event.path).st_uid
@@ -284,11 +302,14 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
             )
     # run object detection on the event
     zones = []
+    success = True
     try:
         analyzer = ImageAnalysisWrapper(event, ['Yolo4Analyzer'], NODE_NAME)
         analysis = analyzer.analyze_event()
         if analysis is None:
             result['object_detections'] = []
+            set_retry(event_id, monitor_id, cause, num_retries=num_retries)
+            success = False
         else:
             result['object_detections'] = analysis
             new_name, zones = update_event_name(
@@ -300,7 +321,8 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
-    return result, zones
+        success = False
+    return result, zones, success
 
 
 def event_to_hass(monitor_id, event_id, result, zones, dry_run=False):
@@ -350,7 +372,7 @@ def run(args):
         )
         return
     # populate the event from ZoneMinder DB
-    result, zones = handle_event(
+    result, zones, _ = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
     event_to_hass(
