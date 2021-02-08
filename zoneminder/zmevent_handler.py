@@ -243,7 +243,7 @@ def update_event_name(event, analysis, filters, dry_run=False):
 def set_retry(event_id, monitor_id, cause, dry_run=False, num_retries=0):
     if dry_run:
         return
-    fpath = os.path.join(RETRY_DIR, f'{event_id}.json')
+    fpath = os.path.join(RETRY_DIR, '%s.json' % event_id)
     try:
         logger.debug('Writing retry data to: %s', fpath)
         with open(fpath, 'w') as fh:
