@@ -287,17 +287,58 @@ def handle_event(event_id, monitor_id, cause, dry_run=False):
     try:
         analyzer = ImageAnalysisWrapper(event, ['Yolo4Analyzer'], NODE_NAME)
         analysis = analyzer.analyze_event()
-        result['object_detections'] = analysis
-        new_name, zones = update_event_name(
-            event, analysis, result['filters'], dry_run=dry_run
-        )
-        result['event'].Name = new_name
+        if analysis is None:
+            result['object_detections'] = []
+        else:
+            result['object_detections'] = analysis
+            new_name, zones = update_event_name(
+                event, analysis, result['filters'], dry_run=dry_run
+            )
+            result['event'].Name = new_name
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,
             exc_info=True
         )
     return result, zones
+
+
+def event_to_hass(monitor_id, event_id, result, zones, dry_run=False):
+    if monitor_id in HASS_IGNORE_MONITOR_IDS.get(NODE_NAME, []):
+        logger.info(
+            'Not sending Event %s for monitor %s to HASS - MonitorId '
+            'in HASS_IGNORE_MONITOR_IDS[%s]',
+            result['event'].EventId, monitor_id, NODE_NAME
+        )
+        return
+    for r in HASS_IGNORE_EVENT_NAME_RES:
+        if r.match(result['event'].Name):
+            logger.info(
+                'Not sending Event %s for monitor %s to HASS - event name '
+                '%s matches regex %s',
+                result['event'].EventId, monitor_id,
+                result['event'].Name, r.pattern
+            )
+            return
+    ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(
+        NODE_NAME, {}
+    ).get(monitor_id, set([]))
+    if set(zones).issubset(ignored_zones):
+        logger.info(
+            'Not sending Event %s for monitor %s to HASS - zones (%s) '
+            'are subset of ignored (%s)',
+            result['event'].EventId, monitor_id,
+            zones, ignored_zones
+        )
+        return
+    result['hostname'] = NODE_NAME
+    res_json = json.dumps(
+        result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+    )
+    if dry_run:
+        logger.warning('Would POST to HASS: %s', res_json)
+        return
+    send_to_hass(res_json, event_id)
 
 
 def run(args):
@@ -312,41 +353,9 @@ def run(args):
     result, zones = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
-    if args.monitor_id in HASS_IGNORE_MONITOR_IDS.get(NODE_NAME, []):
-        logger.info(
-            'Not sending Event %s for monitor %s to HASS - MonitorId '
-            'in HASS_IGNORE_MONITOR_IDS[%s]',
-            result['event'].EventId, args.monitor_id, NODE_NAME
-        )
-        return
-    for r in HASS_IGNORE_EVENT_NAME_RES:
-        if r.match(result['event'].Name):
-            logger.info(
-                'Not sending Event %s for monitor %s to HASS - event name '
-                '%s matches regex %s',
-                result['event'].EventId, args.monitor_id,
-                result['event'].Name, r.pattern
-            )
-            return
-    ignored_zones = HASS_IGNORE_MONITOR_ZONES.get(
-        NODE_NAME, {}
-    ).get(args.monitor_id, set([]))
-    if set(zones).issubset(ignored_zones):
-        logger.info(
-            'Not sending Event %s for monitor %s to HASS - zones (%s) '
-            'are subset of ignored (%s)',
-            result['event'].EventId, args.monitor_id,
-            zones, ignored_zones
-        )
-        return
-    result['hostname'] = NODE_NAME
-    res_json = json.dumps(
-        result, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+    event_to_hass(
+        args.monitor_id, args.event_id, result, zones, dry_run=args.dry_run
     )
-    if args.dry_run:
-        logger.warning('Would POST to HASS: %s', res_json)
-        return
-    send_to_hass(res_json, args.event_id)
 
 
 def main():

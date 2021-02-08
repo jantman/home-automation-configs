@@ -140,7 +140,7 @@ class ImageAnalysisWrapper(object):
             statsd_send_time(
                 'analyze_event.unrecoverable_failure_time', time() - start
             )
-            return []
+            return None
         results = self._to_results(results)
         for res in results:
             try:
