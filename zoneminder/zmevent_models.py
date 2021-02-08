@@ -314,17 +314,11 @@ class ZMEvent(object):
         for k, v in res.items():
             if hasattr(self, k):
                 setattr(self, k, v)
-        if ZM_HOSTNAME == 'guarddog':
-            self.path = os.path.join(
-                EVENTS_PATH, '%s' % self.MonitorId,
-                self.StartTime.strftime('%y/%m/%d/%H/%M/%S')
-            )
-        elif ZM_HOSTNAME == 'telescreen':
-            self.path = os.path.join(
-                EVENTS_PATH, '%s' % self.MonitorId,
-                self.StartTime.strftime('%Y-%m-%d'),
-                '%s' % self.EventId
-            )
+        self.path = os.path.join(
+            EVENTS_PATH, '%s' % self.MonitorId,
+            self.StartTime.strftime('%Y-%m-%d'),
+            '%s' % self.EventId
+        )
         logger.debug(self.as_json)
         # Other items
         self._class_from_sql(
