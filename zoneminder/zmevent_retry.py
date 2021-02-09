@@ -66,7 +66,7 @@ class ZmEventRetrier:
         )
         if not success:
             logger.info('No success.')
-            return
+            return False
         if event.StartTime >= datetime.now() - timedelta(minutes=10):
             event_to_hass(
                 data['monitor_id'], data['event_id'], result, zones
@@ -74,6 +74,7 @@ class ZmEventRetrier:
         statsd_increment_counter(
             'analyze_event.num_retries', increment=data['num_retries'] + 1
         )
+        return True
 
     def run(self):
         while True:
@@ -83,7 +84,10 @@ class ZmEventRetrier:
                 logger.info(
                     'Found %d files to process; handling first', len(files)
                 )
-                self._handle_one(files[0])
+                res = self._handle_one(files[0])
+                if res:
+                    logger.info('Success; remove: %s', files[0])
+                    os.unlink(files[0])
             else:
                 logger.debug('No files to handle in: %s', g)
             time.sleep(10)
