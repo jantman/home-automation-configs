@@ -308,6 +308,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
         analysis = analyzer.analyze_event()
         if analysis is None:
             result['object_detections'] = []
+            num_retries += 1
             set_retry(event_id, monitor_id, cause, num_retries=num_retries)
             success = False
         else:
@@ -323,7 +324,7 @@ def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
             exc_info=True
         )
         success = False
-    return result, zones, success
+    return result, zones, success, event
 
 
 def event_to_hass(monitor_id, event_id, result, zones, dry_run=False):
@@ -373,7 +374,7 @@ def run(args):
         )
         return
     # populate the event from ZoneMinder DB
-    result, zones, _ = handle_event(
+    result, zones, _, _ = handle_event(
         args.event_id, args.monitor_id, args.cause, dry_run=args.dry_run
     )
     event_to_hass(
