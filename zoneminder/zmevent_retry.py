@@ -76,7 +76,7 @@ class ZmEventRetrier:
         )
         return True
 
-    def run(self):
+    def run(self, do_sleep=True):
         while True:
             g = os.path.join(RETRY_DIR + '*.json')
             files = sorted(glob.glob(g))
@@ -90,7 +90,8 @@ class ZmEventRetrier:
                     os.unlink(files[0])
             else:
                 logger.debug('No files to handle in: %s', g)
-            time.sleep(10)
+            if do_sleep:
+                time.sleep(10)
 
 
 def parse_args(argv):
@@ -98,6 +99,8 @@ def parse_args(argv):
     p = argparse.ArgumentParser(description='retry handler for Motion events')
     p.add_argument('-v', '--verbose', dest='verbose', action='count', default=0,
                    help='verbose output. specify twice for debug-level output.')
+    p.add_argument('-n', '--no-sleep', dest='sleep', action='store_false',
+                   default=True, help='do not sleep')
     args = p.parse_args(argv)
     return args
 
@@ -112,7 +115,7 @@ def main():
         set_log_debug()
     else:
         set_log_info()
-    ZmEventRetrier().run()
+    ZmEventRetrier().run(do_sleep=args.sleep)
 
 
 if __name__ == "__main__":
