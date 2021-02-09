@@ -317,7 +317,9 @@ def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
                 event, analysis, result['filters'], dry_run=dry_run
             )
             result['event'].Name = new_name
-            statsd_set_gauge('analyze_event.num_retries', 0)
+            statsd_increment_counter(
+                'analyze_event.num_retries', increment=num_retries+1
+            )
     except Exception:
         logger.critical(
             'ERROR running ImageAnalysisWrapper on event: %s', event,

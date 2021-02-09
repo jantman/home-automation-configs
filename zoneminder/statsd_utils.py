@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 NODE_NAME = node()
 
 
-def statsd_increment_counter(name):
+def statsd_increment_counter(name, increment=1):
     _statsd_send(
-        'zmevent.%s.%s:1|c' % (NODE_NAME, name)
+        'zmevent.%s.%s:%d|c' % (NODE_NAME, name, increment)
     )
 
 

@@ -36,7 +36,7 @@ from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
-from statsd_utils import statsd_set_gauge
+from statsd_utils import statsd_increment_counter
 from zmevent_handler import (
     send_to_hass, _set_event_name, update_event_name, set_retry, handle_event,
     event_to_hass
@@ -71,7 +71,9 @@ class ZmEventRetrier:
             event_to_hass(
                 data['monitor_id'], data['event_id'], result, zones
             )
-        statsd_set_gauge('analyze_event.num_retries', data['num_retries'])
+        statsd_increment_counter(
+            'analyze_event.num_retries', increment=data['num_retries'] + 1
+        )
 
     def run(self):
         while True:
