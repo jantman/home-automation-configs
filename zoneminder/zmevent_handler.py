@@ -72,7 +72,7 @@ from statsd_utils import statsd_increment_counter, statsd_send_time
 
 #: logger - this will be set in :py:func:`~.main` to log to either stdout/err
 #: or a file depending on options
-logger = None
+logger = logging.getLogger(__name__)
 NODE_NAME = node()
 
 
