@@ -36,7 +36,7 @@ from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
-from statsd_utils import statsd_increment_counter, statsd_send_time
+from statsd_utils import statsd_set_gauge
 from zmevent_handler import (
     send_to_hass, _set_event_name, update_event_name, set_retry, handle_event,
     event_to_hass
