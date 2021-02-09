@@ -81,6 +81,8 @@ class ZmEventRetrier:
                     'Found %d files to process; handling first', len(files)
                 )
                 self._handle_one(files[0])
+            else:
+                logger.debug('No files to handle.')
             time.sleep(10)
 
 
