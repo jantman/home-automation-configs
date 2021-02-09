@@ -5,7 +5,9 @@ import requests
 from time import sleep, time
 from random import uniform
 
-from zmevent_config import CONFIG, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder
+from zmevent_config import (
+    CONFIG, ANALYSIS_TABLE_NAME, EVENTS_PATH, DateSafeJsonEncoder
+)
 from zmevent_models import ObjectDetectionResult, DetectedObject
 from statsd_utils import statsd_send_time, statsd_set_gauge
 
@@ -65,7 +67,7 @@ class ImageAnalysisWrapper(object):
     def _to_framepath(self, p):
         if self._hostname != 'telescreen':
             return p.replace(
-                '/usr/share/zoneminder/www/events/',
+                EVENTS_PATH,
                 '/mnt/guarddog/guarddog-events/'
             )
         return p
@@ -76,11 +78,11 @@ class ImageAnalysisWrapper(object):
             if self._hostname != 'telescreen':
                 item['frame_path'] = item['frame_path'].replace(
                     '/mnt/guarddog/guarddog-events/',
-                    '/usr/share/zoneminder/www/events/'
+                    EVENTS_PATH
                 )
                 item['output_path'] = item['output_path'].replace(
                     '/mnt/guarddog/guarddog-events/',
-                    '/usr/share/zoneminder/www/events/'
+                    EVENTS_PATH
                 )
             item['detections'] = [
                 DetectedObject(**x) for x in item['detections']
