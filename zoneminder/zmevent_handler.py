@@ -195,6 +195,7 @@ def _set_event_name(event_id, name, dry_run=False):
 
 
 def update_event_name(event, analysis, filters, dry_run=False):
+    event.Name = '%s-%s' % (event.Monitor.Name, event.EventId)
     for f in filters:
         if f.matched:
             event.Name += '-' + f.suffix
