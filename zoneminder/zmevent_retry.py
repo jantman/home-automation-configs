@@ -103,7 +103,7 @@ def main():
         set_log_debug()
     else:
         set_log_info()
-    run()
+    ZmEventRetrier().run()
 
 
 if __name__ == "__main__":
