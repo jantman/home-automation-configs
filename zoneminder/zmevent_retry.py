@@ -75,14 +75,15 @@ class ZmEventRetrier:
 
     def run(self):
         while True:
-            files = sorted(glob.glob(os.path.join(RETRY_DIR + '*.json')))
+            g = os.path.join(RETRY_DIR + '*.json')
+            files = sorted(glob.glob(g))
             if files:
                 logger.info(
                     'Found %d files to process; handling first', len(files)
                 )
                 self._handle_one(files[0])
             else:
-                logger.debug('No files to handle.')
+                logger.debug('No files to handle in: %s', g)
             time.sleep(10)
 
 
