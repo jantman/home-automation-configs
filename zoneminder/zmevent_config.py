@@ -233,6 +233,11 @@ IGNORED_OBJECTS = {
             ['person'],
             zone_names=['RoadCamera'],
         ),
+        IgnoredObject(
+            'FrontNoZone',
+            ['person'],
+            no_zone=True,
+        ),
         #
         # MONITOR 10 - GARAGE
         #
