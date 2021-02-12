@@ -19,13 +19,13 @@ RaspberryPi touchscreen-based HASS interface on the nightstand next to my bed. A
 1. unmount
 1. Place SD in the pi; assemble display and case
 1. Log in with keyboard and monitor, get MAC address, add to wifi. Reboot. Should join the wifi. SSH in.
-1. ``sudo apt-get update && sudo apt-get upgrade && reboot`` - this upgrades to Debian 10.7 and kernel 5.4.79
+1. ``sudo apt-get update && sudo apt-get upgrade && sudo reboot`` - this upgrades to Debian 10.8 and kernel 5.10.11
 1. ``sudo raspi-config``
    1. System Options -> Hostname
    1. Localisation Options -> Locale
    1. Localisation Options -> Timezone
-   1. System Options -> Network at Boot
-   1. Advanced Options -> Expand Filesystem
+   1. System Options -> Network at Boot -> wait for network at boot
+   1. If the filesystem was not already expanded: Advanced Options -> Expand Filesystem
    1. Finish, Reboot
 1. ``sudo apt-get install puppet git ruby``
 1. ``sudo gem install --no-user-install r10k``
