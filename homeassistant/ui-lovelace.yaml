@@ -200,11 +200,6 @@ views:
                 top: 40%
                 left: 60%
             - type: state-label
-              entity: sensor.pi2graphite_1wire_bedroom
-              style:
-                top: 42%
-                left: 78%
-            - type: state-label
               entity: sensor.pi2graphite_1wire_office
               style:
                 top: 96%

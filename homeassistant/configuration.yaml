@@ -412,8 +412,6 @@ alexa:
         - sensor.lrmotion_temperature
         # OfficeSensor Temperature
         - sensor.officesensor_temperature
-        # Bedroom Temperature
-        - sensor.pi2graphite_1wire_bedroom
         # Office Temperature
         - sensor.pi2graphite_1wire_office
         # Thermostat Fan
