@@ -23,6 +23,11 @@ lovelace:
       filename: lovelace-couch.yaml
       title: Couch
       show_in_sidebar: true
+    lovelace-bed:
+      mode: yaml
+      filename: lovelace-bed.yaml
+      title: Bed
+      show_in_sidebar: true
 
 zone:
   - name: Work
