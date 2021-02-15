@@ -9,7 +9,7 @@ views:
       # LEFT COLUMN
       - type: vertical-stack
         cards:
-        - !include floorplan.yaml
+        - !include /config/lovelace/floorplan.yaml
         - type: picture-entity
           entity: switch.side_state
           camera_image: camera.side
