@@ -7,8 +7,8 @@ views:
       - !include /config/lovelace/floorplan.yaml
       - type: entity
         entity: sensor.time
-      - type: entity
-        entity: sensor.porch_temp
+      - type: light
+        entity: light.ge_45606_2way_dimmer_switch_level
   - title: Cameras
     path: cameras
     badges: []
