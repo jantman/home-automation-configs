@@ -1,26 +1,26 @@
-      - type: grid
-        columns: 4
-        cards:
-          - type: picture-entity
-            entity: camera.front
-          - type: picture-entity
-            entity: camera.porch
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.side
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.garage
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.back
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.gate
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.north
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
-          - type: picture-entity
-            entity: camera.south
-            image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+type: grid
+columns: 4
+cards:
+  - type: picture-entity
+    entity: camera.front
+  - type: picture-entity
+    entity: camera.porch
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.side
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.garage
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.back
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.gate
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.north
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
+  - type: picture-entity
+    entity: camera.south
+    image: 'https://demo.home-assistant.io/stub_config/bedroom.png'
