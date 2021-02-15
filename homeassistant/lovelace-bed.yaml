@@ -394,4 +394,3 @@ views:
           - entity: input_boolean.alarm_duress
           - entity: input_boolean.enable_motion
           - entity: input_boolean.cameras_silent
-title: Couch
