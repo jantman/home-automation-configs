@@ -9,6 +9,10 @@ views:
         entity: sensor.time
       - type: light
         entity: light.ge_45606_2way_dimmer_switch_level
+      - type: entity
+        entity: input_select.alarmstate
+      - type: entity
+        entity: input_boolean.alarm_duress
   - title: Cameras
     path: cameras
     badges: []
