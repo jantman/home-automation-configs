@@ -42,3 +42,8 @@ views:
           - entity: input_boolean.alarm_duress
           - entity: input_boolean.enable_motion
           - entity: input_boolean.cameras_silent
+  - title: Ignore
+    path: ignore
+    badges: []
+    cards:
+      - !include /config/lovelace/alarm-ignore.yaml
