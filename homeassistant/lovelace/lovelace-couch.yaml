@@ -343,14 +343,7 @@ views:
     cards:
       - type: light
         entity: light.jasco_products_45606_2_way_dimmer_switch_level
-      - type: entities
-        entities:
-          - entity: light.ge_45606_2way_dimmer_switch_level_2
-          - entity: light.linear_lb60z1_dimmable_led_light_bulb_level
-          - entity: >-
-              light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
-          - entity: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
-          - entity: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
+      - !include /config/lovelace/lights.yaml
   - title: Climate
     path: climate
     badges: []
