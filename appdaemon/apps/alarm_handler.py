@@ -984,6 +984,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         monitor_id = kwargs['monitor_id']
         self._log.info('Trigger ZM alarm on monitor: %s', monitor_id)
+        self._log.info('Triggering ZM alarms is disabled')
+        return
         url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:on.json' % monitor_id
         self._log.debug('GET %s', url)
@@ -996,6 +998,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         """
         monitor_id = kwargs['monitor_id']
         self._log.info('Untrigger ZM alarm on monitor: %s', monitor_id)
+        self._log.info('Triggering ZM alarms is disabled')
+        return
         url = 'http://172.19.0.1/zm/api/monitors/alarm' \
               '/id:%s/command:off.json' % monitor_id
         self._log.debug('GET %s', url)
