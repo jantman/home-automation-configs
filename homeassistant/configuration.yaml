@@ -20,12 +20,12 @@ lovelace:
   dashboards:
     lovelace-couch:
       mode: yaml
-      filename: lovelace-couch.yaml
+      filename: lovelace/lovelace-couch.yaml
       title: Couch
       show_in_sidebar: true
     lovelace-bed:
       mode: yaml
-      filename: lovelace-bed.yaml
+      filename: lovelace/lovelace-bed.yaml
       title: Bed
       show_in_sidebar: true
 
