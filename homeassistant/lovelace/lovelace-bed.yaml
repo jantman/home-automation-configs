@@ -14,6 +14,16 @@ views:
         entities:
           - input_select.alarmstate
           - input_boolean.alarm_duress
+  - title: Front
+    path: front
+    cards:
+      - type: picture-entity
+        entity: camera.front
+  - title: Porch
+    path: porch
+    cards:
+      - type: picture-entity
+        entity: camera.porch
   - title: Cameras
     path: cameras
     badges: []
