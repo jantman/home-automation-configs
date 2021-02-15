@@ -1,0 +1,231 @@
+type: picture-elements
+image: /local/floorplan.jpg
+elements:
+  # BULBS
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: light.linear_lb60z1_dimmable_led_light_bulb_level # Kitchen bulb
+    style:
+      top: 56%
+      left: 27%
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level # Kitchen bulb 2
+    style:
+      top: 47%
+      left: 27%
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: light.cree_connected_a_19_60w_equivalent_fe0afc46_10 # Porch bulb
+    style:
+      top: 84%
+      left: 7%
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: light.cree_connected_a_19_60w_equivalent_fe0b0886_10 # Porch bulb 2
+    style:
+      top: 84%
+      left: 2%
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: switch.livingroomlight_switch
+    style:
+      top: 95%
+      left: 25%
+  - type: state-icon
+    tap_action:
+      action: toggle
+    entity: light.jasco_products_45606_2_way_dimmer_switch_level
+    style:
+      top: 80%
+      left: 25%
+  - type: state-icon
+    # bedroom light
+    tap_action:
+      action: toggle
+    entity: light.ge_45606_2way_dimmer_switch_level
+    style:
+      top: 60%
+      left: 66%
+  - type: state-icon
+    # office light
+    tap_action:
+      action: toggle
+    entity: light.ge_45606_2way_dimmer_switch_level_2
+    style:
+      top: 80%
+      left: 62%
+  - type: state-icon
+    # deck string lights
+    tap_action:
+      action: toggle
+    entity: switch.inovelli_unknown_type_ff00_id_ff07_switch
+    icon: mdi:lightbulb
+    style:
+      top: 22%
+      left: 20%
+  # DOORS
+  - type: state-icon
+    title: Crawlspace Door
+    entity: binary_sensor.ecolink_doorwindow_sensor_sensor_2 # crawlspace
+    style:
+      top: 93%
+      left: 86%
+  - type: state-icon
+    title: Gate
+    entity: binary_sensor.ecolink_doorwindow_sensor_sensor_3 # Gate
+    style:
+      top: 6%
+      left: 96%
+  - type: state-icon
+    title: Kitchen Door
+    entity: binary_sensor.ecolink_doorwindow_sensor_sensor_4 # kitchen
+    style:
+      top: 40%
+      left: 19%
+  - type: state-icon
+    title: Front Door
+    entity: binary_sensor.ecolink_doorwindow_sensor_sensor # front
+    style:
+      top: 89%
+      left: 14%
+  # MOTION
+  - type: state-icon
+    title: Back Bedroom Motion
+    entity: binary_sensor.ecolink_motion_detector_sensor # back bedroom
+    style:
+      top: 13%
+      left: 65%
+  - type: state-icon
+    entity: binary_sensor.kitchen_motion # kitchen
+    style:
+      top: 56%
+      left: 18%
+  - type: state-icon
+    entity: binary_sensor.livingroom_motion # living room
+    style:
+      top: 80%
+      left: 35%
+  - type: state-icon
+    entity: binary_sensor.office_motion # office
+    style:
+      top: 82%
+      left: 70%
+  - type: state-icon
+    entity: binary_sensor.bedroom_motion # bedroom
+    style:
+      top: 50%
+      left: 75%
+  # CAMERAS
+  - type: state-icon
+    entity: camera.lrkitchen
+    style:
+      top: 68%
+      left: 16%
+  - type: state-icon
+    entity: camera.back
+    style:
+      top: 8%
+      left: 30%
+  - type: state-icon
+    entity: camera.porch
+    style:
+      top: 69%
+      left: 5%
+  - type: state-icon
+    entity: camera.garage
+    style:
+      top: 56%
+      left: 5%
+  - type: state-icon
+    entity: camera.front
+    style:
+      top: 96%
+      left: 10%
+  - type: state-icon
+    entity: camera.side
+    style:
+      top: 6%
+      left: 88%
+  - type: state-icon
+    entity: camera.hall
+    style:
+      top: 23%
+      left: 50%
+  - type: state-icon
+    entity: camera.office
+    style:
+      top: 74%
+      left: 80%
+  - type: state-icon
+    entity: camera.bedrm
+    style:
+      top: 62%
+      left: 80%
+  - type: state-icon
+    entity: camera.south
+    style:
+      top: 96%
+      left: 45%
+  - type: state-icon
+    entity: camera.north
+    style:
+      top: 96%
+      left: 55%
+  # TEMPERATURES
+  - type: state-label
+    entity: sensor.porch_temp
+    style:
+      top: 78%
+      left: 6%
+  - type: state-label
+    entity: sensor.bedroomsensor_temperature
+    style:
+      top: 40%
+      left: 60%
+  - type: state-label
+    entity: sensor.pi2graphite_1wire_office
+    style:
+      top: 96%
+      left: 74%
+  - type: state-label
+    entity: sensor.officesensor_temperature
+    style:
+      top: 81%
+      left: 79%
+  - type: state-label
+    entity: sensor.kitchensensor_temperature
+    style:
+      top: 65%
+      left: 25%
+  - type: state-label
+    entity: sensor.lrmotion_temperature
+    style:
+      top: 73%
+      left: 48%
+  - type: state-label
+    entity: sensor.2gig_technologies_ct101_thermostat_iris_temperature
+    style:
+      top: 65%
+      left: 40%
+  - type: state-label
+    entity: sensor.tv_temp
+    style:
+      top: 72%
+      left: 30%
+  # octoprint
+  - type: state-icon
+    entity: camera.octopi
+    style:
+      top: 74%
+      left: 72%
+  - type: state-label
+    entity: sensor.octoprint_current_state
+    style:
+      top: 71%
+      left: 59%
