@@ -49,6 +49,18 @@ config:
 
 recorder:
   purge_keep_days: 30
+  exclude:
+    domains:
+      - group
+      - history_graph
+      - media_player
+      - scan_store
+      - zone
+      - zwave
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date__time
 
 statsd:
   host: 192.168.0.24
