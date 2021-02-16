@@ -19,9 +19,9 @@ views:
               service: switch.turn_on
               service_data:
                 entity_id: switch.bedpi_display
-              entity: switch.couchpi_display
-              icon: 'mdi:tablet-dashboard'
-              name: Display Off
+            entity: switch.couchpi_display
+            icon: 'mdi:tablet-dashboard'
+            name: Display Off
       - type: entities
         title: Alarm
         entities:
