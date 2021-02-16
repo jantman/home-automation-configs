@@ -7,8 +7,10 @@ views:
       - !include /config/lovelace/floorplan.yaml
       - type: entity
         entity: sensor.time
-      - type: light
-        entity: light.ge_45606_2way_dimmer_switch_level
+      - type: grid
+        cards:
+          - type: button
+            entity: light.ge_45606_2way_dimmer_switch_level
       - type: entities
         title: Alarm
         entities:
