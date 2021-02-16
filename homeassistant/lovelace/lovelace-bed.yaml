@@ -13,6 +13,12 @@ views:
             entity: light.ge_45606_2way_dimmer_switch_level
             tap_action:
               action: more-info
+          - type: button
+            tap_action:
+              action: call-service
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.bedpi_display
       - type: entities
         title: Alarm
         entities:
