@@ -220,7 +220,7 @@ switch:
     resource: http://couchpi:8080/
     body_on: '{"state": true}'
     body_off: '{"state": false}'
-    is_on_template: '{{ value_json.is_on }}'
+    is_on_template: '{{ value_json.is_on == false }}'
     headers:
       Content-Type: application/json
     verify_ssl: false
@@ -229,7 +229,7 @@ switch:
     resource: http://bedpi:8080/
     body_on: '{"state": true}'
     body_off: '{"state": false}'
-    is_on_template: '{{ value_json.is_on }}'
+    is_on_template: '{{ value_json.is_on == false }}'
     headers:
       Content-Type: application/json
     verify_ssl: false
