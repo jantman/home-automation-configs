@@ -58,10 +58,15 @@ recorder:
       - scan_store
       - zone
       - zwave
+      - automation
+      - updater
     entities:
       - sensor.date
       - sensor.time
       - sensor.date__time
+      - sun.sun
+      - sensor.date_time_iso # Don't record date and time
+      - sensor.yr_symbol # Ignore this as well
 
 statsd:
   host: 192.168.0.24
