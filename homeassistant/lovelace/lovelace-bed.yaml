@@ -11,6 +11,8 @@ views:
         cards:
           - type: button
             entity: light.ge_45606_2way_dimmer_switch_level
+            tap_action:
+              action: more-info
       - type: entities
         title: Alarm
         entities:
