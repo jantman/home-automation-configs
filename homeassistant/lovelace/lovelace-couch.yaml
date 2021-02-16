@@ -38,7 +38,7 @@ views:
           - type: button
             tap_action:
               action: call-service
-              service: switch.turn_off
+              service: switch.turn_on
               service_data:
                 entity_id: switch.couchpi_display
             entity: switch.couchpi_display
