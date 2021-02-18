@@ -457,3 +457,9 @@ octoprint:
   number_of_tools: 1
 
 scene: !include scenes.yaml
+
+browser_mod:
+  prefix: "browser_"
+  disable:
+    - light
+    - media_player
