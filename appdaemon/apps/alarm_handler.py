@@ -172,6 +172,26 @@ CAMERA_IMAGE_ENTITIES = {
     'binary_sensor.bedroom_motion': {'monitor_id': 7}
 }
 
+#: Dict of alarm entities to camera entity to show
+HASS_CAMERA_ENTITIES = {
+    'binary_sensor.kitchen_motion': 'camera.lrkitchen',
+    'binary_sensor.livingroom_motion': 'camera.lrkitchen',
+    # crawlspace
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_2': 'camera.side',
+    # gate
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_3': 'camera.side',
+    # kitchen
+    'binary_sensor.ecolink_doorwindow_sensor_sensor_4': 'camera.back',
+    # front door
+    'binary_sensor.ecolink_doorwindow_sensor_sensor': 'camera.porch',
+    # back room
+    'binary_sensor.ecolink_motion_detector_sensor': 'camera.hall',
+    # office
+    'binary_sensor.office_motion': 'camera.office',
+    # bedroom
+    'binary_sensor.bedroom_motion': 'camera.bedrm'
+}
+
 #: List of camera entities to turn on when system is armed in AWAY mode, and
 #: turn off when camera is in HOME or DISARMED.
 AWAY_CAMERA_ENTITIES = [
@@ -458,13 +478,15 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         image = None
         if entity in CAMERA_IMAGE_ENTITIES.keys():
             image = self._image_for_camera(**CAMERA_IMAGE_ENTITIES[entity])
+
         self._trigger_alarm(
             subject='ALARM %s TRIGGERED: %s %s' % (a_state, e_name, st_name),
             message='System is in state %s; %s %s changed from %s to %s'
             ' (Interior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image, entity=entity
+            image=image, entity=entity,
+            hass_camera_entity=HASS_CAMERA_ENTITIES.get(entity)
         )
 
     def _handle_state_exterior(self, entity, attribute, old, new, kwargs):
@@ -518,7 +540,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             ' (Exterior Zone)' % (
                 a_state, fmt_entity(entity, kwargs), attribute, old, new
             ),
-            image=image, entity=entity
+            image=image, entity=entity,
+            hass_camera_entity=HASS_CAMERA_ENTITIES.get(entity)
         )
 
     def _handle_trigger_event(self, event_name, data, _):
@@ -636,7 +659,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _trigger_alarm(
         self, subject='Alarm Triggered', message='alarm triggered', image=None,
-        entity=None
+        entity=None, hass_camera_entity=None
     ):
         """Trigger the alarm"""
         self._log.debug(
@@ -672,6 +695,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self.call_service(
             'logbook/log', name=subject, message=message
         )
+        self._browsermod_show_camera(hass_camera_entity)
         self._do_notify_pushover(
             subject, message, image=image, sound='alien'
         )
@@ -1090,3 +1114,12 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 MIMEImage(image, name='frame.jpg')
             )
         self._do_notify_email(msg.as_string())
+
+    def _browsermod_show_camera(self, camera_entity):
+        if camera_entity is None:
+            return
+        self.turn_off('switch.couchpi_display')
+        self.turn_off('switch.bedpi_display')
+        self.call_service(
+            'browser_mod/more_info', entity_id=camera_entity
+        )

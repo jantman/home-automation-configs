@@ -236,6 +236,8 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             )
         else:
             self._notify_pushover(subject, data, img)
+            cam_entity = 'camera.' + data['event']['Monitor']['Name'].lower()
+            self._browsermod_show_camera(camera_entity=cam_entity)
         self._notify_email(subject, data)
 
     def motion_in_street(self, notes):
@@ -306,6 +308,15 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         k = 'zm_url_base_%s' % data.get('hostname', 'guarddog')
         base = self._hass_secrets[k]
         return '%sindex.php' % base
+
+    def _browsermod_show_camera(self, camera_entity):
+        if camera_entity is None:
+            return
+        self.turn_off('switch.couchpi_display')
+        self.turn_off('switch.bedpi_display')
+        self.call_service(
+            'browser_mod/more_info', entity_id=camera_entity
+        )
 
 
 class EmailNotifier(object):
