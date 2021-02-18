@@ -67,6 +67,17 @@ recorder:
       - sun.sun
       - sensor.date_time_iso # Don't record date and time
       - sensor.yr_symbol # Ignore this as well
+      - sensor.back_events
+      - sensor.bedrm_events
+      - sensor.lrkitchen_events
+      - sensor.office_events
+      - sensor.porch_events
+      - sensor.side_events
+      - sensor.hall_events
+      - sensor.front_events
+      - sensor.garage_events
+      - sensor.gate_events
+      - weather.dark_sky
 
 statsd:
   host: 192.168.0.24
