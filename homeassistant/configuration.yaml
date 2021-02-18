@@ -61,11 +61,17 @@ recorder:
       - zwave
       - automation
       - updater
+      - camera
     entities:
       - sensor.date
       - sensor.time
+      - sensor.date_time
+      - sensor.date_time_utc
+      - sensor.time_date
+      - sensor.time_utc
+      - sensor.date_time_iso
+      - sensor.internet_time
       - sun.sun
-      - sensor.date_time_iso # Don't record date and time
       - sensor.yr_symbol # Ignore this as well
       - sensor.back_events
       - sensor.bedrm_events
@@ -78,6 +84,10 @@ recorder:
       - sensor.garage_events
       - sensor.gate_events
       - weather.dark_sky
+    entity_globs:
+      - sensor.*_sourcenodeid
+      - sensor.*_events
+      - sensor.*_indicator
 
 statsd:
   host: 192.168.0.24
