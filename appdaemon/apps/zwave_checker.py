@@ -10,8 +10,8 @@ import logging
 from datetime import time
 import appdaemon.plugins.hass.hassapi as hass
 from dateutil.parser import parse
-from datetime import timedelta
-from humanize import naturaltime, datetime
+from datetime import timedelta, datetime
+from humanize import naturaltime
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
