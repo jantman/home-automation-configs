@@ -12,6 +12,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from dateutil.parser import parse
 from datetime import timedelta, datetime
 from humanize import naturaltime
+import re
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
