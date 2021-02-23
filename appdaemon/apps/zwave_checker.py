@@ -55,6 +55,10 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             prob.append('Failed')
         if batt <= BATTERY_THRESHOLD:
             prob.append('Battery Level: %d' % batt)
+        self._log.debug(
+            'Entity %s has receivedTS "%s" (len %d)',
+            ename, a['receivedTS'], len(a['receivedTS'])
+        )
         if len(a['receivedTS']) == 23:
             ts = parse(a['receivedTS'][:19])
         else:
