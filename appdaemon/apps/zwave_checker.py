@@ -12,7 +12,6 @@ import appdaemon.plugins.hass.hassapi as hass
 from dateutil.parser import parse
 from datetime import timedelta, datetime
 from humanize import naturaltime
-import re
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
@@ -22,9 +21,6 @@ BATTERY_THRESHOLD = 60
 
 #: Threshold for last message received from node
 LAST_RECV_THRESHOLD = timedelta(hours=4)
-
-#: Regex to parse receivedTS
-LAST_RECV_RE = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}):\d{3}$')
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
@@ -59,11 +55,10 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             prob.append('Failed')
         if batt <= BATTERY_THRESHOLD:
             prob.append('Battery Level: %d' % batt)
-        ts_str = a['receivedTS']
-        m = LAST_RECV_RE.match(ts_str)
-        if m:
-            ts_str = m.group(1)
-        ts = parse(ts_str)
+        if len(a['receivedTS']) == 23:
+            ts = parse(a['receivedTS'][:19])
+        else:
+            ts = parse(a['receivedTS'])
         age = datetime.now() - ts
         if age > LAST_RECV_THRESHOLD:
             prob.append(
