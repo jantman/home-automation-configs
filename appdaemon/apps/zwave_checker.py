@@ -9,12 +9,18 @@ NOTIFY_SERVICE.
 import logging
 from datetime import time
 import appdaemon.plugins.hass.hassapi as hass
+from dateutil.parser import parse
+from datetime import timedelta
+from humanize import naturaltime, datetime
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
 
 #: Threshold below which battery level will trigger an alert.
 BATTERY_THRESHOLD = 60
+
+#: Threshold for last message received from node
+LAST_RECV_THRESHOLD = timedelta(hours=4)
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
@@ -49,9 +55,16 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             prob.append('Failed')
         if batt <= BATTERY_THRESHOLD:
             prob.append('Battery Level: %d' % batt)
+        ts = parse(a['receivedTS'])
+        age = datetime.now() - ts
+        if age > LAST_RECV_THRESHOLD:
+            prob.append(
+                'Last message received %s' % naturaltime(age)
+            )
         if len(prob) == 0:
             self._log.debug(
-                '%s - failed=%s battery_level=%s', ename, failed, batt
+                '%s - failed=%s battery_level=%s last_recv=%s',
+                ename, failed, batt, naturaltime(age)
             )
             return []
         return ['%s: %s' % (ename, '; '.join(prob))]
@@ -60,18 +73,6 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         problems = []
         for e in self.get_state('zwave').values():
             problems.extend(self._check_zwave_entity(e))
-        for e in self.get_state('sensor').values():
-            if not e['entity_id'].endswith('_battery_level'):
-                continue
-            try:
-                val = float(e.get('state', 0.0))
-            except Exception:
-                val = 0.0
-            self._log.debug(
-                '%s - battery_level=%s', e['entity_id'], val
-            )
-            if val <= BATTERY_THRESHOLD:
-                problems.append('%s - state=%s' % (e['entity_id'], val))
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
