@@ -32,6 +32,13 @@ NOTIFY_SERVICE = 'notify/gmail'
 #: at runtime via events. See ``sane_app_logging.py``.
 LOG_DEBUG = False
 
+#: Entities to ignore
+IGNORE_ENTITIES = [
+    'zwave.aeotec_zw090_zstick_gen5_us',
+    'zwave.linear_wa105dbz1_main_operated_siren',
+    'zwave.ecolink_unknown_type_0005_id_000a',
+]
+
 
 class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
@@ -76,6 +83,9 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
     def _check_zwave(self, *args, **kwargs):
         problems = []
         for e in self.get_state('zwave').values():
+            if e['entity_id'] in IGNORE_ENTITIES:
+                self._log.debug('Ignore entity %s', e['entity_id'])
+                continue
             problems.extend(self._check_zwave_entity(e))
         if len(problems) < 1:
             self._log.info('No problems found.')
