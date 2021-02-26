@@ -1,4 +1,4 @@
-aiohttp==3.5.4
+aiohttp==3.7.4
 aiohttp-cors==0.7.0
 aiohttp-jinja2==1.1.1
 asn1crypto==0.24.0
