@@ -102,7 +102,7 @@ class ImageAnalyzer:
 
     def __init__(self, detector, monitor_zones, hostname):
         self._monitor_zones = monitor_zones
-        self._monitor_id = monitor_zones[0].MonitorId
+        self._monitor_id = list(monitor_zones.values())[0].MonitorId
         self._hostname = hostname
         self._detector = detector
 
