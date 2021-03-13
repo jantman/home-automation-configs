@@ -54,7 +54,7 @@ class IgnoredObject(object):
         self._callable = callable
         self._no_zone = no_zone
 
-    def should_ignore(self, label, x, y, w, h, zones, score):
+    def should_ignore(self, label, x, y, w, h, zones, score, monitor_id):
         """
         Return True if this object should be ignored based on the parameters of
         this filter, False otherwise.
@@ -74,9 +74,13 @@ class IgnoredObject(object):
         :param score: the score/confidence of the detection, as a decimal
           percentage (0 to 1)
         :type score: float
+        :param monitor_id: the Monitor ID
+        :type monitor_id: str
         :return: whether or not to ignore the object
         :rtype: bool
         """
+        if self._monitor_num != monitor_id:
+            return False
         if self._labels is not None and label not in self._labels:
             # labels specified, but no matches with this detection
             return False

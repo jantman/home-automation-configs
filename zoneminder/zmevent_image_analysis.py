@@ -102,6 +102,7 @@ class ImageAnalyzer:
 
     def __init__(self, detector, monitor_zones, hostname):
         self._monitor_zones = monitor_zones
+        self._monitor_id = monitor_zones[0].MonitorId
         self._hostname = hostname
         self._detector = detector
 
@@ -154,7 +155,7 @@ class ImageAnalyzer:
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
                 foo.name for foo in IGNORED_OBJECTS.get(self._hostname, [])
-                if foo.should_ignore(cat, x, y, w, h, zones, score)
+                if foo.should_ignore(cat, x, y, w, h, zones, score, self._monitor_id)
             ]
             if len(matched_filters) > 0:
                 # object should be ignored
