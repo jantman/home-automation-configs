@@ -153,10 +153,9 @@ IGNORED_OBJECTS = {
         #
         # Ignore cars off my property...
         IgnoredObject(
-            'SideStreetCar',
-            ['car', 'truck', 'bus', 'train'],
+            'SideVehicles',
+            ['car', 'truck', 'bus', 'train', 'fire hydrant'],
             monitor_num=5,
-            zone_names=['Street1']
         ),
         IgnoredObject(
             'SideGiantPerson',
@@ -232,18 +231,26 @@ IGNORED_OBJECTS = {
             'FrontRoadCamera',
             ['person'],
             zone_names=['RoadCamera'],
+            monitor_num=9,
         ),
         IgnoredObject(
             'FrontNoZone',
             ['person'],
             no_zone=True,
+            monitor_num=9,
+        ),
+        IgnoredObject(
+            'GarageAsUmbrella'
+            ['umbrella'],
+            monitor_num=9,
+            bounding_box=(1599,652,40,40),
         ),
         #
         # MONITOR 10 - GARAGE
         #
         IgnoredObject(
             'GarageCrap',
-            ['aeroplane',],
+            ['aeroplane', 'car',],
             monitor_num=10,
         ),
     ],
