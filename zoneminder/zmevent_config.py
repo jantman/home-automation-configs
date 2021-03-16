@@ -240,7 +240,7 @@ IGNORED_OBJECTS = {
             monitor_num=9,
         ),
         IgnoredObject(
-            'GarageAsUmbrella'
+            'GarageAsUmbrella',
             ['umbrella'],
             monitor_num=9,
             bounding_box=(1599,652,40,40),
