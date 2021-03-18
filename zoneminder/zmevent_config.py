@@ -154,7 +154,7 @@ IGNORED_OBJECTS = {
         # Ignore cars off my property...
         IgnoredObject(
             'SideVehicles',
-            ['car', 'truck', 'bus', 'train', 'fire hydrant'],
+            ['car', 'truck', 'bus', 'train', 'fire hydrant',],
             monitor_num=5,
         ),
         IgnoredObject(
@@ -165,7 +165,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'SideCrap',
-            ['toothbrush', 'traffic light', 'giraffe', 'banana',],
+            ['toothbrush', 'traffic light', 'giraffe', 'banana', 'baseball bat',],
             monitor_num=5,
         ),
         #
@@ -250,7 +250,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'GarageCrap',
-            ['aeroplane', 'car',],
+            ['aeroplane', 'car', 'toaster'],
             monitor_num=10,
         ),
     ],
