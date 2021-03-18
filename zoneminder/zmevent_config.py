@@ -143,6 +143,11 @@ IGNORED_OBJECTS = {
         # MONITOR 4 - BACK
         #
         IgnoredObject(
+            'BackCrap',
+            ['chair', 'bench', 'diningtable', 'umbrella'],
+            monitor_num=4,
+        ),
+        IgnoredObject(
             'BackStreetCar',
             ['car', 'truck', 'bus', 'train', 'kite', 'boat'],
             monitor_num=4,
@@ -154,7 +159,7 @@ IGNORED_OBJECTS = {
         # Ignore cars off my property...
         IgnoredObject(
             'SideVehicles',
-            ['car', 'truck', 'bus', 'train', 'fire hydrant',],
+            ['car', 'truck', 'bus', 'train', 'fire hydrant'],
             monitor_num=5,
         ),
         IgnoredObject(
@@ -165,8 +170,20 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'SideCrap',
-            ['toothbrush', 'traffic light', 'giraffe', 'banana', 'baseball bat', 'sports ball', ],
+            ['toothbrush', 'traffic light', 'giraffe', 'banana', 'baseball bat', 'sports ball'],
             monitor_num=5,
+        ),
+        IgnoredObject(
+            'SidePersonInStreet',
+            ['person'],
+            monitor_num=5,
+            zone_names=['Street1', 'Street2'],
+        ),
+        IgnoredObject(
+            'SidePersonNoZone',
+            ['person'],
+            monitor_num=5,
+            no_zone=True,
         ),
         #
         # MONITOR 6 - OFFICE
@@ -250,7 +267,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'GarageCrap',
-            ['aeroplane', 'car', 'toaster'],
+            ['aeroplane', 'car', 'toaster', 'truck'],
             monitor_num=10,
         ),
     ],
