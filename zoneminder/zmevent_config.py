@@ -170,7 +170,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'SideCrap',
-            ['toothbrush', 'traffic light', 'giraffe', 'banana', 'baseball bat', 'sports ball'],
+            ['toothbrush', 'traffic light', 'giraffe', 'banana', 'baseball bat', 'sports ball', 'frisbee'],
             monitor_num=5,
         ),
         IgnoredObject(
@@ -267,7 +267,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'GarageCrap',
-            ['aeroplane', 'car', 'toaster', 'truck'],
+            ['aeroplane', 'car', 'toaster', 'truck', 'toilet', 'parking meter'],
             monitor_num=10,
         ),
     ],
