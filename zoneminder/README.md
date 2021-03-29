@@ -80,6 +80,41 @@ I now have three of these; two are the IP2M-852W models which have WiFi and wire
 
 After that, I added the wireless MAC address for the camera to my access point's ACL and then set up a static IP, local DNS, and outbound traffic reject the same way I did for the wired MAC. I then configured the WiFi connection in the camera's Setup UI, ensured it connected to the network properly, and unplugged the wired Ethernet.
 
+### [IP8M-2496EB](https://amcrest.com/amcrest-ultrahd-4k-8mp-bullet-poe-ip-camera-security-3840x2160-131ft-nightvision-2-8mm-lens-ip67-weatherproof-microsd-recording-black-ip8m-2496eb.html) Exterior 4K/8MP Camera
+
+1. Get the wired MAC address of the camera from the label on it.
+2. On my [Ubiquiti](https://www.ubnt.com/) router, assign the camera's wired MAC a static IP in the IoT subnet and local DNS.
+3. Plug the camera in to my switch and power it on. Wait a few minutes and then access the builtin HTTP web interface at the IP I assigned.
+4. Log in with the default username/password (admin/admin) and change the password.
+5. Browse through the "setup" portion of the UI and record some of the current/default settings and information:
+   1. "Information" -> "Version" - record all versions
+      * Software Version: ``V2.622.00AC000.0.R, Build Date: 2019-10-24``
+      * WEB Version: ``V3.2.1.677800``
+      * ONVIF Version: ``16.12(V2.4.3.651299)``
+   2. "Camera" -> "Video"
+      * Video tab
+        * Set main stream to H.264H 3840*2160, 10 FPS, CBR, bit rate 4096, watermark to camera hostname
+        * Set sub stream to MJPEG, VGA, 10 FPS, bit rate 1024
+      * Overlay tab
+        * Set Channel Title to the name of the camera (ZM input)
+        * Set Logo Overlay to disabled
+   3. "Network" -> "TCP/IP" - change hostname; record wireless MAC; disable P2P
+   4. "Network" -> "Port" - record all ports
+   5. "Network" -> ("DDNS", "IP Filter", "SMTP", "UPnP") - ensure all are disabled (including UPnP "Start Device Discover")
+   7. "Network" -> "HTTPs" - ensure disabled
+   8. "System" -> "General" -> "Date & Time" - enable NTP
+   9. "System" -> "Export" - export a configuration file and save it.
+   10. "Event" - disable all of them for now
+6. Place the new camera and wire it (if needed).
+7. Add the new camera to various configurations of mine:
+  * My nightly ``network_backups.sh`` script to backup the configuration and information about the camera
+  * [/appdaemon/apps/alarm_handler.py](/appdaemon/apps/alarm_handler.py) ``AWAY_CAMERA_ENTITIES`` and ``CAMERA_IMAGE_ENTITIES``
+  * If needed, [/appdaemon/apps/zmevent_alarm_handler.py](/appdaemon/apps/zmevent_alarm_handler.py) ``HOME_IGNORE_MONITORS``
+  * [/homeassistant/configuration.yaml](/homeassistant/configuration.yaml) ``logbook -> exclude -> entities`` and a ``silence_monitor_ZM-MONITOR-NAME`` input boolean
+  * [/homeassistant/ui-lovelace.yaml](/homeassistant/ui-lovelace.yaml) - entries similar to the other monitors
+8. Add as a monitor in ZM and configure similarly to the others; set up zones and motion detection.
+9. Once motion detection starts running and alerting, add ``IgnoredObject`` instances to [/zoneminder/zmevent_config.py](/zoneminder/zmevent_config.py) ``IGNORED_OBJECTS`` as needed.
+
 ## Writing Alarm Analysis Images
 
 ### Telescreen (ZoneMinder 1.32.3)
