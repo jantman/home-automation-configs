@@ -22,6 +22,14 @@ views:
             entity: switch.bedpi_display
             icon: 'mdi:tablet-dashboard'
             name: Display Off
+          - type: button
+            tap_action:
+              action: toggle
+              service_data:
+                entity_id: switch.bedroomtvpower_on_off
+            entity: switch.bedroomtvpower_on_off
+            icon: 'mdi:television'
+            name: Bedroom TV
       - type: entities
         title: Alarm
         entities:
