@@ -267,7 +267,7 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'GarageCrap',
-            ['aeroplane', 'car', 'toaster', 'truck', 'toilet', 'parking meter'],
+            ['aeroplane', 'car', 'toaster', 'truck', 'toilet', 'parking meter', 'suitcase'],
             monitor_num=10,
         ),
     ],
