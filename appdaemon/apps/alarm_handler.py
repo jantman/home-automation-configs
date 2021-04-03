@@ -1116,10 +1116,23 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._do_notify_email(msg.as_string())
 
     def _turn_off_callback(self, kwargs):
-        self.turn_off(kwargs['entity_id'])
+        try:
+            self.turn_off(kwargs['entity_id'])
+        except Exception as ex:
+            self._log.error(
+                'Exception turning off %s: %s', kwargs['entity_id'], ex
+            )
+            raise
 
     def _call_service_callback(self, kwargs):
-        self.call_service(kwargs['service'], **kwargs['service_kwargs'])
+        try:
+            self.call_service(kwargs['service'], **kwargs['service_kwargs'])
+        except Exception as ex:
+            self._log.error(
+                'Exception calling service: %s %s: %s',
+                kwargs['service'], kwargs['service_kwargs'], ex
+            )
+            raise
 
     def _browsermod_show_camera(self, camera_entity):
         if camera_entity is None:
