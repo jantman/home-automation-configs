@@ -270,6 +270,13 @@ IGNORED_OBJECTS = {
             ['aeroplane', 'car', 'toaster', 'truck', 'toilet', 'parking meter', 'suitcase'],
             monitor_num=10,
         ),
+        # YOLO seems to identify the ridges on the Jeep hard top as cups...
+        IgnoredObject(
+            'GarageCup',
+            ['cup', 'wine glass'],
+            monitor_num=10,
+            zone_names=['CloseBy'],
+        ),
     ],
     'telescreen': [
         #
