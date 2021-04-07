@@ -48,6 +48,7 @@ frontend:
 config:
 
 recorder:
+  db_url: mysql://hassuser:hasspass@172.19.0.1/hass?charset=utf8mb4
   purge_keep_days: 30
   auto_purge: true
   commit_interval: 30
