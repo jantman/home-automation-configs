@@ -412,9 +412,9 @@ alexa:
         # FrontDoor
         - binary_sensor.ecolink_doorwindow_sensor_sensor
         # Crawlspace
-        - binary_sensor.ecolink_doorwindow_sensor_sensor_2
+        - binary_sensor.crawlspace_sensor
         # Gate
-        - binary_sensor.ecolink_doorwindow_sensor_sensor_3
+        - binary_sensor.gate_sensor
         # KitchenDoor
         - binary_sensor.ecolink_doorwindow_sensor_sensor_4
         # Back Bedroom Motion

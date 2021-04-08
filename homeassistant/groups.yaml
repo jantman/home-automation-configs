@@ -1,8 +1,8 @@
 doors:
   name: Doors
   entities:
-    - binary_sensor.ecolink_doorwindow_sensor_sensor_2
-    - binary_sensor.ecolink_doorwindow_sensor_sensor_3
+    - binary_sensor.crawlspace_sensor
+    - binary_sensor.gate_sensor
     - binary_sensor.ecolink_doorwindow_sensor_sensor_4
     - binary_sensor.ecolink_doorwindow_sensor_sensor
 motion:

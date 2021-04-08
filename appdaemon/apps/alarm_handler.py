@@ -151,9 +151,9 @@ CAMERA_IMAGE_ENTITIES = {
     'binary_sensor.kitchen_motion': {'monitor_id': 2, 'ptz_preset': 2},
     'binary_sensor.livingroom_motion': {'monitor_id': 2, 'ptz_preset': 1},
     # crawlspace
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_2': {'monitor_id': 5},
+    'binary_sensor.crawlspace_sensor': {'monitor_id': 5},
     # gate
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_3': {'monitor_id': 5},
+    'binary_sensor.gate_sensor': {'monitor_id': 5},
     # kitchen
     'binary_sensor.ecolink_doorwindow_sensor_sensor_4': {
         'monitor_id': 2, 'ptz_preset': 2, 'second_monitor_id': 4
@@ -177,9 +177,9 @@ HASS_CAMERA_ENTITIES = {
     'binary_sensor.kitchen_motion': 'camera.lrkitchen',
     'binary_sensor.livingroom_motion': 'camera.lrkitchen',
     # crawlspace
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_2': 'camera.side',
+    'binary_sensor.crawlspace_sensor': 'camera.side',
     # gate
-    'binary_sensor.ecolink_doorwindow_sensor_sensor_3': 'camera.side',
+    'binary_sensor.gate_sensor': 'camera.side',
     # kitchen
     'binary_sensor.ecolink_doorwindow_sensor_sensor_4': 'camera.back',
     # front door

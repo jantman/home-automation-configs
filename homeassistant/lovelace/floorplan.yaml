@@ -72,13 +72,13 @@ elements:
   # DOORS
   - type: state-icon
     title: Crawlspace Door
-    entity: binary_sensor.ecolink_doorwindow_sensor_sensor_2 # crawlspace
+    entity: binary_sensor.crawlspace_sensor # crawlspace
     style:
       top: 93%
       left: 86%
   - type: state-icon
     title: Gate
-    entity: binary_sensor.ecolink_doorwindow_sensor_sensor_3 # Gate
+    entity: binary_sensor.gate_sensor # Gate
     style:
       top: 6%
       left: 96%
