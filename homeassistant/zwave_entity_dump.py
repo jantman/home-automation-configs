@@ -8,8 +8,8 @@ from collections import defaultdict
 hass_token = os.environ['TOKEN']
 host = os.environ.get('HASS_HOST', '127.0.0.1')
 r = requests.get(
-    f'http://{host}:8123/api/states',
-    headers={'Authorization': f'Bearer {hass_token}'}
+    'http://%s:8123/api/states' % host,
+    headers={'Authorization': 'Bearer %s' % hass_token}
 )
 r.raise_for_status()
 states = r.json()
