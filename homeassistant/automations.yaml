@@ -374,6 +374,32 @@
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Home
+- alias: Arm at 2100 if I am home
+  trigger:
+    platform: time
+    at: "21:00:00"
+  condition:
+    # device must be home
+    - condition: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      state: 'home'
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
+- alias: Arm at 2300 if I am home
+  trigger:
+    platform: time
+    at: "23:00:00"
+  condition:
+    # device must be home
+    - condition: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      state: 'home'
+  action:
+    - event: CUSTOM_ALARM_STATE_SET
+      event_data:
+        state: Home
 ################################################################################
 # BEGIN Button box handling                                                    #
 ################################################################################
