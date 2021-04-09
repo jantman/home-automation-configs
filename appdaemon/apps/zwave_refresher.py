@@ -12,7 +12,12 @@ RUN_INTERVAL = 300  # seconds
 INTER_ENTITY_DELAY = 15  # seconds
 
 REFRESH_NODES = {
-    'zwave.2gig_technologies_ct101_thermostat_iris': 5
+    'zwave.2gig_technologies_ct101_thermostat_iris': 5,
+    'zwave.ge_45606_2way_dimmer_switch': 19,
+    'zwave.ge_45606_2way_dimmer_switch_2': 20,
+    'zwave.jasco_products_45606_2_way_dimmer_switch': 22,
+    'zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb': 16,
+    'zwave.linear_lb60z1_dimmable_led_light_bulb': 14,
 }
 
 #: Default for info-as-debug logging via LogWrapper; can be overridden
