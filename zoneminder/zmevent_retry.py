@@ -77,6 +77,7 @@ class ZmEventRetrier:
         return True
 
     def run(self, do_sleep=True):
+        logger.warning('Running zmevent_retry.py')
         while True:
             g = os.path.join(RETRY_DIR + '*.json')
             files = sorted(glob.glob(g))
@@ -107,7 +108,9 @@ def parse_args(argv):
 
 def main():
     # populate secrets from environment variables
+    logger.info('Populating secrets')
     populate_secrets()
+    logger.info('Done populating secrets')
     # parse command line arguments
     args = parse_args(sys.argv[1:])
     # set logging level
