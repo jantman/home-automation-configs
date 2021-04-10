@@ -111,22 +111,23 @@ def parse_args(argv):
     return args
 
 
-def set_log_info():
+def set_log_info(l):
     """set logger level to INFO"""
-    set_log_level_format(logging.INFO,
+    set_log_level_format(l, logging.INFO,
                          '%(asctime)s %(levelname)s:%(name)s:%(message)s')
 
 
-def set_log_debug():
+def set_log_debug(l):
     """set logger level to DEBUG, and debug-level output format"""
     set_log_level_format(
+        l,
         logging.DEBUG,
         "%(asctime)s [%(levelname)s %(filename)s:%(lineno)s - "
         "%(name)s.%(funcName)s() ] %(message)s"
     )
 
 
-def set_log_level_format(level, format):
+def set_log_level_format(l, level, format):
     """
     Set logger level and format.
 
@@ -136,8 +137,8 @@ def set_log_level_format(level, format):
     :type format: str
     """
     formatter = logging.Formatter(fmt=format)
-    logger.handlers[0].setFormatter(formatter)
-    logger.setLevel(level)
+    l.handlers[0].setFormatter(formatter)
+    l.setLevel(level)
 
 
 if __name__ == "__main__":
@@ -145,9 +146,9 @@ if __name__ == "__main__":
 
     # set logging level
     if args.verbose > 1:
-        set_log_debug()
+        set_log_debug(logger)
     else:
-        set_log_info()
+        set_log_info(logger)
 
     start_dt = parse(args.START_TIME)
     end_dt = parse(args.END_TIME)
