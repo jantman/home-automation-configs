@@ -115,9 +115,9 @@ def main():
     args = parse_args(sys.argv[1:])
     # set logging level
     if args.verbose > 1:
-        set_log_debug()
+        set_log_debug(logger)
     else:
-        set_log_info()
+        set_log_info(logger)
     ZmEventRetrier().run(do_sleep=args.sleep)
 
 
