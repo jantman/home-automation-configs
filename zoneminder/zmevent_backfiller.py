@@ -106,7 +106,8 @@ def parse_args(argv):
     p.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                    default=False, help='Dry run - only log what would be done')
     p.add_argument('-i', '--id', dest='FIRST_EVENT_ID', action='store',
-                   type=int, help='first Event ID to check')
+                   type=int, help='first Event ID to check',
+                   default=RETRY_START_ID)
     args = p.parse_args(argv)
     return args
 
