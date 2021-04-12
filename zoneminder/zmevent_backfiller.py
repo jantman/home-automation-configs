@@ -82,7 +82,7 @@ class ZmEventBackfiller(object):
             'Looking for events after %d needing analysis...', min_event_id
         )
         sql = 'SELECT e.*,ia.Results FROM (' \
-              'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events' \
+              'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
               'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
               ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
               'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
