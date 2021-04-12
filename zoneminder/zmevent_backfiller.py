@@ -33,7 +33,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
 from zmevent_config import (
-    ANALYSIS_TABLE_NAME, CONFIG
+    ANALYSIS_TABLE_NAME, CONFIG, RETRY_START_ID
 )
 from zmevent_handler import (
     handle_event, populate_secrets, setup_library_logging
@@ -61,13 +61,15 @@ class ZmEventBackfiller(object):
             charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
         )
 
-    def run(self, min_event_id, sleep_time=0):
+    def run(self, min_event_id=RETRY_START_ID, sleep_time=0, dry_run=False):
         events = self._find_events(min_event_id)
         logger.info('Found %d events needing analysis', len(events))
         count = 0
         for evt in events:
             count += 1
             print('Handling event: %s' % evt)
+            if dry_run:
+                continue
             handle_event(evt['Id'], evt['MonitorId'], evt['Cause'])
             print('Finished event %d of %d' % (count, len(events)))
             if sleep_time > 0:
@@ -75,14 +77,17 @@ class ZmEventBackfiller(object):
                 sleep(sleep_time)
         print('Done.')
 
-    def _find_events(self, min_event_id):
+    def _find_events(self, min_event_id=RETRY_START_ID):
         logger.info(
             'Looking for events after %d needing analysis...', min_event_id
         )
-        sql = 'SELECT Id,MonitorId,Cause FROM Events WHERE Id ' \
-              'NOT IN ( ' \
-              'SELECT EventId FROM %s' \
-              ') AND Id > %d;' % (ANALYSIS_TABLE_NAME, min_event_id)
+        sql = 'SELECT e.*,ia.Results FROM (' \
+              'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events' \
+              'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
+              ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
+              'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
+              'e.Id < (SELECT MAX(EventId) FROM' \
+              '%s);' % (min_event_id, ANALYSIS_TABLE_NAME)
         with self._conn.cursor() as cursor:
             logger.debug('EXECUTE: %s', sql)
             cursor.execute(sql)
@@ -98,8 +103,10 @@ def parse_args(argv):
                    help='verbose output. specify twice for debug-level output.')
     p.add_argument('-s', '--sleep', dest='sleep', action='store', default=0.0,
                    type=float, help='Time to sleep between each event')
-    p.add_argument('FIRST_EVENT_ID', action='store', type=int,
-                   help='first Event ID to check')
+    p.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
+                   default=False, help='Dry run - only log what would be done')
+    p.add_argument('-i', '--id', dest='FIRST_EVENT_ID', action='store',
+                   type=int, help='first Event ID to check')
     args = p.parse_args(argv)
     return args
 
@@ -114,7 +121,10 @@ def main():
         set_log_debug(logger)
     else:
         set_log_info(logger)
-    ZmEventBackfiller().run(args.FIRST_EVENT_ID, sleep_time=args.sleep)
+    ZmEventBackfiller().run(
+        min_event_id=args.FIRST_EVENT_ID, sleep_time=args.sleep,
+        dry_run=args.dry_run
+    )
 
 
 if __name__ == "__main__":

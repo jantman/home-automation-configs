@@ -42,6 +42,9 @@ STATSD_PORT = 8125
 #: Directory to store retry files in
 RETRY_DIR = '/var/cache/zoneminder/analysis-retries/'
 
+#: Minimum event ID to backfill or retry
+RETRY_START_ID = 626707
+
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
 CONFIG = {
@@ -58,6 +61,7 @@ if node() == 'telescreen':
     CONFIG['BASE_URL'] = 'http://redirect.jasonantman.com/telescreen/'
     ZM_HOSTNAME = 'telescreen'
     CONFIG['HASS_API_URL'] = 'http://192.168.0.102:8123/api'
+    RETRY_START_ID = 589845
 
 
 def populate_secrets():
