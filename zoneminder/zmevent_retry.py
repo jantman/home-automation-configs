@@ -95,14 +95,14 @@ class ZmEventRetrier:
                   '%s) ORDER BY e.Id DESC;' % (
                 RETRY_START_ID, ANALYSIS_TABLE_NAME
             )
-            result = {}
             with self._conn.cursor() as cursor:
                 logger.debug('EXECUTE: %s', sql)
                 rows = cursor.execute(sql)
                 logger.info('Found %d events needing analysis', rows)
                 statsd_set_gauge('zmevent.needs_retry', rows)
                 result = cursor.fetchone()
-            self._handle_one(result['Id'], result['MonitorId'], result['Cause'])
+            if rows > 0:
+                self._handle_one(result['Id'], result['MonitorId'], result['Cause'])
             if do_sleep:
                 time.sleep(10)
 
