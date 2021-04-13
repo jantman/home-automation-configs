@@ -38,7 +38,7 @@ from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
 from statsd_utils import statsd_set_gauge, statsd_increment_counter
 from zmevent_handler import (
-    send_to_hass, _set_event_name, update_event_name, set_retry, handle_event,
+    send_to_hass, _set_event_name, update_event_name, handle_event,
     event_to_hass
 )
 from zm_videoizer import set_log_debug, set_log_info
