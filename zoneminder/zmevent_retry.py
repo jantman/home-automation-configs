@@ -95,6 +95,7 @@ class ZmEventRetrier:
                   '%s) ORDER BY e.Id DESC;' % (
                 RETRY_START_ID, ANALYSIS_TABLE_NAME
             )
+            result = {}
             with self._conn.cursor() as cursor:
                 logger.debug('EXECUTE: %s', sql)
                 rows = cursor.execute(sql)
