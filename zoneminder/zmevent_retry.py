@@ -30,13 +30,13 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
     HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets,
-    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES, RETRY_DIR
+    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES, RETRY_START_ID
 )
 from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
 from zmevent_filters import *
 from zmevent_ir_change import handle_ir_change
-from statsd_utils import statsd_increment_counter
+from statsd_utils import statsd_set_gauge, statsd_increment_counter
 from zmevent_handler import (
     send_to_hass, _set_event_name, update_event_name, set_retry, handle_event,
     event_to_hass
@@ -53,44 +53,55 @@ logger = logging.getLogger()
 class ZmEventRetrier:
 
     def __init__(self):
-        pass
+        logger.debug('Connecting to MySQL')
+        self._conn = pymysql.connect(
+            host='localhost', user=CONFIG['MYSQL_USER'],
+            password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
+            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+        )
 
-    def _handle_one(self, fname):
-        logger.info('Handling: %s', fname)
-        with open(fname, 'r') as fh:
-            data = json.load(fh)
-        logger.info('Handling event: %s', data)
+    def _handle_one(self, event_id, monitor_id, cause):
+        logger.info(
+            'Handling: event_id=%s monitor_id=%s cause=%s',
+            event_id, monitor_id, cause
+        )
         result, zones, success, event = handle_event(
-            data['event_id'], data['monitor_id'], data['cause'],
-            num_retries=data.get('num_retries', 0)
+            event_id, monitor_id, cause
         )
         if not success:
             logger.info('No success.')
+            statsd_increment_counter('analyze_event.retries_failed')
             return False
         if event.StartTime >= datetime.now() - timedelta(minutes=10):
             event_to_hass(
                 data['monitor_id'], data['event_id'], result, zones
             )
-        statsd_increment_counter(
-            'analyze_event.num_retries', increment=data['num_retries'] + 1
-        )
+        statsd_increment_counter('analyze_event.retries_succeeded')
         return True
 
     def run(self, do_sleep=True):
         logger.warning('Running zmevent_retry.py')
         while True:
-            g = os.path.join(RETRY_DIR + '*.json')
-            files = sorted(glob.glob(g))
-            if files:
-                logger.info(
-                    'Found %d files to process; handling first', len(files)
-                )
-                res = self._handle_one(files[0])
-                if res:
-                    logger.info('Success; remove: %s', files[0])
-                    os.unlink(files[0])
-            else:
-                logger.debug('No files to handle in: %s', g)
+            logger.info(
+                'Looking for events after %d needing analysis...',
+                RETRY_START_ID
+            )
+            sql = 'SELECT e.*,ia.Results FROM (' \
+                  'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
+                  'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
+                  ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
+                  'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
+                  'e.Id < (SELECT MAX(EventId) FROM ' \
+                  '%s) ORDER BY e.Id DESC;' % (
+                RETRY_START_ID, ANALYSIS_TABLE_NAME
+            )
+            with self._conn.cursor() as cursor:
+                logger.debug('EXECUTE: %s', sql)
+                rows = cursor.execute(sql)
+                logger.info('Found %d events needing analysis', rows)
+                statsd_set_gauge('zmevent.needs_retry', rows)
+                result = cursor.fetchone()
+            self._handle_one(result['Id'], result['MonitorId'], result['Cause'])
             if do_sleep:
                 time.sleep(10)
 

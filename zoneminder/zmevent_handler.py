@@ -62,7 +62,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from zmevent_config import (
     LOG_PATH, MIN_LOG_LEVEL, ANALYSIS_TABLE_NAME, DateSafeJsonEncoder,
     HASS_EVENT_NAME, CONFIG, HASS_IGNORE_MONITOR_IDS, populate_secrets,
-    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES, RETRY_DIR
+    HASS_IGNORE_EVENT_NAME_RES, HASS_IGNORE_MONITOR_ZONES
 )
 from zmevent_analyzer import ImageAnalysisWrapper
 from zmevent_models import ZMEvent
@@ -241,24 +241,6 @@ def update_event_name(event, analysis, filters, dry_run=False):
     return name, zones
 
 
-def set_retry(event_id, monitor_id, cause, dry_run=False, num_retries=0):
-    if dry_run:
-        return
-    fpath = os.path.join(RETRY_DIR, '%s.json' % event_id)
-    try:
-        logger.debug('Writing retry data to: %s', fpath)
-        with open(fpath, 'w') as fh:
-            fh.write(json.dumps({
-                'event_id': event_id,
-                'monitor_id': monitor_id,
-                'cause': cause,
-                'num_retries': num_retries
-            }))
-        logger.info('Wrote retry data to: %s', fpath)
-    except Exception:
-        logger.critical('Error setting retry data to %s', fpath, exc_info=True)
-
-
 def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
     event = ZMEvent(event_id, monitor_id, cause)
     # ensure that this command is run by the user that owns the event
@@ -310,7 +292,6 @@ def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
         if analysis is None:
             result['object_detections'] = []
             num_retries += 1
-            set_retry(event_id, monitor_id, cause, num_retries=num_retries)
             success = False
         else:
             result['object_detections'] = analysis
