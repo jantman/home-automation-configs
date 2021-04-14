@@ -81,20 +81,21 @@ class ZmEventRetrier:
 
     def run(self, do_sleep=True):
         logger.warning('Running zmevent_retry.py')
+        sql = 'SELECT e.*,ia.Results FROM (' \
+              'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
+              'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
+              ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
+              'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
+              'e.Id < (SELECT MAX(EventId) FROM ' \
+              '%s) ORDER BY e.Id DESC;' % (
+                  RETRY_START_ID, ANALYSIS_TABLE_NAME
+              )
         while True:
             logger.info(
                 'Looking for events after %d needing analysis...',
                 RETRY_START_ID
             )
-            sql = 'SELECT e.*,ia.Results FROM (' \
-                  'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
-                  'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
-                  ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
-                  'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
-                  'e.Id < (SELECT MAX(EventId) FROM ' \
-                  '%s) ORDER BY e.Id DESC;' % (
-                RETRY_START_ID, ANALYSIS_TABLE_NAME
-            )
+            rows = 0
             with self._conn.cursor() as cursor:
                 logger.debug('EXECUTE: %s', sql)
                 rows = cursor.execute(sql)
@@ -102,7 +103,9 @@ class ZmEventRetrier:
                 statsd_set_gauge('zmevent.needs_retry', rows)
                 result = cursor.fetchone()
             if rows > 0:
-                self._handle_one(result['Id'], result['MonitorId'], result['Cause'])
+                self._handle_one(
+                    result['Id'], result['MonitorId'], result['Cause']
+                )
             if do_sleep:
                 time.sleep(10)
 
