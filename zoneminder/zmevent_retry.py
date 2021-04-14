@@ -57,7 +57,8 @@ class ZmEventRetrier:
         self._conn = pymysql.connect(
             host='localhost', user=CONFIG['MYSQL_USER'],
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
-            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True
         )
 
     def _handle_one(self, event_id, monitor_id, cause):
@@ -102,6 +103,7 @@ class ZmEventRetrier:
                 logger.info('Found %d events needing analysis', rows)
                 statsd_set_gauge('zmevent.needs_retry', rows)
                 result = cursor.fetchone()
+            self._conn.commit()
             if rows > 0:
                 self._handle_one(
                     result['Id'], result['MonitorId'], result['Cause']
