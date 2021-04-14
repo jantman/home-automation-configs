@@ -75,7 +75,7 @@ class ZmEventRetrier:
             return False
         if event.StartTime >= datetime.now() - timedelta(minutes=10):
             event_to_hass(
-                data['monitor_id'], data['event_id'], result, zones
+                monitor_id, event_id, result, zones
             )
         statsd_increment_counter('analyze_event.retries_succeeded')
         return True
