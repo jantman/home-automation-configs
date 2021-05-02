@@ -85,9 +85,7 @@ class ZmEventBackfiller(object):
               'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
               'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
               ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
-              'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
-              'e.Id < (SELECT MAX(EventId) FROM ' \
-              '%s);' % (min_event_id, ANALYSIS_TABLE_NAME)
+              'ON e.Id=ia.EventId WHERE ia.Results IS NULL;' % min_event_id
         with self._conn.cursor() as cursor:
             logger.debug('EXECUTE: %s', sql)
             cursor.execute(sql)
