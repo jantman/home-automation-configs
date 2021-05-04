@@ -242,7 +242,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'FrontJunk',
-            ['pottedplant', 'bench',],
+            ['pottedplant', 'bench', 'chair',],
             monitor_num=9,
         ),
         IgnoredObject(
@@ -286,7 +286,7 @@ IGNORED_OBJECTS = {
         IgnoredObject(
             'GateCrap',
             # yolo4 often sees shadows on my front as strange things...
-            ['boat', 'bench', 'baseball bat', 'frisbee', 'sports ball', 'traffic light', 'stop sign', 'tennis racket', 'umbrella'],
+            ['boat', 'bench', 'baseball bat', 'frisbee', 'sports ball', 'traffic light', 'stop sign', 'tennis racket', 'umbrella', 'train'],
             monitor_num=3,
         ),
     ]
