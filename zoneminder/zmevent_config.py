@@ -113,9 +113,17 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
     return False
 
 
+IgnoreEverywhere = IgnoredObject(
+    'IgnoreEverywhere',
+    ['bird'],
+)
+
+
 #: IgnoredObject instances to filter objects out from detection results
 IGNORED_OBJECTS = {
     'guarddog': [
+        # Ignored from ALL MONITORS
+        IgnoreEverywhere,
         #
         # MONITOR 2 - LRKitchen
         #
@@ -283,6 +291,8 @@ IGNORED_OBJECTS = {
         ),
     ],
     'telescreen': [
+        # Ignored from ALL MONITORS
+        IgnoreEverywhere,
         #
         # MONITOR 3 - GATE
         #
