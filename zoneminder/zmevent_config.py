@@ -40,7 +40,7 @@ STATSD_HOST = '192.168.0.24'
 STATSD_PORT = 8125
 
 #: Minimum event ID to backfill or retry
-RETRY_START_ID = 626707
+RETRY_START_ID = 670988
 
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
