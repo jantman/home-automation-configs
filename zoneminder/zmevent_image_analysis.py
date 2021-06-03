@@ -2,7 +2,7 @@ import time
 import os
 import logging
 from shapely.geometry.polygon import LinearRing, Polygon
-from zmevent_config import IGNORED_OBJECTS
+from zmevent_config import IGNORED_OBJECTS, REQUIRED_OBJECT_CATEGORIES
 from zmevent_models import DetectedObject, ObjectDetectionResult
 import darknet
 import cv2
@@ -152,6 +152,21 @@ class ImageAnalyzer:
                 cat = cat.decode()
             x, y, w, h = self._convert_bbox(img, newimg, bounds)
             zones = self._zones_for_object(x, y, w, h)
+            # begin handling of required categories
+            if cat not in REQUIRED_OBJECT_CATEGORIES:
+                logger.info(
+                    'Event %s Frame %s: Ignoring %s (%.2f) at %d,%d based on '
+                    'category not in REQUIRED_OBJECT_CATEGORIES',
+                    event_id, frame_id, cat, score, x, y
+                )
+                rect_color = (104, 104, 104)
+                text_color = (111, 247, 93)
+                retval['ignored_detections'].append(DetectedObject(
+                    cat, zones, score, x, y, w, h,
+                    ignore_reason='category not in REQUIRED_OBJECT_CATEGORIES'
+                ))
+                continue
+            # end handling of required categories
             logger.debug('Checking IgnoredObject filters for detections...')
             matched_filters = [
                 foo.name for foo in IGNORED_OBJECTS.get(self._hostname, [])

@@ -113,6 +113,27 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
     return False
 
 
+#: List of YOLO4 object categories to alert on; this effectively overrides
+#: all of the object handling below. If this list is non-empty, then we'll
+#: completely and immediately ignore any object that isn't in one of these
+#: categories.
+REQUIRED_OBJECT_CATEGORIES = [
+    'person',
+    'bicycle',
+    'car',
+    'motorbike',
+    'bus',
+    'train',
+    'truck',
+    'cat',
+    'dog',
+    'horse',
+    'sheep',
+    'cow',
+]
+
+
+#: Single IgnoredObject instance to ignore on all monitors
 IgnoreEverywhere = IgnoredObject(
     'IgnoreEverywhere',
     ['bird'],
