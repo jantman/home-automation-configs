@@ -327,6 +327,12 @@ IGNORED_OBJECTS = {
             ],
             monitor_num=3,
         ),
+        IgnoredObject(
+            'DeckSpot',
+            REQUIRED_OBJECT_CATEGORIES,
+            monitor_num=3,
+            bounding_box=(223, 422, 5, 5),
+        ),
     ]
 }
 
