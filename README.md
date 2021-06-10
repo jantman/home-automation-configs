@@ -16,12 +16,10 @@ The information I provide on home automation/security and surveillance is based 
 
 * [appdaemon apps and configs](appdaemon/) - also includes my appdaemon logging helper
 * [homeassistant/](homeassistant/) - my HomeAssistant configs
-* [testing/](testing/) - configurations and scripts for testing HomeAssistant and AppDaemon locally using docker-compose
 * [zoneminder/](zoneminder/) - some of my scripts and notes related to my ZoneMinder installation, including event image analysis and notifications
 * RaspberryPi touchscreen-based alarm control panels - see [doorpanels.md](doorpanels.md)
 * RaspberryPi touchscreen-based remote control on the end table next to my living room couch - see [couchpi.md](couchpi.md)
 * [wemos_d1_mini/](wemos_d1_mini/) - Code I have running on WeMos D1 Mini microcontrollers for various IO tasks.
-
 
 ## Using It and Important Notes
 
