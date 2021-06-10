@@ -125,7 +125,7 @@ LIGHT_ENTITIES = [
     'light.cree_connected_a_19_60w_equivalent_fe0b0886_10',
     'light.cree_connected_a_19_60w_equivalent_fe0afc46_10',
     # TV
-    'switch.livingroomlight_switch',
+    'switch.workbenchlight_switch',
     # Living Room
     'light.jasco_products_45606_2_way_dimmer_switch_level',
     # Bedroom

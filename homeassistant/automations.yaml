@@ -19,7 +19,7 @@
     - service: homeassistant.turn_off
       entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
+      entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
       entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_off
@@ -47,7 +47,7 @@
     - service: homeassistant.turn_off
       entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
     - service: homeassistant.turn_off
-      entity_id: switch.livingroomlight_switch
+      entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
       entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_off

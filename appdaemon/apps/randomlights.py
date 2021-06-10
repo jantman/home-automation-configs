@@ -25,7 +25,7 @@ LOG_DEBUG = False
 LIGHT_ENTITIES = [
     'group.kitchenlights',
     'group.porchlights',
-    'switch.livingroomlight_switch',
+    'switch.workbenchlight_switch',
     'light.ge_45606_2way_dimmer_switch_level',
     'light.ge_45606_2way_dimmer_switch_level_2',
     'light.jasco_products_45606_2_way_dimmer_switch_level'

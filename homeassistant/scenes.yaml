@@ -1,7 +1,7 @@
 - name: DinnerMovie
   icon: "mdi:food-fork-drink"
   entities:
-    switch.livingroomlight_switch: "off"
+    switch.workbenchlight_switch: "off"
     light.jasco_products_45606_2_way_dimmer_switch_level:
       state: "on"
       brightness: 149
@@ -15,7 +15,7 @@
 - name: Movies
   icon: "mdi:projector-screen"
   entities:
-    switch.livingroomlight_switch: "off"
+    switch.workbenchlight_switch: "off"
     light.jasco_products_45606_2_way_dimmer_switch_level: "off"
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
     light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
@@ -27,7 +27,7 @@
 - name: AllLightsOn
   icon: "mdi:lightbulb-group"
   entities:
-    switch.livingroomlight_switch: "on"
+    switch.workbenchlight_switch: "on"
     light.jasco_products_45606_2_way_dimmer_switch_level:
       state: "on"
       brightness: 255

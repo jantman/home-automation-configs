@@ -399,7 +399,7 @@ alexa:
         name: 'Office Light'
       light.jasco_products_45606_2_way_dimmer_switch_level:
         name: 'Living Room Lights'
-      switch.livingroomlight_switch:
+      switch.workbenchlight_switch:
         name: 'TV Light'
       switch.inovelli_unknown_type_ff00_id_ff07_switch:
         name: 'String Lights'
@@ -468,7 +468,7 @@ alexa:
         # Thermostat Operation
         - sensor.thermostat_operation_mode
         # LivingRoomLight Switch
-        - switch.livingroomlight_switch
+        - switch.workbenchlight_switch
         # Living Room Light
         - light.jasco_products_45606_2_way_dimmer_switch_level
 

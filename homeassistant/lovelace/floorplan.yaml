@@ -33,10 +33,11 @@ elements:
   - type: state-icon
     tap_action:
       action: toggle
-    entity: switch.livingroomlight_switch
+    entity: switch.workbenchlight_switch
+    icon: mdi:lightbulb
     style:
-      top: 95%
-      left: 25%
+      top: 72%
+      left: 70%
   - type: state-icon
     tap_action:
       action: toggle
