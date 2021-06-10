@@ -59,7 +59,7 @@ elements:
       action: toggle
     entity: light.ge_45606_2way_dimmer_switch_level_2
     style:
-      top: 80%
+      top: 88%
       left: 62%
   - type: state-icon
     # deck string lights
@@ -115,7 +115,7 @@ elements:
   - type: state-icon
     entity: binary_sensor.office_motion # office
     style:
-      top: 82%
+      top: 88%
       left: 70%
   - type: state-icon
     entity: binary_sensor.bedroom_motion # bedroom
@@ -223,8 +223,8 @@ elements:
   - type: state-icon
     entity: camera.octopi
     style:
-      top: 74%
-      left: 72%
+      top: 78%
+      left: 60%
   - type: state-label
     entity: sensor.octoprint_current_state
     style:
