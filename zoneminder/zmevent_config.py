@@ -323,7 +323,7 @@ IGNORED_OBJECTS = {
             [
                 'boat', 'bench', 'baseball bat', 'frisbee', 'sports ball',
                 'traffic light', 'stop sign', 'tennis racket', 'umbrella',
-                'train', 'chair', 'bed', 'toilet'
+                'train', 'chair', 'bed', 'toilet', 'car'
             ],
             monitor_num=3,
         ),
