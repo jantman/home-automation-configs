@@ -214,6 +214,9 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             return
         # else our alarm isn't disarmed and we have some objects detected
         img = self._primary_detection_for_event(data)
+        push_subject = 'ZM %s - %s' % (
+            data['event']['Monitor']['Name'], self.detection_str(img)
+        )
         subject = 'ZoneMinder Alarm on %s - %s' % (
             data['event']['Monitor']['Name'], self.detection_str(img)
         )
@@ -235,7 +238,7 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 'Suppressing pushover notification - %s is on', input_name
             )
         else:
-            self._notify_pushover(subject, data, img)
+            self._notify_pushover(push_subject, data, img)
             cam_entity = 'camera.' + data['event']['Monitor']['Name'].lower()
             self._browsermod_show_camera(camera_entity=cam_entity)
         self._notify_email(subject, data)
