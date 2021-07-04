@@ -15,9 +15,9 @@
         before: sunset
   action:
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_off
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_off
       entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
@@ -43,9 +43,9 @@
     state: 'away'
   action:
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_off
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_off
       entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
@@ -78,9 +78,9 @@
     - service: homeassistant.turn_on
       entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
@@ -94,9 +94,9 @@
     to: 'on'
   action:
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
 - alias: Turn Kitchen Light Off 10 Minutes After Motion
   id: KitchenLightMotionOff
   trigger:
@@ -107,9 +107,9 @@
       minutes: 10
   action:
     - service: homeassistant.turn_off
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_off
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
 ################################################################################
 # Porch Lights                                                                 #
 ################################################################################
@@ -290,9 +290,9 @@
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
       entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
     - service: homeassistant.turn_on
@@ -487,9 +487,9 @@
       webhook_id: ecfabc6102f0-light
   action:
     - service: homeassistant.turn_on
-      entity_id: light.linear_lb60z1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+      entity_id: light.kitchenbulb2level_on_off
 ################################################################################
 # END Button box handling                                                      #
 ################################################################################

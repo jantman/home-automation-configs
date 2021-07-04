@@ -21,8 +21,8 @@ lights:
     - light.ge_45606_2way_dimmer_switch_level
     - light.ge_45606_2way_dimmer_switch_level_2
     - light.jasco_products_45606_2_way_dimmer_switch_level
-    - light.linear_lb60z1_dimmable_led_light_bulb_level
-    - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+    - light.kitchenbulb1level_on_off
+    - light.kitchenbulb2level_on_off
     - switch.workbenchlight_switch
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
 porchlights:
@@ -33,8 +33,8 @@ porchlights:
 kitchenlights:
   name: Kitchen Lights
   entities:
-    - light.linear_lb60z1_dimmable_led_light_bulb_level
-    - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+    - light.kitchenbulb1level_on_off
+    - light.kitchenbulb2level_on_off
 lrlights:
   name: Living Room Lights
   entities:

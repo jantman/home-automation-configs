@@ -2,8 +2,8 @@ type: entities
 title: Lights
 entities:
   # kitchen
-  - light.linear_lb60z1_dimmable_led_light_bulb_level
-  - light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level
+  - light.kitchenbulb1level_on_off
+  - light.kitchenbulb2level_on_off
   # porch
   - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
   - light.cree_connected_a_19_60w_equivalent_fe0afc46_10

@@ -119,8 +119,8 @@ INTERIOR_ENABLE_ENTITY = 'input_boolean.enable_motion'
 #: List of entity IDs that should be turned on for 10 minutes after an alarm.
 LIGHT_ENTITIES = [
     # Kitchen
-    'light.linear_lb60z1_dimmable_led_light_bulb_level',
-    'light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level',
+    'light.kitchenbulb1level_on_off',
+    'light.kitchenbulb2level_on_off',
     # Porch
     'light.cree_connected_a_19_60w_equivalent_fe0b0886_10',
     'light.cree_connected_a_19_60w_equivalent_fe0afc46_10',
