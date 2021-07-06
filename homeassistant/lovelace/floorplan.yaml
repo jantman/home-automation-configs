@@ -70,6 +70,15 @@ elements:
     style:
       top: 22%
       left: 20%
+  - type: state-icon
+    # back room light
+    tap_action:
+      action: toggle
+    entity: light.backroomlightlevel_on_off
+    icon: mdi:lightbulb
+    style:
+      top: 23%
+      left: 75%
   # DOORS
   - type: state-icon
     title: Crawlspace Door

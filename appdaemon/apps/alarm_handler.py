@@ -134,6 +134,8 @@ LIGHT_ENTITIES = [
     'light.ge_45606_2way_dimmer_switch_level_2',
     # Deck string lights
     'switch.inovelli_unknown_type_ff00_id_ff07_switch',
+    # back room light
+    'light.backroomlightlevel_on_off',
 ]
 
 #: List of RGB light entities that should react to an alarm. Right now they
