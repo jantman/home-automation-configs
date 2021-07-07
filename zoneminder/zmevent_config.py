@@ -220,14 +220,14 @@ IGNORED_OBJECTS = {
         #
         IgnoredObject(
             'OfficeCrap',
-            ['bicycle',],
+            ['bicycle', 'cat', 'dog'],
             monitor_num=6,
         ),
         #
         # MONITOR 7 - BEDRM
         #
         IgnoredObject(
-            'BEDRMJunk', ['bed'],
+            'BEDRMJunk', ['bed', 'cat', 'dog'],
             monitor_num=7
         ),
         #
@@ -237,7 +237,7 @@ IGNORED_OBJECTS = {
             'HallStuff',
             [
                 'parking meter', 'toilet', 'cake', 'handbag', 'teddy bear',
-                'backpack', 'bench', 'suitcase',
+                'backpack', 'bench', 'suitcase', 'cat', 'dog'
             ],
             monitor_num=8
         ),
