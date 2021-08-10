@@ -123,6 +123,6 @@ class PushoverNotifier(object):
             self._hass_secrets['gmail_password']
         )
         self._log.info('Sending mail From=%s To=%s', addr, addr)
-        s.sendmail(addr, addr, message)
-        self._log.info('EMail sent.')
+        resp = s.sendmail(addr, addr, message)
+        self._log.info('EMail sent; server response: %s', resp)
         s.quit()
