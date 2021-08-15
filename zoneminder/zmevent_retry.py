@@ -84,7 +84,8 @@ class ZmEventRetrier:
         logger.warning('Running zmevent_retry.py')
         sql = 'SELECT e.*,ia.Results FROM (' \
               'SELECT Id,MonitorId,Name,StartTime,Cause FROM Events ' \
-              'WHERE EndTime IS NOT NULL AND Id > %s ORDER BY Id DESC' \
+              'WHERE EndTime IS NOT NULL AND Id > %s ' \
+              'AND DiskSpace IS NOT NULL ORDER BY Id DESC' \
               ') AS e LEFT JOIN zmevent_handler_ImageAnalysis AS ia ' \
               'ON e.Id=ia.EventId WHERE ia.Results IS NULL AND ' \
               'e.Id < (SELECT MAX(EventId) FROM ' \
