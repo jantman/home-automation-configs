@@ -73,7 +73,7 @@ class ZmEventArchiver(object):
         sql = 'SELECT Id, Name, MaxScore from Events WHERE Archived=0 AND ' \
               'StartTime < DATE_SUB(NOW(), INTERVAL %d DAY)' % num_days
         if monitor_id is not None:
-            sql += ' AND MonitorId=%d' % num_days
+            sql += ' AND MonitorId=%d' % monitor_id
         sql += ';'
         events = []
         with self._conn.cursor() as cursor:
