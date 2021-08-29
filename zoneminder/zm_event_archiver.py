@@ -53,6 +53,7 @@ class ZmEventArchiver(object):
             keep_days, match_re=match_re, no_match_re=no_match_re,
             max_score=max_score, monitor_id=monitor_id
         )
+        logger.debug('Found %d events to delete', len(event_ids))
         self._delete_events(event_ids)
 
     def _find_events(
@@ -141,8 +142,7 @@ def parse_args(argv):
                    default=False,
                    help="dry-run - don't actually make any changes")
     p.add_argument('-v', '--verbose', dest='verbose', action='store_true',
-                   default=False,
-                   help='verbose output')
+                   default=False, help='verbose output')
     p.add_argument('-k', '--keep-days', dest='keep_days', action='store',
                    type=int, default=30,
                    help='number of days of non-archived events to keep '
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     args = parse_args(sys.argv[1:])
 
     # set logging level
-    if args.verbose > 1:
+    if args.verbose:
         set_log_debug()
     else:
         set_log_info()
