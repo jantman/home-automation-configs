@@ -813,6 +813,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             a = e.get('attributes', {})
             self._log.info('Turning OFF: %s (%s)', eid, a['friendly_name'])
             self.turn_off(eid)
+        self.turn_on('input_boolean.bedpi_display_wake')
+        self.turn_on('input_boolean.couchpi_display_wake')
 
     def _arm_home(self, prev_state):
         """Ensure exterior sensors are closed and then arm system in Home."""
