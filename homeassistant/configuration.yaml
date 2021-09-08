@@ -370,6 +370,10 @@ input_boolean:
     name: Silence Temperature Checker
   silence_humidor_checker:
     name: Silence Humidor Checker
+  bedpi_display_wake:
+    name: Enable BedPi Display Wake
+  couchpi_display_wake:
+    name: Enable CouchPi Display Wake
 
 input_select:
   alarmstate:
