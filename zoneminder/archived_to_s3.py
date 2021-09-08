@@ -25,16 +25,15 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Imports from this directory
 from zmevent_config import (
-    ANALYSIS_TABLE_NAME, CONFIG, ZM_HOSTNAME, populate_secrets
+    ANALYSIS_TABLE_NAME, CONFIG, ZM_HOSTNAME, populate_secrets,
+    DateSafeJsonEncoder
 )
-from zmevent_handler import setup_library_logging
 from zmevent_models import ZMEvent
 from zm_videoizer import set_log_debug, set_log_info
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.WARNING, format=FORMAT)
 logger = logging.getLogger()
-setup_library_logging()
 
 for lname in ['urllib3']:
     l = logging.getLogger(lname)
@@ -76,11 +75,14 @@ class ZmArchivedToS3(object):
             if dirname in s3_prefixes:
                 logger.debug('Event already in S3: %s', dirname)
                 continue
-            count += 1
             d: Dict = self._dict_for_event(
                 evt['Id'], evt['MonitorId'], evt['Cause']
             )
+            if not os.path.exists(d['path']):
+                logger.info('Skipping; does not exist: %s', d['path'])
+                continue
             self._event_to_s3(d, dirname)
+            count += 1
         print(f'Uploaded {count} archived events to S3')
 
     def _event_to_s3(self, evt: Dict, dirname: str):
@@ -96,23 +98,26 @@ class ZmArchivedToS3(object):
                 d_key
             )
         else:
-            self._bucket.upload_fileobj(
-                StringIO(json.dumps(evt)), d_key
+            logger.warning(
+                'Upload event %s info to: %s', evt['EventId'], d_key
             )
+            self._bucket.Object(d_key).put(Body=json.dumps(
+                evt, sort_keys=True, indent=4, cls=DateSafeJsonEncoder
+            ))
         for fname in os.listdir(evt['path']):
+            fpath = os.path.join(evt['path'], fname)
             p = os.path.join(dir, os.path.basename(fname))
             if self._dry_run:
                 logger.warning(
-                    'Would upload %s to %s', fname, p
+                    'Would upload %s to %s', fpath, p
                 )
             else:
-                self._bucket.upload_file(fname, p)
+                logger.warning('Upload %s to %s', fpath, p)
+                self._bucket.upload_file(fpath, p)
 
     def _list_s3_prefixes(self) -> List[str]:
         res: Set[str] = set()
-        for o in self._bucket.objects.filter(
-            Delimiter='/', Prefix=self._prefix
-        ):
+        for o in self._bucket.objects.filter(Prefix=self._prefix):
             k: str = o.key[len(self._prefix):].split('/')[0]
             res.add(k)
         return list(res)
@@ -173,7 +178,7 @@ def main():
     # set logging level
     if args.verbose > 1:
         set_log_debug(logger)
-    else:
+    elif args.verbose > 0:
         set_log_info(logger)
     ZmArchivedToS3(dry_run=args.dry_run).run()
 
