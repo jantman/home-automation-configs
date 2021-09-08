@@ -315,8 +315,10 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
     def _browsermod_show_camera(self, camera_entity):
         if camera_entity is None:
             return
-        self.turn_off('switch.couchpi_display')
-        self.turn_off('switch.bedpi_display')
+        if self.get_state('input_boolean.bedpi_display_wake') == 'on':
+            self.turn_off('switch.bedpi_display')
+        if self.get_state('input_boolean.couchpi_display_wake') == 'on':
+            self.turn_off('switch.couchpi_display')
         self.call_service(
             'browser_mod/more_info', entity_id=camera_entity
         )
