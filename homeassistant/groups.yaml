@@ -44,3 +44,11 @@ tvlight:
   name: TV Light
   entities:
     - switch.workbenchlight_switch
+stringlight:
+  name: String Lights
+  entities:
+    - switch.inovelli_unknown_type_ff00_id_ff07_switch
+bugzap:
+  name: Bug Zapper
+  entities:
+    - switch.bug_zapper
