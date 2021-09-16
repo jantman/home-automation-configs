@@ -258,6 +258,10 @@ def handle_event(event_id, monitor_id, cause, dry_run=False, num_retries=0):
         'filters': [],
         'object_detections': []
     }
+    statsd_increment_counter('events_from_monitor.%s' % event.Monitor.Name)
+    statsd_send_time(
+        'event_length_from_monitor.%s' % event.Monitor.Name, event.Length
+    )
     # run filters on event
     logger.debug('Running filters on %s', event)
     for cls in EventFilter.__subclasses__():
