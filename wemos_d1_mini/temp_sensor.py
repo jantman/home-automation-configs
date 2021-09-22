@@ -62,9 +62,12 @@ class TempSender:
         self.temp_id = self.ds_sensor.scan()[0]
         print('Temperature sensor: %s' % self.temp_id)
         self.leds['red'].on()
+        print('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
+        print('connect_wlan()')
         self.connect_wlan()
         self.leds['red'].off()
+        print('hexlify mac')
         self.mac = hexlify(self.wlan.config('mac')).decode()
         print('MAC: %s' % self.mac)
         self.entity_id = ENTITIES[self.mac]
@@ -79,12 +82,14 @@ class TempSender:
         print("Enter loop...")
         while True:
             self.send_temp()
+            print('sleep 60')
             sleep(60)
 
     def send_temp(self):
         print('converting temps...')
         self.ds_sensor.convert_temp()
         sleep(1)
+        print('read_temp()')
         temp_c = self.ds_sensor.read_temp(self.temp_id)
         print('temp_c=%s' % temp_c)
         if temp_c == 85.0:
@@ -112,17 +117,22 @@ class TempSender:
         print('network config:', self.wlan.ifconfig())
 
     def http_post(self, data):
+        print('http_post() called')
         self.set_rgb(False, False, True)
+        print('getaddrinfo()')
         addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
         print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
         s = socket.socket()
         s.settimeout(10.0)
         try:
+            print('before connect()')
             s.connect(addr)
+            print('after connect()')
         except OSError as exc:
             print('ERROR connecting to %s: %s' % (addr, exc))
             self.set_rgb(False, False, False)
             self.blink_leds(['red'], num_times=3, length_ms=100)
+            print('s.close()')
             s.close()
             return None
         print('POST to: %s: %s' % (self.post_path, data))
@@ -135,6 +145,7 @@ class TempSender:
             )
         print('SEND:\n%s' % b)
         s.send(bytes(b, 'utf8'))
+        print('after send()')
         buf = ''
         while True:
             data = s.recv(100)
@@ -142,8 +153,10 @@ class TempSender:
                 buf += str(data, 'utf8')
             else:
                 break
+        print('received data:')
         print(buf)
         s.close()
+        print('after close()')
         self.set_rgb(False, False, False)
         if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:
             print('OK')
