@@ -47,7 +47,6 @@ FRIENDLY_NAMES = {
 
 def printflush(*args):
     print(*args)
-    sys.stdout.flush()
 
 
 class TempSender:
