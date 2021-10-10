@@ -7,6 +7,7 @@ https://wiki.wemos.cc/products:d1:d1_mini#pin
 Connect buttons and LEDs according to ``temp_sensor.fzz``.
 """
 
+import sys
 from machine import Pin, reset
 import micropython
 import network
@@ -44,63 +45,68 @@ FRIENDLY_NAMES = {
 }
 
 
+def printflush(*args):
+    print(*args)
+    sys.stdout.flush()
+
+
 class TempSender:
 
     def __init__(self):
-        print("Init", flush=True)
+        printflush("Init")
         self.unhandled_event = False
-        print('Init LEDs', flush=True)
+        printflush('Init LEDs')
         self.leds = {
             'red': Pin(D2, Pin.OUT, value=False),
             'blue': Pin(D3, Pin.OUT, value=False),
             'green': Pin(D4, Pin.OUT, value=False)
         }
-        print('Init OneWire', flush=True)
+        printflush('Init OneWire')
         self.ds_pin = Pin(D1)
         self.ow_inst = OneWire(self.ds_pin)
         self.ds_sensor = DS18X20(self.ow_inst)
         self.temp_id = self.ds_sensor.scan()[0]
-        print('Temperature sensor: %s' % self.temp_id, flush=True)
-        print('set LED red', flush=True)
+        printflush('Temperature sensor: %s' % self.temp_id)
+        printflush('set LED red')
         self.leds['red'].on()
-        print('Instantiate WLAN', flush=True)
+        printflush('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
-        print('connect_wlan()', flush=True)
+        printflush('connect_wlan()')
         self.connect_wlan()
-        print('turn off red LED', flush=True)
+        printflush('turn off red LED')
         self.leds['red'].off()
-        print('hexlify mac', flush=True)
+        printflush('hexlify mac')
         self.mac = hexlify(self.wlan.config('mac')).decode()
-        print('MAC: %s' % self.mac, flush=True)
+        printflush('MAC: %s' % self.mac)
         self.entity_id = ENTITIES[self.mac]
         self.friendly_name = FRIENDLY_NAMES[self.mac]
-        print('Entity ID: %s; Friendly Name: %s' % (
+        printflush('Entity ID: %s; Friendly Name: %s' % (
             self.entity_id, self.friendly_name
-        ), flush=True)
+        ))
         self.post_path = '/api/states/' + self.entity_id
-        print('POST path: %s' % self.post_path, flush=True)
+        printflush('POST path: %s' % self.post_path)
 
     def run(self):
-        print("Enter loop...", flush=True)
+        printflush("Enter loop...")
         while True:
             self.send_temp()
-            print('sleep 60', flush=True)
+            printflush('sleep 60')
             sleep(60)
-            print('after sleep 60', flush=True)
+            printflush('after sleep 60')
 
     def send_temp(self):
-        print('converting temps...', flush=True)
+        printflush('converting temps...')
         self.ds_sensor.convert_temp()
         sleep(1)
-        print('read_temp()', flush=True)
+        printflush('read_temp()')
         temp_c = self.ds_sensor.read_temp(self.temp_id)
-        print('temp_c=%s' % temp_c, flush=True)
+        printflush('temp_c=%s' % temp_c)
         if temp_c == 85.0:
-            print('Got bad temp; reset onewire bus', flush=True)
+            printflush('Got bad temp; reset onewire bus')
             self.ow_inst.reset()
             return
         temp_f = ((temp_c * 9.0) / 5.0) + 32
-        print('temp_f=%s' % temp_f, flush=True)
+        printflush('temp_f=%s' % temp_f)
         data = json.dumps({
             'state': round(temp_f, 2),
             'attributes': {
@@ -113,35 +119,35 @@ class TempSender:
     def connect_wlan(self):
         self.wlan.active(True)
         if not self.wlan.isconnected():
-            print('connecting to network...', flush=True)
+            printflush('connecting to network...')
             self.wlan.connect(SSID, WPA_KEY)
             while not self.wlan.isconnected():
                 pass
-        print('network config:', self.wlan.ifconfig(), flush=True)
+        printflush('network config:', self.wlan.ifconfig())
 
     def http_post(self, data):
-        print('http_post() called', flush=True)
-        print('set LED blue', flush=True)
+        printflush('http_post() called')
+        printflush('set LED blue')
         self.set_rgb(False, False, True)
-        print('getaddrinfo()', flush=True)
+        printflush('getaddrinfo()')
         addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
-        print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT), flush=True)
+        printflush('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
         s = socket.socket()
         s.settimeout(10.0)
         try:
-            print('before connect()', flush=True)
+            printflush('before connect()')
             s.connect(addr)
-            print('after connect()', flush=True)
+            printflush('after connect()')
         except OSError as exc:
-            print('ERROR connecting to %s: %s' % (addr, exc), flush=True)
-            print('set LEDs off', flush=True)
+            printflush('ERROR connecting to %s: %s' % (addr, exc))
+            printflush('set LEDs off')
             self.set_rgb(False, False, False)
-            print('blink red LED', flush=True)
+            printflush('blink red LED')
             self.blink_leds(['red'], num_times=3, length_ms=100)
-            print('s.close()', flush=True)
+            printflush('s.close()')
             s.close()
             return None
-        print('POST to: %s: %s' % (self.post_path, data), flush=True)
+        printflush('POST to: %s: %s' % (self.post_path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
             'Content-Type: application/json\r\n' \
             'Authorization: Bearer %s\r\n' \
@@ -149,9 +155,9 @@ class TempSender:
                 self.post_path, HOOK_HOST, HASS_TOKEN,
                 len(bytes(data, 'utf8')), data
             )
-        print('SEND:\n%s' % b, flush=True)
+        printflush('SEND:\n%s' % b)
         s.send(bytes(b, 'utf8'))
-        print('after send()', flush=True)
+        printflush('after send()')
         buf = ''
         while True:
             data = s.recv(100)
@@ -159,20 +165,20 @@ class TempSender:
                 buf += str(data, 'utf8')
             else:
                 break
-        print('received data:', flush=True)
-        print(buf, flush=True)
+        printflush('received data:')
+        printflush(buf)
         s.close()
-        print('after close()', flush=True)
+        printflush('after close()')
         self.set_rgb(False, False, False)
         if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:
-            print('OK', flush=True)
-            print('blink LED green', flush=True)
+            printflush('OK')
+            printflush('blink LED green')
             self.blink_leds(['green'])
         else:
-            print('FAIL', flush=True)
-            print('blink LED red', flush=True)
+            printflush('FAIL')
+            printflush('blink LED red')
             self.blink_leds(['red'], num_times=3, length_ms=100)
-        print('http_post done', flush=True)
+        printflush('http_post done')
 
     def set_rgb(self, red, green, blue):
         self.leds['red'].value(red)
