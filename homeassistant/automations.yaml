@@ -83,6 +83,54 @@
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
+- alias: Turn Lights On At Sunset If Away and Randomlights Off
+  trigger:
+    platform: sun
+    event: sunset
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: device_tracker.555924e18d8ed3d2
+        state: 'away'
+      - condition: state
+        entity_id: input_boolean.enable_randomlights
+        state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+    - service: homeassistant.turn_on
+      entity_id: light.kitchenbulb1level_on_off
+    - service: homeassistant.turn_on
+      entity_id: light.kitchenbulb2level_on_off
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+- alias: Turn Lights If Away After Sunset and Randomlights Off
+  trigger:
+      platform: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      from: 'home'
+  condition:
+    condition: and
+    conditions:
+      - condition: or
+        conditions:
+        - condition: sun
+          after: sunset
+        - condition: sun
+          before: sunrise
+      - condition: state
+        entity_id: input_boolean.enable_randomlights
+        state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+    - service: homeassistant.turn_on
+      entity_id: light.kitchenbulb1level_on_off
+    - service: homeassistant.turn_on
+      entity_id: light.kitchenbulb2level_on_off
+    - service: homeassistant.turn_on
+      entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
 # Kitchen Lights                                                               #
 ################################################################################
