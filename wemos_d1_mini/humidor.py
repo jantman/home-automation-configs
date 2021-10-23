@@ -35,12 +35,18 @@ FRIENDLY_NAMES = {
 }
 
 
+def printflush(*args):
+    print(*args)
+
+
 class HumidorSender:
 
     def __init__(self):
         print("Init")
         self.unhandled_event = False
+        printflush('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
+        printflush('connect_wlan()')
         self.connect_wlan()
         self.mac = hexlify(self.wlan.config('mac')).decode()
         print('MAC: %s' % self.mac)
@@ -113,15 +119,25 @@ class HumidorSender:
         print('network config:', self.wlan.ifconfig())
 
     def http_post(self, data, suffix):
+        printflush('getaddrinfo()')
         addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
         print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
         s = socket.socket()
         s.settimeout(10.0)
         try:
+            printflush('before connect()')
             s.connect(addr)
+            printflush('after connect()')
         except OSError as exc:
-            print('ERROR connecting to %s: %s' % (addr, exc))
+            printflush('ERROR connecting to %s: %s' % (addr, exc))
+            printflush('set LEDs off')
+            self.set_rgb(False, False, False)
+            printflush('blink red LED')
+            self.blink_leds(['red'], num_times=3, length_ms=100)
+            printflush('s.close()')
             s.close()
+            printflush('CONNECTION ERROR: calling machine.soft_reset()')
+            machine.soft_reset()
             return None
         path = self.post_path + '_' + suffix
         print('POST to: %s: %s' % (path, data))
