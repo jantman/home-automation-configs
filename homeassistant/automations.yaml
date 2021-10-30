@@ -42,7 +42,7 @@
   condition:
     condition: state
     entity_id: device_tracker.555924e18d8ed3d2
-    state: 'away'
+    state: 'not_home'
   action:
     - service: homeassistant.turn_off
       entity_id: light.kitchenbulb1level_on_off
@@ -73,7 +73,7 @@
     conditions:
       - condition: state
         entity_id: device_tracker.555924e18d8ed3d2
-        state: 'away'
+        state: 'not_home'
       - condition: state
         entity_id: input_boolean.enable_randomlights
         state: 'off'
@@ -96,7 +96,7 @@
     conditions:
       - condition: state
         entity_id: device_tracker.555924e18d8ed3d2
-        state: 'away'
+        state: 'not_home'
       - condition: state
         entity_id: input_boolean.enable_randomlights
         state: 'off'
@@ -217,7 +217,7 @@
   condition:
     condition: state
     entity_id: device_tracker.555924e18d8ed3d2
-    state: 'away'
+    state: 'not_home'
   action:
     service: light.turn_on
     data:
@@ -229,7 +229,7 @@
   trigger:
       platform: state
       entity_id: device_tracker.555924e18d8ed3d2
-      to: 'away'
+      to: 'not_home'
   condition:
     # it must be dark out
     - condition: or  # 'when dark' condition: either after sunset or before sunrise
