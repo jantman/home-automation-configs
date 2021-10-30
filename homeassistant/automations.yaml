@@ -2,6 +2,7 @@
 # General Light-related automations (all lights)                               #
 ################################################################################
 - alias: Turn Lights Off When Away During Day
+  id: turn-lights-off-when-away-during-day
   trigger:
       platform: state
       entity_id: device_tracker.555924e18d8ed3d2
@@ -33,6 +34,7 @@
     - service: homeassistant.turn_off
       entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights Off During Day When Away
+  id: turn-lights-off-during-day-when-away
   trigger:
       platform: sun
       event: sunrise
@@ -61,6 +63,7 @@
     - service: homeassistant.turn_off
       entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights On 30m Before Sunset When Away and Randomlights Off
+  id: turn-lights-on-30m-before-sunset-when-away-and-random-off
   trigger:
     platform: sun
     event: sunset
@@ -84,6 +87,7 @@
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 - alias: Turn Lights On At Sunset If Away and Randomlights Off
+  id: turn-lights-on-at-sunset-if-away-and-random-off
   trigger:
     platform: sun
     event: sunset
@@ -105,7 +109,8 @@
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
-- alias: Turn Lights If Away After Sunset and Randomlights Off
+- alias: Turn Lights On If Away After Sunset and Randomlights Off
+  id: turn-lights-on-if-away-after-sunset-and-random-off
   trigger:
       platform: state
       entity_id: device_tracker.555924e18d8ed3d2
@@ -302,6 +307,7 @@
 # from https://www.home-assistant.io/cookbook/automation_first_light/          #
 ################################################################################
 - alias: Enable First Morning Trigger
+  id: enable-first-morning-trigger
   trigger:
     - platform: time
       at: '4:00'
@@ -310,6 +316,7 @@
     entity_id: input_boolean.trigger_first_morning
 # "first morning" routine - turns it off 5 hours after sunrise
 - alias: Disable First Morning Trigger
+  id: disable-first-morning-trigger
   trigger:
     - platform: sun
       event: sunrise
@@ -319,6 +326,7 @@
     entity_id: input_boolean.trigger_first_morning
 # "first morning" motion trigger
 - alias: First Morning Button Trigger
+  id: first-morning-button-trigger
   trigger:
     platform: webhook
     webhook_id: cc50e36b6a6b-morning
@@ -352,6 +360,7 @@
 # Alarm Automations                                                            #
 ################################################################################
 - alias: Arm after motion in bedroom, at night, when home, and house is dark.
+  id: arm-after-motion-in-bedrom-at-night-when-home-house-dark
   trigger:
     # Trigger 2 minutes after bedroom_motion set to off
     platform: state
@@ -395,6 +404,7 @@
       event_data:
         state: Home
 - alias: Arm after living room light is shut off, at night, when home
+  id: arm-after-living-room-light-is-shut-off-at-night-when-home
   trigger:
     platform: state
     entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
@@ -423,6 +433,7 @@
       event_data:
         state: Home
 - alias: Arm at 2100 if I am home
+  id: arm-at-2100-if-I-am-home
   trigger:
     platform: time
     at: "21:00:00"
@@ -436,6 +447,7 @@
       event_data:
         state: Home
 - alias: Arm at 2300 if I am home
+  id: arm-at-2300-if-I-am-home
   trigger:
     platform: time
     at: "23:00:00"
@@ -452,6 +464,7 @@
 # BEGIN Button box handling                                                    #
 ################################################################################
 - alias: Button Box Panic Button cc50e36b6a6b
+  id: button-box-panic-button-cc50e36b6a6b
   trigger:
     - platform: webhook
       webhook_id: cc50e36b6a6b-panic
@@ -460,6 +473,7 @@
       event_data:
         message: triggered by button box panic button cc50e36b6a6b
 - alias: Button Box Arm Home cc50e36b6a6b
+  id: button-box-arm-home-cc50e36b6a6b
   trigger:
     - platform: webhook
       webhook_id: cc50e36b6a6b-armhome
@@ -469,6 +483,7 @@
         state: Home
         message: triggered by cc50e36b6a6b
 - alias: Button Box Disarm cc50e36b6a6b
+  id: button-box-disarm-cc50e36b6a6b
   trigger:
     - platform: webhook
       webhook_id: cc50e36b6a6b-disarm
@@ -482,6 +497,7 @@
         state: Disarmed
         message: triggered by cc50e36b6a6b
 - alias: Button Box Duress cc50e36b6a6b
+  id: button-box-duress-cc50e36b6a6b
   trigger:
     - platform: webhook
       webhook_id: cc50e36b6a6b-duress
@@ -491,6 +507,7 @@
         state: Duress
         message: triggered by cc50e36b6a6b
 - alias: Button Box Panic Button ecfabc6102f0
+  id: button-box-panic-button-ecfabc6102f0
   trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-panic
@@ -499,6 +516,7 @@
       event_data:
         message: triggered by button box panic button ecfabc6102f0
 - alias: Button Box Arm Home ecfabc6102f0
+  id: button-box-arm-home-ecfabc6102f0
   trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-armhome
@@ -508,6 +526,7 @@
         state: Home
         message: triggered by ecfabc6102f0
 - alias: Button Box Disarm ecfabc6102f0
+  id: button-box-disarm-ecfabc6102f0
   trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-disarm
@@ -521,6 +540,7 @@
         state: Disarmed
         message: triggered by ecfabc6102f0
 - alias: Button Box Duress ecfabc6102f0
+  id: button-box-duress-ecfabc6102f0
   trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-duress
@@ -530,6 +550,7 @@
         state: Duress
         message: triggered by ecfabc6102f0
 - alias: Button Box Kitchen Light
+  id: button-box-kitchen-light
   trigger:
     - platform: webhook
       webhook_id: ecfabc6102f0-light
