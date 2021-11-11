@@ -113,6 +113,23 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
     return False
 
 
+def is_bug_zapper_as_person(i, label, x, y, w, h, zones, score):
+    """
+    ``i`` is an IgnoredObject instance. This is a custom method to match the
+    cases where the bug zapper is identified as a person.
+    Returns True if object should be ignored.
+    """
+    if (
+        320 < x < 350 and
+        90 < y < 120 and
+        h < 40 and
+        w < 30 and
+        label == 'person'
+    ):
+        return True
+    return False
+
+
 #: List of YOLO4 object categories to alert on; this effectively overrides
 #: all of the object handling below. If this list is non-empty, then we'll
 #: completely and immediately ignore any object that isn't in one of these
@@ -332,6 +349,11 @@ IGNORED_OBJECTS = {
             REQUIRED_OBJECT_CATEGORIES,
             monitor_num=3,
             bounding_box=(223, 422, 5, 5),
+        ),
+        IgnoredObject(
+            'BugZapperAsPerson',
+            monitor_num=3,
+            callable=is_bug_zapper_as_person,
         ),
     ]
 }
