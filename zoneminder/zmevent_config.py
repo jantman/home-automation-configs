@@ -352,6 +352,7 @@ IGNORED_OBJECTS = {
         ),
         IgnoredObject(
             'BugZapperAsPerson',
+            ['person'],
             monitor_num=3,
             callable=is_bug_zapper_as_person,
         ),
