@@ -37,7 +37,7 @@ FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.WARNING, format=FORMAT)
 logger = logging.getLogger()
 
-for lname in ['urllib3']:
+for lname in ['urllib3', 'botocore', 'boto3']:
     l = logging.getLogger(lname)
     l.setLevel(logging.WARNING)
     l.propagate = True
