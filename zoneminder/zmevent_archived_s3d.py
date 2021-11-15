@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Script to upload archived event data and frames to S3
+Daemon to sync ZM archived events to an S3 bucket
+
+<https://github.com/jantman/home-automation-configs/blob/master/zoneminder/zmevent_archived_s3d.py>
 
 Environment Variables used:
 
@@ -60,19 +62,29 @@ class ZmArchivedToS3(object):
         )
         self._bucket = self._s3.Bucket(os.environ['BUCKET_NAME'])
         self._prefix: str = os.environ.get('BUCKET_PREFIX', '')
+        self._s3_prefixes: List[str] = self._list_s3_prefixes()
+        logger.debug(
+            'Found %d prefixes in S3: %s', len(self._s3_prefixes),
+            self._s3_prefixes
+        )
+        self._max_event_id: int = 0
+
+    def loop(self, do_sleep=True):
+        logger.info('Running zmevent_archived_s3d.py loop')
+        while True:
+            self.run()
+            if do_sleep:
+                time.sleep(30)
 
     def run(self):
+        logger.info('Looking for archived events...')
         events: List[dict] = self._find_events()
-        s3_prefixes: List[str] = self._list_s3_prefixes()
-        logger.debug(
-            'Found %d prefixes in S3: %s', len(s3_prefixes), s3_prefixes
-        )
         count = 0
         evt: Dict
         for evt in events:
             dirname: str = self._directory_for_event(evt)
             logger.debug('Event directory name: %s', dirname)
-            if dirname in s3_prefixes:
+            if dirname in self._s3_prefixes:
                 logger.debug('Event already in S3: %s', dirname)
                 continue
             d: Dict = self._dict_for_event(
@@ -83,6 +95,8 @@ class ZmArchivedToS3(object):
                 continue
             self._event_to_s3(d, dirname)
             count += 1
+            self._s3_prefixes.append(dirname)
+            self._max_event_id = evt['Id']
         print(f'Uploaded {count} archived events to S3')
 
     def _event_to_s3(self, evt: Dict, dirname: str):
@@ -147,7 +161,8 @@ class ZmArchivedToS3(object):
         sql = 'SELECT e.Id AS Id,MonitorId,m.Name AS MonitorName,' \
               'e.Name AS Name,Cause,StartTime,Archived ' \
               'FROM Events AS e ' \
-              'LEFT JOIN Monitors AS m ON e.MonitorId=m.Id WHERE Archived=1;'
+              'LEFT JOIN Monitors AS m ON e.MonitorId=m.Id WHERE Archived=1 ' \
+              f'AND Id > {self._max_event_id};'
         return self._run_sql(sql)
 
     def _run_sql(self, sql: str) -> List[dict]:
@@ -166,6 +181,10 @@ def parse_args(argv):
                    help='verbose output. specify twice for debug-level output.')
     p.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                    default=False, help='Dry run - only log what would be done')
+    p.add_argument('-n', '--no-sleep', dest='sleep', action='store_false',
+                   default=True, help='do not sleep')
+    p.add_argument('-o', '--one-shot', dest='oneshot', action='store_true',
+                   default=False, help='Run sync once and then exit')
     args = p.parse_args(argv)
     return args
 
@@ -180,7 +199,10 @@ def main():
         set_log_debug(logger)
     elif args.verbose > 0:
         set_log_info(logger)
-    ZmArchivedToS3(dry_run=args.dry_run).run()
+    if args.oneshot:
+        ZmArchivedToS3(dry_run=args.dry_run).run()
+    else:
+        ZmArchivedToS3(dry_run=args.dry_run).loop(do_sleep=args.sleep)
 
 
 if __name__ == "__main__":
