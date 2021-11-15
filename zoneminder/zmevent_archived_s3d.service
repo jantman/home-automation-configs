@@ -8,7 +8,7 @@ StartLimitBurst=999
 EnvironmentFile=/etc/zmeventnotification.env
 ExecStart=/opt/home-automation-configs/zoneminder/zmevent_archived_s3d.py
 Type=simple
-User=www-data
+User=root
 Restart=always
 # Disable stopping unit if it doesn't start up in some timeout
 TimeoutStartSec=infinity
