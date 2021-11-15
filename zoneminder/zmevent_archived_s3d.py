@@ -162,7 +162,7 @@ class ZmArchivedToS3(object):
               'e.Name AS Name,Cause,StartTime,Archived ' \
               'FROM Events AS e ' \
               'LEFT JOIN Monitors AS m ON e.MonitorId=m.Id WHERE Archived=1 ' \
-              f'AND Id > {self._max_event_id};'
+              f'AND e.Id > {self._max_event_id};'
         return self._run_sql(sql)
 
     def _run_sql(self, sql: str) -> List[dict]:
