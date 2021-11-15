@@ -21,6 +21,7 @@ import pymysql
 from pymysql.connections import Connection
 from io import StringIO
 import json
+import time
 
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
