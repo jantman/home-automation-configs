@@ -52,7 +52,8 @@ class ZmArchivedToS3(object):
         self._conn: Connection = pymysql.connect(
             host='localhost', user=CONFIG['MYSQL_USER'],
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
-            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+            charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True
         )
         logger.info('Connected to MySQL')
         self._s3 = boto3.resource(
@@ -174,7 +175,7 @@ class ZmArchivedToS3(object):
             logger.debug('EXECUTE: %s', sql)
             cursor.execute(sql)
             result = cursor.fetchall()
-        logger.debug('Got %d results', len(result))
+        logger.debug('Got %d results: %s', len(result), result)
         return result
 
 
