@@ -48,12 +48,13 @@ class ZmArchivedToS3(object):
 
     def __init__(self, dry_run: bool = False):
         self._dry_run: bool = dry_run
-        logger.debug('Connecting to MySQL')
+        logger.info('Connecting to MySQL')
         self._conn: Connection = pymysql.connect(
             host='localhost', user=CONFIG['MYSQL_USER'],
             password=CONFIG['MYSQL_PASS'], db=CONFIG['MYSQL_DB'],
             charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
         )
+        logger.info('Connected to MySQL')
         self._s3 = boto3.resource(
             's3',
             region_name=os.environ.get(
@@ -63,8 +64,11 @@ class ZmArchivedToS3(object):
         )
         self._bucket = self._s3.Bucket(os.environ['BUCKET_NAME'])
         self._prefix: str = os.environ.get('BUCKET_PREFIX', '')
+        logger.info(
+            'Listing S3 prefixes in s3://%s/%s', self._bucket.name, self._prefix
+        )
         self._s3_prefixes: List[str] = self._list_s3_prefixes()
-        logger.debug(
+        logger.info(
             'Found %d prefixes in S3: %s', len(self._s3_prefixes),
             self._s3_prefixes
         )
@@ -78,7 +82,6 @@ class ZmArchivedToS3(object):
                 time.sleep(30)
 
     def run(self):
-        logger.info('Looking for archived events...')
         events: List[dict] = self._find_events()
         count = 0
         evt: Dict
@@ -98,7 +101,7 @@ class ZmArchivedToS3(object):
             count += 1
             self._s3_prefixes.append(dirname)
             self._max_event_id = evt['Id']
-        print(f'Uploaded {count} archived events to S3')
+        logger.info(f'Uploaded {count} archived events to S3')
 
     def _event_to_s3(self, evt: Dict, dirname: str):
         dir: str = os.path.join(self._prefix, dirname)
@@ -158,7 +161,7 @@ class ZmArchivedToS3(object):
         return d
 
     def _find_events(self) -> List[dict]:
-        logger.info('Looking for archived events...')
+        logger.debug('Looking for archived events...')
         sql = 'SELECT e.Id AS Id,MonitorId,m.Name AS MonitorName,' \
               'e.Name AS Name,Cause,StartTime,Archived ' \
               'FROM Events AS e ' \

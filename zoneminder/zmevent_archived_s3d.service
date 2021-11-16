@@ -6,7 +6,7 @@ StartLimitBurst=999
 
 [Service]
 EnvironmentFile=/etc/zmeventnotification.env
-ExecStart=/opt/home-automation-configs/zoneminder/zmevent_archived_s3d.py
+ExecStart=/opt/home-automation-configs/zoneminder/zmevent_archived_s3d.py -v
 Type=simple
 User=root
 Restart=always
