@@ -123,7 +123,7 @@ def is_garage_zipper_as_person(i, label, x, y, w, h, zones, score):
         515 < x < 542 and
         232 < y < 261 and
         140 < w < 292 and
-        468 < h < 536 and
+        468 < h < 540 and
         label == 'person'
     ):
         return True
