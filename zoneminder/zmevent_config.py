@@ -333,7 +333,7 @@ IGNORED_OBJECTS = {
             'GarageCrap',
             [
                 'aeroplane', 'car', 'toaster', 'truck', 'toilet',
-                'parking meter', 'suitcase', 'clock', 'mouse'
+                'parking meter', 'suitcase', 'clock', 'mouse', 'cat'
             ],
             monitor_num=10,
         ),
