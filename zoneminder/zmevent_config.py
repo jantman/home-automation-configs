@@ -113,6 +113,23 @@ def is_garage_as_person(i, label, x, y, w, h, zones, score):
     return False
 
 
+def is_garage_zipper_as_person(i, label, x, y, w, h, zones, score):
+    """
+    ``i`` is an IgnoredObject instance. This is a custom method to match the
+    cases where the left edge of the garage door is identified as a person.
+    Returns True if object should be ignored.
+    """
+    if (
+        515 < x < 542 and
+        232 < y < 261 and
+        240 < w < 285 and
+        468 < h < 530 and
+        label == 'person'
+    ):
+        return True
+    return False
+
+
 def is_bug_zapper_as_person(i, label, x, y, w, h, zones, score):
     """
     ``i`` is an IgnoredObject instance. This is a custom method to match the
@@ -326,6 +343,12 @@ IGNORED_OBJECTS = {
             ['cup', 'wine glass'],
             monitor_num=10,
             zone_names=['CloseBy'],
+        ),
+        IgnoredObject(
+            'GarageZipperAsPerson',
+            ['person'],
+            monitor_num=10,
+            callable=is_garage_zipper_as_person,
         ),
     ],
     'telescreen': [
