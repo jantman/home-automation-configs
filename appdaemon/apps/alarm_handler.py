@@ -74,14 +74,16 @@ from pushover_notifier import PushoverNotifier
 #: List of regular expressions to match the binary_sensor entities for my
 #: "exterior" zone, i.e. things that alarm when I'm either Home or Away
 EXTERIOR_SENSOR_REs = [
-    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$')
+    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor.*$'),
+    re.compile(r'^binary_sensor\.gate_sensor$'),
+    re.compile(r'^binary_sensor\.crawlspace_sensor$'),
 ]
 
 #: List of regular expressions to match the binary_sensor entities for my
 #: "interor" zone, i.e. things that alarm only when I'm Away.
 INTERIOR_SENSOR_REs = [
     re.compile(r'^binary_sensor\.ecolink_motion_detector_sensor.*$'),
-    re.compile(r'^binary_sensor\..*_motion$')
+    re.compile(r'^binary_sensor\..*_motion$'),
 ]
 
 #: List of regular expressions to match the binary_sensor entities for any
