@@ -153,7 +153,7 @@ def is_grill_as_person(i, label, x, y, w, h, zones, score):
     cases where the grill is identified on the gate camera as a person.
     Returns True if object should be ignored.
     """
-    if label != 'person' or score > 35:
+    if label != 'person' or score > 50:
         return False
     if (
         173 < x < 183 and
