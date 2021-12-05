@@ -21,7 +21,7 @@ The process here is largely based on the one I developed for my older 3B+ based 
 
 __Note:__ Do not attach the touchscreen until instructed!
 
-1. Write the Raspberry Pi Foundation's Raspberry Pi OS With Desktop (``2021-05-07-raspios-buster-armhf.zip``) image to SD card: ``dd bs=4M if=2021-05-07-raspios-buster-armhf.img of=/dev/sdX conv=fsync status=progress``
+1. Write the Raspberry Pi Foundation's Raspberry Pi OS With Desktop (``2021-10-30-raspios-bullseye-armhf.zip``) image to SD card: ``dd bs=4M if=2021-10-30-raspios-bullseye-armhf.img of=/dev/sdX conv=fsync status=progress``
 1. When finished, mount the two partitions of the card (rootfs and boot) somewhere on your system.
 1. As root, on the boot partition, ``touch ssh`` to enable SSH login.
 1. Find the UID and GID of the ``pi`` user (usually 1000:1000).
@@ -31,7 +31,7 @@ __Note:__ Do not attach the touchscreen until instructed!
    1. ``install -m 0644 -o 1000 -g 1000 $AUTHKEYS_PATH home/pi/.ssh/authorized_keys``
    1. Set a hostname. Using "rpi5" as an example: ``echo kitchenpi > etc/hostname && sed -i "s/raspberrypi/kitchenpi/g" etc/hosts``
 1. Umount the partitions and eject the card. Put it in the Pi, connect a HDMI monitor and USB keyboard, and power it up.
-1. The Pi should boot, resize the filesystem, then reboot and eventually boot to the Raspbian graphical desktop auto-logged-in as the "pi" user.
+1.  The Pi should boot, resize the filesystem, then reboot and eventually boot to the Raspbian graphical desktop auto-logged-in as the "pi" user.
 1. Go through the first two screens of the configuration "wizard"; set localization and timezone settings and password.
 1. Get the MAC address of the network adapter you'll be using. Set up a static lease for it, and add to WiFi ACL (if applicable).
 1. Configure WiFi and let the installer run updates.
@@ -47,6 +47,7 @@ __Note:__ Do not attach the touchscreen until instructed!
    1. Add as a [privatepuppet deploy key](https://github.com/jantman/privatepuppet/settings/keys)
    1. ``cd /root && git clone https://github.com/jantman/workstation-bootstrap.git && cd workstation-bootstrap``
    1. ``echo -e "Host github.com\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null\n" >> ~/.ssh/config && chmod 0600 ~/.ssh/config``
+   1. ``vim /etc/fstab`` and set the last field of all partitions to ``0`` to prevent fsck at boot.
    1. ``./bin/run_r10k_puppet.sh``
    1. ``reboot``
 1. ``sudo su -`` and ``bin/run_r10k_puppet.sh``; reboot once that's done
