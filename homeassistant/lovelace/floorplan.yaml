@@ -88,6 +88,15 @@ elements:
     style:
       top: 23%
       left: 75%
+  - type: state-icon
+    title: Christmas Tree
+    entity: switch.christmastree_on_off
+    tap_action:
+      action: toggle
+    icon: mdi:pine-tree
+    style:
+      top: 95%
+      left: 64%
   # DOORS
   - type: state-icon
     title: Crawlspace Door
