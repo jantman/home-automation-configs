@@ -75,10 +75,10 @@ elements:
     tap_action:
       action: toggle
     entity: switch.bug_zapper
-    icon: mdi:bug
+    icon: mdi:string-lights
     style:
-      top: 5%
-      left: 15%
+      top: 95%
+      left: 2%
   - type: state-icon
     # back room light
     tap_action:

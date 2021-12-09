@@ -25,6 +25,7 @@ lights:
     - light.kitchenbulb2level_on_off
     - switch.workbenchlight_switch
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
+    - switch.bug_zapper
 porchlights:
   name: Porch Lights
   entities:
@@ -48,6 +49,7 @@ stringlight:
   name: String Lights
   entities:
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
+    - switch.bug_zapper
 bugzap:
   name: Bug Zapper
   entities:
