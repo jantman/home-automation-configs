@@ -49,7 +49,6 @@ stringlight:
   name: String Lights
   entities:
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
-    - switch.bug_zapper
 bugzap:
   name: Bug Zapper
   entities:
