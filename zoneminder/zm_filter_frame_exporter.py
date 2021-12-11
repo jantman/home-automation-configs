@@ -34,13 +34,15 @@ for lname in ['urllib3']:
     l.propagate = True
 
 
-def _zm_sql_val(val: str) -> str:
+def _zm_sql_val(val: str, op: str) -> str:
     try:
         x = int(val)
         assert val == str(x)
         return val
     except Exception:
         pass
+    if op == 'LIKE':
+        return f'"%{val}%"'
     return f'"{val}"'
 
 
@@ -55,7 +57,7 @@ def _zm_term_to_sql(term: dict) -> str:
         s += '( '
     if term.get('cnj') not in [None, '']:
         s += term.get('cnj') + ' '
-    s += term['attr'] + ' ' + term['op'] + ' ' + _zm_sql_val(term['val'])
+    s += term['attr'] + ' ' + term['op'] + ' ' + _zm_sql_val(term['val'], term['op'])
     if term.get('cbr') in [1, '1']:
         s += ')'
     s += ' '
