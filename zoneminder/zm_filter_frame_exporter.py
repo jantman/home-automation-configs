@@ -41,6 +41,8 @@ def _zm_sql_val(val: str, op: str) -> str:
         return val
     except Exception:
         pass
+    if op == '=[]':
+        return f'({val})'
     if op == 'LIKE':
         return f'"%{val}%"'
     return f'"{val}"'
@@ -57,7 +59,14 @@ def _zm_term_to_sql(term: dict) -> str:
         s += '( '
     if term.get('cnj') not in [None, '']:
         s += term.get('cnj') + ' '
-    s += term['attr'] + ' ' + term['op'] + ' ' + _zm_sql_val(term['val'], term['op'])
+    if term['op'] == '=[]':
+        s += term['attr'] + ' IN ' + _zm_sql_val(
+            term['val'], term['op']
+        )
+    else:
+        s += term['attr'] + ' ' + term['op'] + ' ' + _zm_sql_val(
+            term['val'], term['op']
+        )
     if term.get('cbr') in [1, '1']:
         s += ')'
     s += ' '
