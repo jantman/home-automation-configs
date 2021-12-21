@@ -138,6 +138,8 @@ LIGHT_ENTITIES = [
     'switch.inovelli_unknown_type_ff00_id_ff07_switch',
     # back room light
     'light.backroomlightlevel_on_off',
+    # back room shop lights
+    'switch.backroomshoplights_on_off',
 ]
 
 #: List of RGB light entities that should react to an alarm. Right now they

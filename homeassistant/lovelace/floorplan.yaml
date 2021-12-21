@@ -87,7 +87,16 @@ elements:
     icon: mdi:lightbulb
     style:
       top: 23%
-      left: 75%
+      left: 60%
+  - type: state-icon
+    # back room shop lights
+    tap_action:
+      action: toggle
+    entity: switch.backroomshoplights_on_off
+    icon: mdi:wall-sconce-flat
+    style:
+      top: 12%
+      left: 76%
   - type: state-icon
     title: Christmas Tree
     entity: switch.christmastree_on_off
