@@ -60,14 +60,18 @@ backroomlights:
   entities:
     - switch.backroomshoplights_on_off
     - light.backroomlightlevel_on_off
-indoorlights:
-  name: Indoor Lights
+commonlights:
+  name: Common Lights
   entities:
     - light.ge_45606_2way_dimmer_switch_level
     - light.ge_45606_2way_dimmer_switch_level_2
     - light.jasco_products_45606_2_way_dimmer_switch_level
     - light.kitchenbulb1level_on_off
     - light.kitchenbulb2level_on_off
+indoorlights:
+  name: Indoor Lights
+  entities:
+    - group.commonlights
     - switch.workbenchlight_switch
     - switch.backroomshoplights_on_off
     - light.backroomlightlevel_on_off

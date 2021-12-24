@@ -374,11 +374,11 @@
       command: single
   condition:
     - condition: state
-      entity_id: group.indoorlights
+      entity_id: group.commonlights
       state: 'off'
   action:
     - service: homeassistant.turn_on
-      entity_id: group.indoorlights
+      entity_id: group.commonlights
 - alias: Bedroom Lights Toggle Off
   id: bedroom-lights-toggle-off
   trigger:
