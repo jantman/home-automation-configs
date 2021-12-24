@@ -328,8 +328,12 @@
 - alias: First Morning Button Trigger
   id: first-morning-button-trigger
   trigger:
-    platform: webhook
-    webhook_id: cc50e36b6a6b-morning
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: 00:15:8d:00:07:9a:2b:be
+      unique_id: 00:15:8d:00:07:9a:2b:be:1:0x0012
+      command: single
   # only complete the automation if we're still waiting for the first motion
   condition:
     - condition: state
@@ -355,6 +359,76 @@
       entity_id: light.ge_45606_2way_dimmer_switch_level_2
 ################################################################################
 # END "first morning" routine                                                  #
+################################################################################
+################################################################################
+# Aqara Zigbee Buttons                                                         #
+################################################################################
+- alias: Bedroom Lights Toggle On
+  id: bedroom-lights-toggle-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: 00:15:8d:00:07:9a:2b:be
+      unique_id: 00:15:8d:00:07:9a:2b:be:1:0x0012
+      command: single
+  condition:
+    - condition: state
+      entity_id: group.indoorlights
+      state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: group.indoorlights
+- alias: Bedroom Lights Toggle Off
+  id: bedroom-lights-toggle-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: 00:15:8d:00:07:9a:2b:be
+      unique_id: 00:15:8d:00:07:9a:2b:be:1:0x0012
+      command: single
+  condition:
+    - condition: state
+      entity_id: group.indoorlights
+      state: 'on'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: group.indoorlights
+- alias: BackRoom Lights Toggle On
+  id: backroom-lights-toggle-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: 00:15:8d:00:07:5e:1f:4c
+      unique_id: 00:15:8d:00:07:5e:1f:4c:1:0x0012
+      command: single
+  condition:
+    - condition: state
+      entity_id: group.backroomlights
+      state: 'off'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: group.backroomlights
+- alias: BackRoom Lights Toggle Off
+  id: backroom-lights-toggle-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: 00:15:8d:00:07:5e:1f:4c
+      unique_id: 00:15:8d:00:07:5e:1f:4c:1:0x0012
+      command: single
+  condition:
+    - condition: state
+      entity_id: group.backroomlights
+      state: 'on'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: group.backroomlights
+################################################################################
+# END Aqara Zigbee Buttons                                                     #
 ################################################################################
 ################################################################################
 # Alarm Automations                                                            #
