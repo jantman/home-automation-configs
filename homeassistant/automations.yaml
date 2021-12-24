@@ -506,59 +506,6 @@
       event_data:
         state: Duress
         message: triggered by cc50e36b6a6b
-- alias: Button Box Panic Button ecfabc6102f0
-  id: button-box-panic-button-ecfabc6102f0
-  trigger:
-    - platform: webhook
-      webhook_id: ecfabc6102f0-panic
-  action:
-    - event: CUSTOM_ALARM_TRIGGER
-      event_data:
-        message: triggered by button box panic button ecfabc6102f0
-- alias: Button Box Arm Home ecfabc6102f0
-  id: button-box-arm-home-ecfabc6102f0
-  trigger:
-    - platform: webhook
-      webhook_id: ecfabc6102f0-armhome
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Home
-        message: triggered by ecfabc6102f0
-- alias: Button Box Disarm ecfabc6102f0
-  id: button-box-disarm-ecfabc6102f0
-  trigger:
-    - platform: webhook
-      webhook_id: ecfabc6102f0-disarm
-  condition:
-    - condition: state
-      entity_id: input_select.alarmstate
-      state: Home
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Disarmed
-        message: triggered by ecfabc6102f0
-- alias: Button Box Duress ecfabc6102f0
-  id: button-box-duress-ecfabc6102f0
-  trigger:
-    - platform: webhook
-      webhook_id: ecfabc6102f0-duress
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Duress
-        message: triggered by ecfabc6102f0
-- alias: Button Box Kitchen Light
-  id: button-box-kitchen-light
-  trigger:
-    - platform: webhook
-      webhook_id: ecfabc6102f0-light
-  action:
-    - service: homeassistant.turn_on
-      entity_id: light.kitchenbulb1level_on_off
-    - service: homeassistant.turn_on
-      entity_id: light.kitchenbulb2level_on_off
 ################################################################################
 # END Button box handling                                                      #
 ################################################################################
