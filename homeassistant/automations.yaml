@@ -461,55 +461,6 @@
       event_data:
         state: Home
 ################################################################################
-# BEGIN Button box handling                                                    #
-################################################################################
-- alias: Button Box Panic Button cc50e36b6a6b
-  id: button-box-panic-button-cc50e36b6a6b
-  trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-panic
-  action:
-    - event: CUSTOM_ALARM_TRIGGER
-      event_data:
-        message: triggered by button box panic button cc50e36b6a6b
-- alias: Button Box Arm Home cc50e36b6a6b
-  id: button-box-arm-home-cc50e36b6a6b
-  trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-armhome
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Home
-        message: triggered by cc50e36b6a6b
-- alias: Button Box Disarm cc50e36b6a6b
-  id: button-box-disarm-cc50e36b6a6b
-  trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-disarm
-  condition:
-    - condition: state
-      entity_id: input_select.alarmstate
-      state: Home
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Disarmed
-        message: triggered by cc50e36b6a6b
-- alias: Button Box Duress cc50e36b6a6b
-  id: button-box-duress-cc50e36b6a6b
-  trigger:
-    - platform: webhook
-      webhook_id: cc50e36b6a6b-duress
-  action:
-    - event: CUSTOM_ALARM_STATE_SET
-      event_data:
-        state: Duress
-        message: triggered by cc50e36b6a6b
-################################################################################
-# END Button box handling                                                      #
-################################################################################
-################################################################################
 # Christmas stuff                                                              #
 ################################################################################
 - id: PorchChristmasLightsOffAfterSunrise
