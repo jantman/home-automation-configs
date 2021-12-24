@@ -27,6 +27,7 @@ lights:
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
     - switch.bug_zapper
     - switch.backroomshoplights_on_off
+    - light.backroomlightlevel_on_off
 porchlights:
   name: Porch Lights
   entities:
@@ -57,5 +58,16 @@ bugzap:
 backroomlights:
   name: Back Room Lights
   entities:
+    - switch.backroomshoplights_on_off
+    - light.backroomlightlevel_on_off
+indoorlights:
+  name: Indoor Lights
+  entities:
+    - light.ge_45606_2way_dimmer_switch_level
+    - light.ge_45606_2way_dimmer_switch_level_2
+    - light.jasco_products_45606_2_way_dimmer_switch_level
+    - light.kitchenbulb1level_on_off
+    - light.kitchenbulb2level_on_off
+    - switch.workbenchlight_switch
     - switch.backroomshoplights_on_off
     - light.backroomlightlevel_on_off
