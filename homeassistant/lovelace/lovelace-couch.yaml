@@ -5,7 +5,7 @@ views:
     badges: []
     cards:
       - type: media-control
-        entity: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+        entity: media_player.kodi_121535415815200622acb7c5952aae52
       - type: grid
         cards:
           - type: button
@@ -74,7 +74,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.ShowOSD
             entity: binary_sensor.172_17_0_1
             hold_action:
@@ -86,7 +86,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Home
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -99,7 +99,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Up
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -112,7 +112,7 @@ views:
               action: call-service
               service: media_player.media_play_pause
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
@@ -124,7 +124,7 @@ views:
               action: call-service
               service: media_player.media_stop
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
@@ -136,7 +136,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Player.SetSubtitle
                 playerid: 1
                 subtitle: 'on'
@@ -151,7 +151,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Left
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -164,7 +164,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Select
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -177,7 +177,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Right
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -190,7 +190,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: VideoLibrary.Scan
             entity: binary_sensor.172_17_0_1
             show_name: true
@@ -203,7 +203,7 @@ views:
               action: call-service
               service: media_player.media_previous_track
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
@@ -215,7 +215,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Player.SetSpeed
                 playerid: 1
                 speed: decrement
@@ -230,7 +230,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Down
             entity: binary_sensor.172_17_0_1
             show_name: false
@@ -243,7 +243,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Player.SetSpeed
                 playerid: 1
                 speed: increment
@@ -258,7 +258,7 @@ views:
               action: call-service
               service: media_player.media_next_track
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
@@ -270,7 +270,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Input.Back
             entity: binary_sensor.172_17_0_1
             show_name: true
@@ -283,7 +283,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Player.Seek
                 playerid: 1
                 value: bigbackward
@@ -298,7 +298,7 @@ views:
               action: call-service
               service: kodi.call_method
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
                 method: Player.Seek
                 playerid: 1
                 value: bigforward
@@ -313,7 +313,7 @@ views:
               action: call-service
               service: media_player.volume_up
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
@@ -325,7 +325,7 @@ views:
               action: call-service
               service: media_player.volume_down
               service_data:
-                entity_id: media_player.kodi_b0e9084cbade7a45a5ffcc94b0b4253c
+                entity_id: media_player.kodi_121535415815200622acb7c5952aae52
             entity: binary_sensor.172_17_0_1
             show_name: false
             hold_action:
