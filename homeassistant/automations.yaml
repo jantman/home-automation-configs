@@ -363,8 +363,8 @@
 ################################################################################
 # Aqara Zigbee Buttons                                                         #
 ################################################################################
-- alias: Bedroom Lights Toggle On
-  id: bedroom-lights-toggle-on
+- alias: Bedroom Lights On
+  id: bedroom-lights-on
   trigger:
     platform: event
     event_type: zha_event
@@ -372,31 +372,23 @@
       device_ieee: 00:15:8d:00:07:9a:2b:be
       unique_id: 00:15:8d:00:07:9a:2b:be:1:0x0012
       command: single
-  condition:
-    - condition: state
-      entity_id: group.commonlights
-      state: 'off'
   action:
     - service: homeassistant.turn_on
       entity_id: group.commonlights
-- alias: Bedroom Lights Toggle Off
-  id: bedroom-lights-toggle-off
+- alias: Bedroom Lights Off
+  id: bedroom-lights-off
   trigger:
     platform: event
     event_type: zha_event
     event_data:
       device_ieee: 00:15:8d:00:07:9a:2b:be
       unique_id: 00:15:8d:00:07:9a:2b:be:1:0x0012
-      command: single
-  condition:
-    - condition: state
-      entity_id: group.indoorlights
-      state: 'on'
+      command: double
   action:
     - service: homeassistant.turn_off
       entity_id: group.indoorlights
-- alias: BackRoom Lights Toggle On
-  id: backroom-lights-toggle-on
+- alias: BackRoom Lights On
+  id: backroom-lights-on
   trigger:
     platform: event
     event_type: zha_event
@@ -404,26 +396,18 @@
       device_ieee: 00:15:8d:00:07:5e:1f:4c
       unique_id: 00:15:8d:00:07:5e:1f:4c:1:0x0012
       command: single
-  condition:
-    - condition: state
-      entity_id: group.backroomlights
-      state: 'off'
   action:
     - service: homeassistant.turn_on
       entity_id: group.backroomlights
-- alias: BackRoom Lights Toggle Off
-  id: backroom-lights-toggle-off
+- alias: BackRoom Lights Off
+  id: backroom-lights-off
   trigger:
     platform: event
     event_type: zha_event
     event_data:
       device_ieee: 00:15:8d:00:07:5e:1f:4c
       unique_id: 00:15:8d:00:07:5e:1f:4c:1:0x0012
-      command: single
-  condition:
-    - condition: state
-      entity_id: group.backroomlights
-      state: 'on'
+      command: double
   action:
     - service: homeassistant.turn_off
       entity_id: group.backroomlights
