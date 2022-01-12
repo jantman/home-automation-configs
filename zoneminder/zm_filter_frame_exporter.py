@@ -184,24 +184,21 @@ class ZmFilterFrameExporter(object):
 
     def _copy_with_substring(self, evt, substring):
         src = evt.path
-        dest = os.path.join(
-            self._outdir,
-            '%s_%s_%s' % (
-                evt.StartTime.strftime('%Y%m%d%H%M%S'),
-                evt.Monitor.Name,
-                evt.EventId
-            )
-        )
+        prefix = '%s_%s_' % (evt_id, ename)
         count = 0
-        if not self.dry_run and not os.path.exists(dest):
-            os.makedirs(dest)
         for f in glob(os.path.join(src, '*' + substring + '*')):
             count += 1
             if self.dry_run:
                 with open(os.path.join(self._outdir, 'frames.txt'), 'a') as fh:
                     fh.write(src + "\n")
             else:
-                copy(f, os.path.join(dest, os.path.basename(f)))
+                copy(
+                    f,
+                    os.path.join(
+                        self._outdir,
+                        prefix + os.path.basename(f)
+                    )
+                )
         return count
 
     def _find_event_ids(self, filter_id):
