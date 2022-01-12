@@ -14,6 +14,7 @@ import pymysql
 from tempfile import mkdtemp
 from shutil import copy, copytree
 import json
+from glob import glob
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
@@ -103,7 +104,8 @@ class ZmFilterFrameExporter(object):
         self.dry_run = dry_run
 
     def run(
-        self, filter_id, min_score=None, num_frames=5, complete=False
+        self, filter_id, min_score=None, num_frames=5, complete=False,
+        substring=None
     ):
         event_ids = self._find_event_ids(filter_id)
         logger.info('Found %d Events for filter %d', len(event_ids), filter_id)
@@ -114,6 +116,8 @@ class ZmFilterFrameExporter(object):
             if complete:
                 self._copy_complete(evt)
                 count += 1
+            elif substring:
+                count += self._copy_with_substring(evt, substring)
             elif min_score:
                 count += self._copy_with_min_score(evt, min_score)
             else:
@@ -178,6 +182,28 @@ class ZmFilterFrameExporter(object):
             return
         copytree(src, dest)
 
+    def _copy_with_substring(self, evt, substring):
+        src = evt.path
+        dest = os.path.join(
+            self._outdir,
+            '%s_%s_%s' % (
+                evt.StartTime.strftime('%Y%m%d%H%M%S'),
+                evt.Monitor.Name,
+                evt.EventId
+            )
+        )
+        count = 0
+        if not self.dry_run and not os.path.exists(dest):
+            os.makedirs(dest)
+        for f in glob(os.path.join(src, '*' + substring + '*')):
+            count += 1
+            if self.dry_run:
+                with open(os.path.join(self._outdir, 'frames.txt'), 'a') as fh:
+                    fh.write(src + "\n")
+            else:
+                copy(f, os.path.join(dest, os.path.basename(f)))
+        return count
+
     def _find_event_ids(self, filter_id):
         sql = 'SELECT Id,Name,Query_json FROM Filters WHERE Id=%s;'
         args = [filter_id]
@@ -217,6 +243,9 @@ def parse_args(argv):
     p.add_argument('-n', '--num-frames', dest='num_frames', action='store',
                    type=int, default=5,
                    help='Only export the N highest-scoring frames')
+    p.add_argument('-S', '--substring', dest='substring', action='store',
+                   type=str, default=None,
+                   help='Only export event files with names containing this substring')
     p.add_argument('-D', '--dry-run', action='store_true', dest='dry_run',
                    default=False,
                    help='Instead of copying frames, write file with '
@@ -270,5 +299,5 @@ if __name__ == "__main__":
         os.environ['MYSQL_DB'], dry_run=args.dry_run
     ).run(
         args.FILTER_ID, complete=args.complete, min_score=args.min_score,
-        num_frames=args.num_frames
+        num_frames=args.num_frames, substring=args.substring
     )
