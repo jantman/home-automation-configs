@@ -184,7 +184,7 @@ class ZmFilterFrameExporter(object):
 
     def _copy_with_substring(self, evt, substring):
         src = evt.path
-        prefix = '%s_%s_' % (evt_id, ename)
+        prefix = '%s_%s_' % (evt.EventId, evt.Name)
         count = 0
         for f in glob(os.path.join(src, '*' + substring + '*')):
             count += 1
