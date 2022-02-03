@@ -128,17 +128,17 @@ After that, I added the wireless MAC address for the camera to my access point's
       * ONVIF Version: ``19.06(V2.6.1.845551)``
    2. "Camera" -> "Video"
       * Video tab
-        * Set main stream to H.264 3840x2160, 15 FPS, VBR, Quality 6(Best) Max Bit Rate 8192, watermark to camera hostname
+        * Set main stream to H.264 2304x1296, 15 FPS, VBR, Quality 6(Best) Max Bit Rate 8192, watermark to camera hostname
         * Set sub stream to MJPEG, VGA, 8 FPS, bit rate 1024
       * Overlay tab
         * Set Channel Title to the name of the camera (ZM input)
         * Set Logo Overlay to disabled
    3. "Camera" -> "Configuration"
       * Profile Management tab
-        * Profile Management -> Day/Night
+        * Profile Management -> General
       * Configuration tab
         * General profile
-          * TBD
+          * Leave everything defaults except "BLC Mode" - Set to Mode WDR and slider to middle (50)
    4. "Network" -> "TCP/IP" - change hostname; record wireless MAC; disable P2P
    5. "Network" -> "Connection" - record all ports
    6. "Network" -> ("DDNS", "IP Filter", "SMTP", "UPnP") - ensure all are disabled
