@@ -156,6 +156,21 @@ After that, I added the wireless MAC address for the camera to my access point's
 8. Add as a monitor in ZM and configure similarly to the others; set up zones and motion detection.
 9. Once motion detection starts running and alerting, add ``IgnoredObject`` instances to [/zoneminder/zmevent_config.py](/zoneminder/zmevent_config.py) ``IGNORED_OBJECTS`` as needed.
 
+### Aspect Ratios
+
+```
+3840	2160	0.5625
+3072	2048	0.666666666666667
+3072	1728	0.5625
+2592	1944	0.75
+2688	1520	0.56547619047619
+2048	1536	0.75
+2304	1296	0.5625
+1920	1080	0.5625
+1280	960	0.75
+1280	720	0.5625
+```
+
 ## Writing Alarm Analysis Images
 
 ### Telescreen (ZoneMinder 1.32.3)
