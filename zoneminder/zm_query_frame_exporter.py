@@ -52,7 +52,7 @@ class ZmQueryFrameExporter(ZmFilterFrameExporter):
                 count += self._copy_max_score(evt, num_frames)
         print('Wrote frames for %d events to: %s' % (count, self._outdir))
 
-    def _find_event_ids_from_query(self, where):
+    def _find_event_ids(self, where):
         query: str = 'SELECT * FROM Events WHERE ' + where + ';'
         results = {}
         with self._conn.cursor() as cursor:
