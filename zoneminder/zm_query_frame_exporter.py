@@ -56,7 +56,6 @@ class ZmQueryFrameExporter(ZmFilterFrameExporter):
         query: str = 'SELECT * FROM Events WHERE ' + where + ';'
         results = {}
         with self._conn.cursor() as cursor:
-            query = ''
             logger.info('Executing: %s', query)
             cursor.execute(query)
             for row in cursor.fetchall():
