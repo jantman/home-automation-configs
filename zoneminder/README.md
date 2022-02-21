@@ -128,7 +128,7 @@ After that, I added the wireless MAC address for the camera to my access point's
       * ONVIF Version: ``19.06(V2.6.1.845551)``
    2. "Camera" -> "Video"
       * Video tab
-        * Set main stream to H.264 2304x1296, 15 FPS, VBR, Quality 6(Best) Max Bit Rate 8192, watermark to camera hostname
+        * Set main stream to H.264 3840x2160, 12 FPS, CBR, Quality 6(Best) Bit Rate 8192, watermark to camera hostname (note: see [this Amcrest forum post](https://amcrest.com/forum/viewtopic.php?f=18&t=15537) for why not to set a lower resolution)
         * Set sub stream to MJPEG, VGA, 8 FPS, bit rate 1024
       * Overlay tab
         * Set Channel Title to the name of the camera (ZM input)
