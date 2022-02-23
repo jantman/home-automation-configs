@@ -145,8 +145,8 @@ class TempSender:
             self.blink_leds(['red'], num_times=3, length_ms=100)
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         printflush('POST to: %s: %s' % (self.post_path, data))
         b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
@@ -168,8 +168,8 @@ class TempSender:
             self.blink_leds(['red'], num_times=3, length_ms=100)
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         buf = ''
         try:
@@ -190,8 +190,8 @@ class TempSender:
             self.blink_leds(['red'], num_times=3, length_ms=100)
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         s.close()
         printflush('after close()')

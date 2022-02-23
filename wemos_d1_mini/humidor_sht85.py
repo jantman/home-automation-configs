@@ -218,8 +218,8 @@ class HumidorSender:
             printflush('ERROR connecting to %s: %s' % (addr, exc))
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         path = self.post_path + '_' + suffix
         print('POST to: %s: %s' % (path, data))
@@ -236,8 +236,8 @@ class HumidorSender:
             printflush('ERROR sending to %s: %s' % (addr, exc))
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         buf = ''
         try:
@@ -253,8 +253,8 @@ class HumidorSender:
             printflush('Buffer: %s' % buf)
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         s.close()
         if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:

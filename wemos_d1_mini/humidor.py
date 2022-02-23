@@ -136,8 +136,8 @@ class HumidorSender:
             self.blink_leds(['red'], num_times=3, length_ms=100)
             printflush('s.close()')
             s.close()
-            printflush('CONNECTION ERROR: calling machine.soft_reset()')
-            machine.soft_reset()
+            printflush('CONNECTION ERROR: calling machine.reset()')
+            machine.reset()
             return None
         path = self.post_path + '_' + suffix
         print('POST to: %s: %s' % (path, data))
