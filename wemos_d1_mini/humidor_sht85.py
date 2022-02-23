@@ -230,15 +230,32 @@ class HumidorSender:
                 path, HOOK_HOST, HASS_TOKEN, len(bytes(data, 'utf8')), data
             )
         print('SEND:\n%s' % b)
-        s.send(bytes(b, 'utf8'))
+        try:
+            s.send(bytes(b, 'utf8'))
+        except OSError as exc:
+            printflush('ERROR sending to %s: %s' % (addr, exc))
+            printflush('s.close()')
+            s.close()
+            printflush('CONNECTION ERROR: calling machine.soft_reset()')
+            machine.soft_reset()
+            return None
         buf = ''
-        while True:
-            data = s.recv(100)
-            if data:
-                buf += str(data, 'utf8')
-            else:
-                break
-        print(buf)
+        try:
+            while True:
+                data = s.recv(100)
+                if data:
+                    buf += str(data, 'utf8')
+                else:
+                    break
+            print(buf)
+        except OSError as exc:
+            printflush('ERROR sending to %s: %s' % (addr, exc))
+            printflush('Buffer: %s' % buf)
+            printflush('s.close()')
+            s.close()
+            printflush('CONNECTION ERROR: calling machine.soft_reset()')
+            machine.soft_reset()
+            return None
         s.close()
         if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:
             print('OK')

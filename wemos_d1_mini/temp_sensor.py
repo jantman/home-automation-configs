@@ -157,17 +157,42 @@ class TempSender:
                 len(bytes(data, 'utf8')), data
             )
         printflush('SEND:\n%s' % b)
-        s.send(bytes(b, 'utf8'))
-        printflush('after send()')
+        try:
+            s.send(bytes(b, 'utf8'))
+            printflush('after send()')
+        except OSError as exc:
+            printflush('ERROR sending to %s: %s' % (addr, exc))
+            printflush('set LEDs off')
+            self.set_rgb(False, False, False)
+            printflush('blink red LED')
+            self.blink_leds(['red'], num_times=3, length_ms=100)
+            printflush('s.close()')
+            s.close()
+            printflush('CONNECTION ERROR: calling machine.soft_reset()')
+            machine.soft_reset()
+            return None
         buf = ''
-        while True:
-            data = s.recv(100)
-            if data:
-                buf += str(data, 'utf8')
-            else:
-                break
-        printflush('received data:')
-        printflush(buf)
+        try:
+            while True:
+                data = s.recv(100)
+                if data:
+                    buf += str(data, 'utf8')
+                else:
+                    break
+            printflush('received data:')
+            printflush(buf)
+        except OSError as exc:
+            printflush('ERROR receiving from %s: %s' % (addr, exc))
+            printflush('Buffer: %s' % buf)
+            printflush('set LEDs off')
+            self.set_rgb(False, False, False)
+            printflush('blink red LED')
+            self.blink_leds(['red'], num_times=3, length_ms=100)
+            printflush('s.close()')
+            s.close()
+            printflush('CONNECTION ERROR: calling machine.soft_reset()')
+            machine.soft_reset()
+            return None
         s.close()
         printflush('after close()')
         self.set_rgb(False, False, False)
