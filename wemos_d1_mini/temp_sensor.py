@@ -118,11 +118,18 @@ class TempSender:
     def connect_wlan(self):
         self.wlan.active(True)
         if not self.wlan.isconnected():
-            printflush('connecting to network...')
+            print('connecting to network...')
             self.wlan.connect(SSID, WPA_KEY)
-            while not self.wlan.isconnected():
-                pass
-        printflush('network config:', self.wlan.ifconfig())
+            for _ in range(0, 15):
+                if self.wlan.isconnected():
+                    printflush('WLAN is connected')
+                    break
+                printflush('WLAN is not connected; sleep 1s')
+                sleep(1)
+            else:
+                printflush('Could not connect to WLAN after 15s; reset')
+                machine.reset()
+        print('network config:', self.wlan.ifconfig())
 
     def http_post(self, data):
         printflush('http_post() called')

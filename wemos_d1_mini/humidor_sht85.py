@@ -200,8 +200,15 @@ class HumidorSender:
         if not self.wlan.isconnected():
             print('connecting to network...')
             self.wlan.connect(SSID, WPA_KEY)
-            while not self.wlan.isconnected():
-                pass
+            for _ in range(0, 15):
+                if self.wlan.isconnected():
+                    printflush('WLAN is connected')
+                    break
+                printflush('WLAN is not connected; sleep 1s')
+                sleep(1)
+            else:
+                printflush('Could not connect to WLAN after 15s; reset')
+                machine.reset()
         print('network config:', self.wlan.ifconfig())
 
     def http_post(self, data, suffix):
