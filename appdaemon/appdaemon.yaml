@@ -12,5 +12,9 @@ appdaemon:
       type: hass
       ha_url: http://hass:8123
       token: !secret hass_token
-hadashboard:
-  dash_url: http://guarddog:5050
+http:
+  url: http://0.0.0.0:5050
+  headers:
+    Access-Control-Allow-Origin: "*"
+api:
+admin:
