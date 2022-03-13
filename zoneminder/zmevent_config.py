@@ -156,10 +156,10 @@ def is_grill_as_person(i, label, x, y, w, h, zones, score):
     if label != 'person' or score > 50:
         return False
     if (
-        173 < x < 183 and
-        240 < y < 265 and
+        220 < x < 235 and
+        208 < y < 265 and
         90 < h < 140 and
-        50 < w < 62
+        46 < w < 62
     ):
         return True
     return False
