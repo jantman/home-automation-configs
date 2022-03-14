@@ -703,8 +703,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             'logbook/log', name=subject, message=message
         )
         self._browsermod_show_camera(hass_camera_entity)
+        pushover_image = self._pushover_scale_image(image)
         self._do_notify_pushover(
-            subject, message, image=image, sound='alien'
+            subject, message, image=pushover_image, sound='alien'
         )
         self._do_alarm_lights()
         self._notify_email(subject, message, image=image)
@@ -715,6 +716,24 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         )
         self.turn_off('input_boolean.trigger_delay')
         self._untrigger_timer = self.run_in(self._untrigger_alarm, undo_delay)
+
+    def _pushover_scale_image(self, image):
+        """
+        Pushover attachments are limited to 2,621,440 bytes. Some of the
+        combined images of the new 4K cameras are larger than that. If needed,
+        scale the image down to fit.
+        """
+        if len(image) < 2600000:
+            self._log.info('Image is less than 2600000 bytes; not scaling')
+            return image
+        self._log.info(
+            'Image size is %d bytes; resize to 50% for pushover', len(image)
+        )
+        img = Image.open(BytesIO(image))
+        resized = img.resize((round(img.size[0]*0.5), round(img.size[1]*0.5)))
+        b = BytesIO()
+        resized.save(b, format='JPEG')
+        return b.getvalue()
 
     def _trigger_alarm_delay_callback(self, kwargs):
         img = kwargs['image']
