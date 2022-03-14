@@ -746,7 +746,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
 
     def _undo_alarm_lights(self, _):
         """Revert lights back to previous state, 10-20 min. after alarm."""
-        self._log.info('Reverting all lights to previous state')
+        self._log.info(
+            'Reverting all lights to previous state: %s', self._light_states
+        )
         for e_id, prev_state in self._light_states.items():
             if prev_state == 'off':
                 self.turn_off(e_id)
