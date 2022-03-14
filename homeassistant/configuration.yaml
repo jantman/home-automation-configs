@@ -310,6 +310,8 @@ notify:
 input_boolean:
   alarm_duress:
     name: Alarm Duress
+  alarm_is_triggered:
+    name: Alarm Is Triggered
   trigger_first_morning:
     name: Waiting for first morning motion
     icon: mdi:kettle

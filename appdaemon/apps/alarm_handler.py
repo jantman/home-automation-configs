@@ -347,6 +347,7 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             )
             self._last_transition_time = 0
         # end get current state time
+        self._reset_input_booleans()
         self._log.info('Done initializing AlarmHandler')
 
     @property
@@ -736,6 +737,9 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         Turn on all lights when alarm goes off. Save state of all lights before
         turning on, and revert them 10-20 minutes later.
         """
+        if self.get_state('input_boolean.alarm_is_triggered') == 'on':
+            self._log.info('Alarm is already triggered; not turning lights on')
+            return
         self._log.info('Turning on all lights')
         for e_id in LIGHT_ENTITIES + RGB_LIGHT_ENTITIES:
             self._light_states[e_id] = self.get_state(e_id)
@@ -743,9 +747,11 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._log.info(
             'All lights turned on. Previous state: %s', self._light_states
         )
+        self.turn_on('input_boolean.alarm_is_triggered')
 
     def _undo_alarm_lights(self, _):
         """Revert lights back to previous state, 10-20 min. after alarm."""
+        self.turn_off('input_boolean.alarm_is_triggered')
         self._log.info(
             'Reverting all lights to previous state: %s', self._light_states
         )
@@ -812,7 +818,8 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 eid.startswith('input_boolean.enable_') or
                 eid == 'input_boolean.no_alarm_delay' or
                 eid == 'input_boolean.arming_away' or
-                eid == 'input_boolean.trigger_delay'
+                eid == 'input_boolean.trigger_delay' or
+                eid == 'input_boolean.alarm_is_triggered'
             ):
                 self._log.info('Not resetting input_boolean: %s', eid)
                 continue
