@@ -45,6 +45,7 @@ class IgnoredObject(object):
           defined zones.
         """
         assert isinstance(labels, type([])) or labels is None
+        assert name is not None
         self.name = name
         self._labels = labels
         self._monitor_num = monitor_num

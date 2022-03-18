@@ -182,7 +182,8 @@ class ImageAnalyzer:
                 rect_color = (104, 104, 104)
                 text_color = (111, 247, 93)
                 retval['ignored_detections'].append(DetectedObject(
-                    cat, zones, score, x, y, w, h, ignore_reason=matched_filters
+                    cat, zones, score, x, y, w, h,
+                    ignore_reason='matched filters: %s' % matched_filters
                 ))
             else:
                 # object should not be ignored; add to result
