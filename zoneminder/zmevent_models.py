@@ -472,7 +472,7 @@ class DetectedObject(object):
         self._y = y
         self._w = w
         self._h = h
-        self._ignore_reason = None
+        self._ignore_reason = ignore_reason
 
     @property
     def as_dict(self):
