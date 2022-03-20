@@ -146,6 +146,6 @@ class LowScoreFilter(EventFilter):
             self._suffix = 'LowScore'
         else:
             logger.info(
-                'LowScoreFilter found no match for Event %s',
-                self._event.EventId,
+                'LowScoreFilter found NO match for Event %s: MaxScore=%s',
+                self._event.EventId, self._event.MaxScore
             )
