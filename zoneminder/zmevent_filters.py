@@ -121,3 +121,31 @@ class IRChangeFilter(EventFilter):
                 self._event.FirstFrameId, f1_is_color, self._event.LastFrameId,
                 f2_is_color
             )
+
+
+class LowScoreFilter(EventFilter):
+    """
+    Suppress notification for events with a MaxScore below THRESHOLD
+    """
+
+    THRESHOLD = 4
+
+    def run(self):
+        if (
+            self._event.MaxScore is not None and
+            self._event.MaxScore < self.THRESHOLD
+        ):
+            logger.info(
+                'LowScoreFilter matched for Event %s: MaxScore=',
+                self._event.EventId, self._event.MaxScore
+            )
+            self._matched = True
+            self._reasons.append(
+                'LowScore filter MaxScore=%s' % self._event.MaxScore
+            )
+            self._suffix = 'LowScore'
+        else:
+            logger.info(
+                'LowScoreFilter found no match for Event %s',
+                self._event.EventId,
+            )
