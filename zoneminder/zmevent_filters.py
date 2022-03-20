@@ -136,7 +136,7 @@ class LowScoreFilter(EventFilter):
             self._event.MaxScore < self.THRESHOLD
         ):
             logger.info(
-                'LowScoreFilter matched for Event %s: MaxScore=',
+                'LowScoreFilter matched for Event %s: MaxScore=%s',
                 self._event.EventId, self._event.MaxScore
             )
             self._matched = True
