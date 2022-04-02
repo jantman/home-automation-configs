@@ -327,12 +327,6 @@ IGNORED_OBJECTS = {
             monitor_num=9,
         ),
         IgnoredObject(
-            'FrontRoadCamera',
-            ['person'],
-            zone_names=['RoadCamera'],
-            monitor_num=9,
-        ),
-        IgnoredObject(
             'FrontNoZone',
             ['person'],
             no_zone=True,
