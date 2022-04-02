@@ -256,10 +256,10 @@ IGNORED_OBJECTS = {
             monitor_num=5,
         ),
         IgnoredObject(
-            'SidePersonInStreet',
-            ['person'],
+            'SideCamStreet',
+            REQUIRED_OBJECT_CATEGORIES,
             monitor_num=5,
-            zone_names=['Street1', 'Street2'],
+            zone_names=['Street1', 'Street2', 'Nextdoor'],
         ),
         IgnoredObject(
             'SidePersonNoZone',
@@ -303,8 +303,8 @@ IGNORED_OBJECTS = {
         #
         # front camera front street
         IgnoredObject(
-            'FrontCamFrontStreet',
-            ['car', 'truck', 'train'],
+            'FrontCamStreet',
+            REQUIRED_OBJECT_CATEGORIES,
             monitor_num=9,
             zone_names=['Street']
         ),
