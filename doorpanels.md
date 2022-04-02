@@ -21,7 +21,9 @@ The process here is largely based on the one I developed for my older 3B+ based 
 
 __Note:__ Do not attach the touchscreen until instructed!
 
-1. Write the Raspberry Pi Foundation's Raspberry Pi OS With Desktop (``2021-10-30-raspios-bullseye-armhf.zip``) image to SD card: ``dd bs=4M if=2021-10-30-raspios-bullseye-armhf.img of=/dev/sdX conv=fsync status=progress``
+__Warning:__ As of April 2, 2022, the version of Chromium in the Raspberry Pi OS repositories (`98.0.4758.106-rpt1`) does not work with this setup; it just shows a black screen. Downgrading to the `95.0.4638.78-rpt6` version of chromium packages from the [raspberrypi.org chromium-browser repo](http://archive.raspberrypi.org/debian/pool/main/c/chromium-browser/) and the `20210812` version of rpi-chromium-mods from the [raspberrypi.org rpi-chromium-mods repository](http://archive.raspberrypi.org/debian/pool/main/r/rpi-chromium-mods/) seems to fix this. For my own ease, I've saved a full image of the current working SD card at `/mnt/nas1-NetBackup/kitchenpi/kitchenpi-2022-01-28-raspios-bullseye-armhf_working-chromium95.img`.
+
+1. Write the Raspberry Pi Foundation's Raspberry Pi OS With Desktop (``2022-01-28-raspios-bullseye-armhf.zip``) image to SD card: ``dd bs=4M if=2022-01-28-raspios-bullseye-armhf.img of=/dev/sdX conv=fsync status=progress``
 1. When finished, mount the two partitions of the card (rootfs and boot) somewhere on your system.
 1. As root, on the boot partition, ``touch ssh`` to enable SSH login.
 1. Find the UID and GID of the ``pi`` user (usually 1000:1000).
