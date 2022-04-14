@@ -39,6 +39,7 @@ LOG_DEBUG = False
 
 #: Entities to ignore
 IGNORE_ENTITIES = [
+    'zwave.aeotec_zw090_zstick_gen5_us',
     'zwave.unknown_node_6_2',
 ]
 
@@ -78,7 +79,7 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             prob.append(
                 'Last message received %s' % naturaltime(age)
             )
-        state = a.get('state')
+        state = e.get('state')
         if state not in OK_STATES:
             prob.append('State: %s' % state)
         if len(prob) == 0:
