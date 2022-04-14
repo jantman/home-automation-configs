@@ -6,7 +6,6 @@ a persistent notification, add a logbook entry, and notify via
 NOTIFY_SERVICE.
 """
 
-import logging
 from datetime import time
 import appdaemon.plugins.hass.hassapi as hass
 from dateutil.parser import parse
@@ -18,6 +17,15 @@ from pushover_notifier import PushoverNotifier
 
 #: Threshold below which battery level will trigger an alert.
 BATTERY_THRESHOLD = 60
+
+#: Threshold for last message received from node
+LAST_RECV_THRESHOLD = timedelta(hours=24)
+
+#: ignore last receive for these entities
+IGNORE_RECV_ENTITIES = [
+    'zwave.linear_wa105dbz1_main_operated_siren',
+    'zwave.inovelli_unknown_type_ff00_id_ff07_2',
+]
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
@@ -31,10 +39,11 @@ LOG_DEBUG = False
 
 #: Entities to ignore
 IGNORE_ENTITIES = [
-    'zwave.aeotec_zw090_zstick_gen5_us',
-    'zwave.linear_wa105dbz1_main_operated_siren',
-    'zwave.unknown_node_6',
+    'zwave.unknown_node_6_2',
 ]
+
+#: states that are OK
+OK_STATES = ['ready', 'sleeping']
 
 
 class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
@@ -59,13 +68,23 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             prob.append('Failed')
         if batt <= BATTERY_THRESHOLD:
             prob.append('Battery Level: %d' % batt)
+        a['receivedTS'] = a['receivedTS'].strip()
+        if len(a['receivedTS']) == 23:
+            ts = parse(a['receivedTS'][:19])
+        else:
+            ts = parse(a['receivedTS'])
+        age = datetime.now() - ts
+        if age > LAST_RECV_THRESHOLD and e['entity_id'] not in IGNORE_RECV_ENTITIES:
+            prob.append(
+                'Last message received %s' % naturaltime(age)
+            )
         state = a.get('state')
-        if a == "unavailable":
-            prob.append('State: unavailable')
+        if state not in OK_STATES:
+            prob.append('State: %s' % state)
         if len(prob) == 0:
             self._log.debug(
-                '%s - failed=%s battery_level=%s last_recv=%s',
-                ename, failed, batt, naturaltime(age)
+                '%s - failed=%s battery_level=%s last_recv=%s state=%s',
+                ename, failed, batt, naturaltime(age), state
             )
             return []
         return ['%s: %s' % (ename, '; '.join(prob))]
