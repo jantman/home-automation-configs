@@ -8,6 +8,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 
 * [boot.py](boot.py) - the original boot file that came with MicroPython
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
+* [hass_sender.py](hass_sender.py) - Base class for connecting to WiFi and sending metrics to HomeAssistant.
 * [humidor_sht85.py](humidor_sht85.py) - The code for the temperature and humidity sensor in my humidor, using the SHT85 sensor. See [sht85.md](sht85.md) for details.
 * [i2c_device.py](i2c_device.py) - Version of i2c_device.py from https://github.com/adafruit/Adafruit_CircuitPython_BusDevice @ a489e58 modified to run on MicroPython (MIT license)
 * [led_test.py](led_test.py) - A simple test of flashing the board's onboard LED.
@@ -15,6 +16,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [requirements.txt](requirements.txt) - pip requirements file for managing the boards and uploading code to them
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
 * [sht85.md](sht85.md) - Notes on the SHT85 sensor and WeMos setup.
+* [skeleton.py](skeleton.py) - Skeleton of a script for reading a sensor and sending the result to HomeAssistant.
 * [sync.py](sync.py) - Wrapper script around [rshell](https://github.com/dhylands/rshell) to automate syncing scripts to my boards.
 * [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.
 * [temp_sensor.png](temp_sensor.png) - PNG of Schematic

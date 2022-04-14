@@ -5,16 +5,13 @@ SHT85 sensor wired according to sht85.md
 """
 
 import micropython
-from micropython import const
 micropython.alloc_emergency_exception_buf(100)
+
+from hass_sender import printflush, HassSender
+from micropython import const
 from machine import Pin, I2C
-import network
-import socket
 from time import sleep, sleep_ms
-from binascii import hexlify
-import time
 import json
-from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH, HASS_TOKEN
 from i2c_device import I2CDevice
 try:
     import struct
@@ -24,15 +21,6 @@ except ImportError:
 # Pin mappings - board number to GPIO number
 SDA = micropython.const(4)  # D2
 SCL = micropython.const(5)  # D1
-
-
-ENTITIES = {
-    '500291c9b1a3': 'sensor.500291c9b1a3',
-}
-
-FRIENDLY_NAMES = {
-    '500291c9b1a3': 'Humidor',
-}
 
 # BEGIN Condensed version of sht85.py
 _SHT31_DEFAULT_ADDRESS = const(0x44)
@@ -71,10 +59,6 @@ def _unpack(data):
     return word[: length // 3]
 
 
-def printflush(*args):
-    print(*args)
-
-
 class SHT85:
 
     def __init__(self, i2c_bus, address=_SHT31_DEFAULT_ADDRESS):
@@ -97,16 +81,16 @@ class SHT85:
         """
         print("SHT31D._reset() Sending periodic break to device")
         self._command(_SHT31_PERIODIC_BREAK)
-        time.sleep(0.001)
+        sleep(0.001)
         print("SHT31D._reset() Sending soft reset to device")
         self._command(_SHT31_SOFTRESET)
-        time.sleep(0.0015)
+        sleep(0.0015)
 
     def _data(self):
         data = bytearray(6)
         data[0] = 0xFF
         self._command(const(0x2400))
-        time.sleep(0.0155)
+        sleep(0.0155)
         self.i2c_device.readinto(data)
         word = _unpack(data)
         length = len(word)
@@ -129,54 +113,41 @@ class SHT85:
         data = bytearray(6)
         data[0] = 0xFF
         self._command(_SHT31_READSERIALNBR)
-        time.sleep(0.001)
+        sleep(0.001)
         self.i2c_device.readinto(data)
         word = _unpack(data)
         return (word[0] << 16) | word[1]
 
 # END Condensed version of sht85.py
 
-class HumidorSender:
+
+class HumidorSender(HassSender):
 
     def __init__(self):
-        print("Init")
-        self.unhandled_event = False
-        printflush('Instantiate WLAN')
-        self.wlan = network.WLAN(network.STA_IF)
-        printflush('connect_wlan()')
-        self.connect_wlan()
-        self.mac = hexlify(self.wlan.config('mac')).decode()
-        print('MAC: %s' % self.mac)
-        self.entity_id = ENTITIES[self.mac]
-        self.friendly_name = FRIENDLY_NAMES[self.mac]
-        print('Entity ID: %s; Friendly Name: %s' % (
-            self.entity_id, self.friendly_name
-        ))
-        self.post_path = '/api/states/' + self.entity_id
-        print('POST path: %s' % self.post_path)
-        print("Initializing i2c...")
+        super().__init__()
+        printflush("Initializing i2c...")
         self.i2c = I2C(
             scl=Pin(SCL, mode=Pin.IN, pull=Pin.PULL_UP),
             sda=Pin(SDA, mode=Pin.IN, pull=Pin.PULL_UP),
             freq=1000
         )
-        print("Initializing sensor...")
+        printflush("Initializing sensor...")
         self.sensor = SHT85(self.i2c)
-        print("Serial number: %s", self.sensor.serial_number)
-        print("Done initializing.")
+        printflush("Serial number: %s", self.sensor.serial_number)
+        printflush("Done initializing.")
 
     def run(self):
-        print("Enter loop...")
+        printflush("Enter loop...")
         while True:
             self.send_data()
             sleep(60)
 
     def send_data(self):
-        print('measuring...')
+        printflush('measuring...')
         temp_c, humidity = self.sensor._read()
-        print('temp_c=%s humidity=%s' % (temp_c, humidity))
+        printflush('temp_c=%s humidity=%s' % (temp_c, humidity))
         temp_f = ((temp_c * 9.0) / 5.0) + 32
-        print('temp_f=%s' % temp_f)
+        printflush('temp_f=%s' % temp_f)
         data = json.dumps({
             'state': round(temp_f, 2),
             'attributes': {
@@ -184,7 +155,7 @@ class HumidorSender:
                 'unit_of_measurement': '\u00b0F'
             }
         })
-        self.http_post(data, 'temp')
+        self.http_post(data, suffix='temp')
         data = json.dumps({
             'state': round(humidity, 2),
             'attributes': {
@@ -192,81 +163,7 @@ class HumidorSender:
                 'unit_of_measurement': '%'
             }
         })
-        self.http_post(data, 'humidity')
-
-    def connect_wlan(self):
-        self.wlan.active(True)
-        if not self.wlan.isconnected():
-            print('connecting to network...')
-            self.wlan.connect(SSID, WPA_KEY)
-            for _ in range(0, 15):
-                if self.wlan.isconnected():
-                    printflush('WLAN is connected')
-                    break
-                printflush('WLAN is not connected; sleep 1s')
-                sleep(1)
-            else:
-                printflush('Could not connect to WLAN after 15s; reset')
-                machine.reset()
-        print('network config:', self.wlan.ifconfig())
-
-    def http_post(self, data, suffix):
-        printflush('getaddrinfo()')
-        addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
-        print('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
-        s = socket.socket()
-        s.settimeout(10.0)
-        try:
-            printflush('before connect()')
-            s.connect(addr)
-            printflush('after connect()')
-        except OSError as exc:
-            printflush('ERROR connecting to %s: %s' % (addr, exc))
-            printflush('s.close()')
-            s.close()
-            printflush('CONNECTION ERROR: calling machine.reset()')
-            machine.reset()
-            return None
-        path = self.post_path + '_' + suffix
-        print('POST to: %s: %s' % (path, data))
-        b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
-            'Content-Type: application/json\r\n' \
-            'Authorization: Bearer %s\r\n' \
-            'Content-Length: %d\r\n\r\n%s' % (
-                path, HOOK_HOST, HASS_TOKEN, len(bytes(data, 'utf8')), data
-            )
-        print('SEND:\n%s' % b)
-        try:
-            s.send(bytes(b, 'utf8'))
-        except OSError as exc:
-            printflush('ERROR sending to %s: %s' % (addr, exc))
-            printflush('s.close()')
-            s.close()
-            printflush('CONNECTION ERROR: calling machine.reset()')
-            machine.reset()
-            return None
-        buf = ''
-        try:
-            while True:
-                data = s.recv(100)
-                if data:
-                    buf += str(data, 'utf8')
-                else:
-                    break
-            print(buf)
-        except OSError as exc:
-            printflush('ERROR sending to %s: %s' % (addr, exc))
-            printflush('Buffer: %s' % buf)
-            printflush('s.close()')
-            s.close()
-            printflush('CONNECTION ERROR: calling machine.reset()')
-            machine.reset()
-            return None
-        s.close()
-        if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:
-            print('OK')
-        else:
-            print('FAIL')
+        self.http_post(data, suffix='humidity')
 
 
 if __name__ == '__main__':

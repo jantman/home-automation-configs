@@ -18,7 +18,8 @@ rmain.ASCII_XFER = True
 COMMON_FILES = {
     'boot.py': 'boot.py',
     'config.py': 'config.py',
-    'webrepl_cfg.py': 'webrepl_cfg.py'
+    'webrepl_cfg.py': 'webrepl_cfg.py',
+    'hass_sender.py': 'hass_sender.py',
 }
 
 PER_BOARD_FILES = {
