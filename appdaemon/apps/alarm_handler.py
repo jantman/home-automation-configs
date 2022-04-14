@@ -228,11 +228,7 @@ AWAY_TRIGGER_DELAY_SECONDS = 10
 #: input_boolean.no_alarm_delay is "off", will cause a delayed trigger of the
 #: alarm. Entities not in this list will not delay (i.e. alarm will trigger
 #: immediately).
-AWAY_DELAY_ENTITIES = [
-    # front door
-    'binary_sensor.ecolink_doorwindow_sensor_sensor',
-    'binary_sensor.livingroom_motion',
-]
+AWAY_DELAY_ENTITIES = []
 
 #: Path of a file to "touch" whenever the alarm changes state.
 TRANSITION_FILE_PATH = '/tmp/alarm_last_state_transition'
