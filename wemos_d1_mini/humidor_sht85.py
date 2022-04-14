@@ -13,7 +13,6 @@ import socket
 from time import sleep, sleep_ms
 from binascii import hexlify
 import time
-import time
 import json
 from config import SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HOOK_PATH, HASS_TOKEN
 from i2c_device import I2CDevice

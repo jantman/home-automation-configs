@@ -21,21 +21,9 @@ COMMON_FILES = {
     'webrepl_cfg.py': 'webrepl_cfg.py'
 }
 
-HUMIDOR_FILES = {
-    'humidor.py': 'main.py',
-    'bme280_float.py': 'bme280_float.py',
-    'bme280.py': 'bme280.py',
-}
-
 PER_BOARD_FILES = {
     '500291c9b245': {
         'temp_sensor.py': 'main.py'
-    },
-    'cc50e36b6a6b': {
-        'button_box_v1.py': 'main.py'
-    },
-    'ecfabc6102f0': {
-        'button_box_v2.py': 'main.py'
     },
     'bcddc2b66c5a': {
         'temp_sensor.py': 'main.py'
@@ -43,13 +31,10 @@ PER_BOARD_FILES = {
     'bcddc2b67528': {
         'temp_sensor.py': 'main.py'
     },
-    'f4cfa2d0a226': HUMIDOR_FILES,
     '500291c9b1a3': {
         'humidor_sht85.py': 'main.py',
         'i2c_device.py': 'i2c_device.py',
     },
-    'f4cfa2d0a962': HUMIDOR_FILES,
-    'f4cfa2d0de01': HUMIDOR_FILES
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
