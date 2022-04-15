@@ -4,9 +4,10 @@ as of 09115cf788e0c1417c2fb5f77246f5a7dcc58b15
 """
 import time
 from micropython import const
+from math import exp
 
 _SGP30_DEFAULT_I2C_ADDR = const(0x58)
-_SGP30_FEATURESET = const(0x0020)
+_SGP30_FEATURESETS = (0x0020, 0x0022)
 
 _SGP30_CRC8_POLYNOMIAL = const(0x31)
 _SGP30_CRC8_INIT = const(0xFF)
@@ -26,7 +27,7 @@ class SGP30:
         self._addr = address
         self.serial = self._i2c_read_words_from_cmd(command=[0x36, 0x82], reply_size=3, delay=0.01)
         featureset = self._i2c_read_words_from_cmd([0x20, 0x2f], 1, 0.01)
-        if featureset[0] != _SGP30_FEATURESET:
+        if featureset[0] not in _SGP30_FEATURESETS:
             raise RuntimeError('SGP30 Not detected! Featureset: %d' % featureset[0])
         self.initialise_indoor_air_quality()
 
@@ -79,6 +80,30 @@ class SGP30:
             arr.append(generate_crc(arr))
             buffer += arr
         self._i2c_read_words_from_cmd(command=[0x20, 0x1e] + buffer, reply_size=0, delay=0.01)
+
+    def set_iaq_humidity(self, gramsPM3):  # pylint: disable=invalid-name
+        """Set the humidity in g/m3 for eCO2 and TVOC compensation algorithm"""
+        tmp = int(gramsPM3 * 256)
+        buffer = []
+        for value in [tmp]:
+            arr = [value >> 8, value & 0xFF]
+            arr.append(generate_crc(arr))
+            buffer += arr
+        self._i2c_read_words_from_cmd([0x20, 0x61] + buffer, 0, 0.01)
+
+    def set_iaq_relative_humidity(self, celcius, relative_humidity):
+        """
+        Set the humidity in g/m3 for eCo2 and TVOC compensation algorithm.
+        The absolute humidity is calculated from the temperature and relative
+        humidity (as a percentage).
+        """
+        numerator = ((relative_humidity / 100) * 6.112) * exp(
+            (17.62 * celcius) / (243.12 + celcius)
+        )
+        denominator = 273.15 + celcius
+
+        humidity_grams_pm3 = 216.7 * (numerator / denominator)
+        self.set_iaq_humidity(humidity_grams_pm3)
 
     # Low level command functions
     def _i2c_read_words_from_cmd(self, command, reply_size, delay):

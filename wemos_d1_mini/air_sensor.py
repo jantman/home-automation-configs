@@ -31,6 +31,8 @@ class AirQualitySensor:
         )
         printflush("Initializing sensor...")
         self.sensor = SGP30(self.i2c)
+        # from: https://github.com/adafruit/Adafruit_CircuitPython_SGP30/blob/3e906600098d8d6049af2eedc6e93b5895f8a6f4/examples/sgp30_simpletest.py#L19
+        self.sensor.set_indoor_air_quality_baseline(0x8973, 0x8AAE)
         printflush("Serial number: %s", self.sensor.serial)
         printflush("Done initializing.")
 
@@ -54,6 +56,7 @@ class AirQualitySensor:
         return baseline_co2, baseline_tvoc, co2_ppm, tvoc_ppb
 
     def send_data(self):
+        # sgp30.set_iaq_relative_humidity(celcius=22.1, relative_humidity=44)
         printflush('measuring...')
         baseline_eco2, baseline_tvoc, eco2_ppm, tvoc_ppb = self._read_sensor()
         return
