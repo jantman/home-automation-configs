@@ -90,11 +90,13 @@ INTERIOR_SENSOR_REs = [
 #: sensors that should not alarm for ``DELAYED_EXTERIOR_SENSOR_DELAY_SEC``
 #: seconds after arming the alarm, and should not fail arming the alarm if
 #: they are open/triggered when arming is requested.
-DELAYED_EXTERIOR_SENSOR_REs = []
+DELAYED_EXTERIOR_SENSOR_REs = [
+    re.compile(r'^binary_sensor\.ecolink_doorwindow_sensor_sensor$'),
+]
 
 #: Integer number of seconds for how long to delay triggering off of
 #: ``DELAYED_EXTERIOR_SENSOR_REs`` after arming the alarm.
-DELAYED_EXTERIOR_SENSOR_DELAY_SEC = 360 # 6 minutes
+DELAYED_EXTERIOR_SENSOR_DELAY_SEC = 60  # 60 seconds
 
 #: Device tracker entity ID for my phone, for arming/disarming based on
 #: presence or proximity.
