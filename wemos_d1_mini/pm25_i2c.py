@@ -8,7 +8,7 @@ MIT license
 
 # imports
 import time
-from adafruit_bus_device.i2c_device import I2CDevice
+from adafruit_bus_device_i2c import I2CDevice
 import struct
 
 # SPDX-FileCopyrightText: 2020 ladyada for Adafruit Industries
