@@ -15,6 +15,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [main.py](main.py) - Sample script that just attempts to connect to WiFi.
 * [requirements.txt](requirements.txt) - pip requirements file for managing the boards and uploading code to them
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
+* [sgp30.py](sgp30.py) - needed by air_sensor.py - https://github.com/safuya/micropython-sgp30/blob/09115cf788e0c1417c2fb5f77246f5a7dcc58b15/sgp30.py
 * [sht85.md](sht85.md) - Notes on the SHT85 sensor and WeMos setup.
 * [skeleton.py](skeleton.py) - Skeleton of a script for reading a sensor and sending the result to HomeAssistant.
 * [sync.py](sync.py) - Wrapper script around [rshell](https://github.com/dhylands/rshell) to automate syncing scripts to my boards.
