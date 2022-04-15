@@ -36,7 +36,7 @@ PER_BOARD_FILES = {
         'humidor_sht85.py': 'main.py',
         'i2c_device.py': 'i2c_device.py',
     },
-    'f008d1d19abc': {
+    '7c9ebd66d880': {
         'air_sensor.py': 'main.py',
         'sgp30.py': 'sgp30.py',
     },

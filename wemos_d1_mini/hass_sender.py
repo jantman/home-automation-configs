@@ -50,8 +50,9 @@ class HassSender:
         raise NotImplementedError()
 
     def connect_wlan(self):
+        printflush('set wlan to active')
         self.wlan.active(True)
-        self.wlan.scan()
+        printflush('test if wlan is connected')
         if not self.wlan.isconnected():
             printflush('connecting to network...')
             self.wlan.connect(SSID, WPA_KEY)

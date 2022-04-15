@@ -20,21 +20,22 @@ SDA = micropython.const(19)  # D19
 SCL = micropython.const(18)  # D18
 
 
-class AirQualitySensor:
+class AirQualitySensor(HassSender):
 
     def __init__(self):
+        super().__init__()
         printflush("Initializing i2c...")
         self.i2c = I2C(
             scl=Pin(SCL, mode=Pin.IN, pull=Pin.PULL_UP),
             sda=Pin(SDA, mode=Pin.IN, pull=Pin.PULL_UP),
             freq=100000
         )
-        printflush("Initializing sensor...")
+        printflush("Initializing SGP30 sensor...")
         self.sensor = SGP30(self.i2c)
         # from: https://github.com/adafruit/Adafruit_CircuitPython_SGP30/blob/3e906600098d8d6049af2eedc6e93b5895f8a6f4/examples/sgp30_simpletest.py#L19
         self.sensor.set_indoor_air_quality_baseline(0x8973, 0x8AAE)
         printflush("Serial number: %s", self.sensor.serial)
-        printflush("Done initializing.")
+        printflush("Done initializing SGP30")
 
     def run(self):
         printflush("Enter loop...")
@@ -42,7 +43,7 @@ class AirQualitySensor:
             self.send_data()
             sleep(60)
 
-    def _read_sensor(self):
+    def _read_sgp30(self):
         printflush('Reading baseline...')
         baseline_co2, baseline_tvoc = self.sensor.indoor_air_quality_baseline
         printflush(
@@ -57,17 +58,37 @@ class AirQualitySensor:
 
     def send_data(self):
         # sgp30.set_iaq_relative_humidity(celcius=22.1, relative_humidity=44)
-        printflush('measuring...')
-        baseline_eco2, baseline_tvoc, eco2_ppm, tvoc_ppb = self._read_sensor()
+        printflush('measuring SGP30...')
+        baseline_eco2, baseline_tvoc, eco2_ppm, tvoc_ppb = self._read_sgp30()
         return
-        data = json.dumps({
-            'state': data,
+        self.http_post(json.dumps({
+            'state': baseline_eco2,
             'attributes': {
-                'friendly_name': self.friendly_name,
-                'unit_of_measurement': '\u00b0F'
+                'friendly_name': '%s Baseline eCO2' % self.friendly_name,
+                'unit_of_measurement': 'PPM'
             }
-        })
-        self.http_post(data)
+        }))
+        self.http_post(json.dumps({
+            'state': baseline_tvoc,
+            'attributes': {
+                'friendly_name': '%s Baseline TVOC' % self.friendly_name,
+                'unit_of_measurement': 'PPB'
+            }
+        }))
+        self.http_post(json.dumps({
+            'state': eco2_ppm,
+            'attributes': {
+                'friendly_name': '%s eCO2' % self.friendly_name,
+                'unit_of_measurement': 'PPM'
+            }
+        }))
+        self.http_post(json.dumps({
+            'state': tvoc_ppb,
+            'attributes': {
+                'friendly_name': '%s TVOC' % self.friendly_name,
+                'unit_of_measurement': 'PPB'
+            }
+        }))
 
 
 if __name__ == '__main__':
