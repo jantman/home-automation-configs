@@ -12,6 +12,13 @@ from config import (
     SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN, ENTITIES, FRIENDLY_NAMES
 )
 
+wlan_status_code = {}
+wlan_status_code[network.STAT_IDLE] = 'Idle'
+wlan_status_code[network.STAT_CONNECTING] = 'Connecting'
+wlan_status_code[network.STAT_WRONG_PASSWORD] = 'Wrong Password'
+wlan_status_code[network.STAT_NO_AP_FOUND] = 'No AP Found'
+wlan_status_code[network.STAT_GOT_IP] = 'Connected'
+
 
 def printflush(*args):
     print(*args)
@@ -44,14 +51,20 @@ class HassSender:
 
     def connect_wlan(self):
         self.wlan.active(True)
+        self.wlan.scan()
         if not self.wlan.isconnected():
-            print('connecting to network...')
+            printflush('connecting to network...')
             self.wlan.connect(SSID, WPA_KEY)
-            for _ in range(0, 15):
+            printflush('MAC: %s' % hexlify(self.wlan.config('mac')).decode())
+            for _ in range(0, 60):
                 if self.wlan.isconnected():
                     printflush('WLAN is connected')
                     break
-                printflush('WLAN is not connected; sleep 1s')
+                stat = self.wlan.status()
+                printflush(
+                    'WLAN is not connected; sleep 1s; status=%s' %
+                    wlan_status_code.get(stat, stat)
+                )
                 sleep(1)
             else:
                 printflush('Could not connect to WLAN after 15s; reset')
