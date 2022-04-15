@@ -64,15 +64,21 @@ class I2CDevice:
         as if ``buf[start:end]``. This will not cause an allocation like
         ``buf[start:end]`` will so it saves memory.
 
+        Implementation taken from:
+        https://github.com/adafruit/Adafruit_Blinka/blob/d094997a471301a2147d58f1693aa1d3a49df6cd/src/busio.py#L152-L159
+
         :param ~WriteableBuffer buffer: buffer to write into
         :param int start: Index to start writing at
         :param int end: Index to write up to but not include; if None, use ``len(buf)``
         """
-        if end is None:
-            end = len(buf)
-        self.i2c.readfrom_into(self.device_address, buf, start=start, end=end)
+        if start != 0 or end is not None:
+            if end is None:
+                end = len(buf)
+            buf = memoryview(buf)[start:end]
+        stop = True  # remove for efficiency later
+        return self.i2c.readfrom_into(self.device_address, buf, stop)
 
-    def write(self, buf, *, start=0, end=None):
+    def write(self, buf, *, start=0, end=None, stop=True):
         """
         Write the bytes from ``buffer`` to the device, then transmit a stop
         bit.
@@ -81,13 +87,24 @@ class I2CDevice:
         as if ``buffer[start:end]``. This will not cause an allocation like
         ``buffer[start:end]`` will so it saves memory.
 
-        :param ~ReadableBuffer buffer: buffer containing the bytes to write
+        Implementation taken from:
+        https://github.com/adafruit/Adafruit_Blinka/blob/d094997a471301a2147d58f1693aa1d3a49df6cd/src/busio.py#L161-L169
+
+        :param ~ReadableBuffer buf: buffer containing the bytes to write
         :param int start: Index to start writing from
         :param int end: Index to read up to but not include; if None, use ``len(buf)``
         """
-        if end is None:
-            end = len(buf)
-        self.i2c.writeto(self.device_address, buf, start=start, end=end)
+        if isinstance(buf, str):
+            buf = bytes([ord(x) for x in buf])
+        if start != 0 or end is not None:
+            if end is None:
+                return self.i2c.writeto(
+                    self.device_address, memoryview(buf)[start:], stop=stop
+                )
+            return self.i2c.writeto(
+                self.device_address, memoryview(buf)[start:end], stop=stop
+            )
+        return self.i2c.writeto(self.device_address, buf, stop=stop)
 
     # pylint: disable-msg=too-many-arguments
     def write_then_readinto(

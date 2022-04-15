@@ -39,6 +39,8 @@ PER_BOARD_FILES = {
     '7c9ebd66d880': {
         'air_sensor.py': 'main.py',
         'sgp30.py': 'sgp30.py',
+        'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
+        'pm25_i2c.py': 'pm25_i2c.py',
     },
 }
 

@@ -87,8 +87,8 @@ class PM25:
     def read(self) -> dict:
         """Read any available data from the air quality sensor and
         return a dictionary with available particulate/quality data"""
+        print('reading PM25 sensor')
         self._read_into_buffer()
-        # print([hex(i) for i in self._buffer])
 
         # check packet header
         if not self._buffer[0:2] == b"BM":
