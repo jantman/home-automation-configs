@@ -30,7 +30,7 @@ netdisco==2.6.0
 netifaces==0.10.9
 pycparser==2.19
 PyDispatcher==2.0.5
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyserial==3.4
 python-forecastio==1.4.0
 python-openzwave==0.4.19
