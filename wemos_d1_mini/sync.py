@@ -42,6 +42,7 @@ PER_BOARD_FILES = {
         'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
         'pm25_i2c.py': 'pm25_i2c.py',
         'adafruit_shtc3.py': 'adafruit_shtc3.py',
+        'i2c_device.py': 'i2c_device.py',
     },
 }
 
