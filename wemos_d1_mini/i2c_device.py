@@ -71,6 +71,10 @@ class I2CDevice:
         """added by jantman for compatibility"""
         pass
 
+    def __enter__(self):
+        """added by jantman for compatibility"""
+        pass
+
     def readinto(self, buf, *, start=0, end=None):
         """
         Read into ``buf`` from the device. The number of bytes read will be the
