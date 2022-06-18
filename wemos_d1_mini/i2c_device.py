@@ -67,6 +67,10 @@ class I2CDevice:
         if probe:
             self.__probe_for_device()
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """added by jantman for compatibility"""
+        pass
+
     def readinto(self, buf, *, start=0, end=None):
         """
         Read into ``buf`` from the device. The number of bytes read will be the
