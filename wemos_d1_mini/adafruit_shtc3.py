@@ -2,6 +2,9 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020 Bryan Siepert for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
+##########################################################################
+# from https://github.com/adafruit/Adafruit_CircuitPython_SHTC3 @ 519bf17
+##########################################################################
 """
 `adafruit_shtc3`
 ================================================================================
@@ -39,7 +42,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SHTC3.git"
 
 from struct import unpack_from
 import time
-from adafruit_bus_device import i2c_device
+import i2c_device
 
 
 # include "Arduino.h"

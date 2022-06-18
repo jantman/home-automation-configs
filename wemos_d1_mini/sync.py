@@ -41,6 +41,7 @@ PER_BOARD_FILES = {
         'sgp30.py': 'sgp30.py',
         'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
         'pm25_i2c.py': 'pm25_i2c.py',
+        'adafruit_shtc3.py': 'adafruit_shtc3.py',
     },
 }
 
