@@ -28,14 +28,14 @@ class AirQualitySensor(HassSender):
         printflush('Scanning I2C bus...')
         devices = self.i2c.scan()
         printflush('I2C scan results: %s' % devices)
-        printflush('Initializing SHTC3...')
-        self.sht = adafruit_shtc3.SHTC3(self.i2c)
-        temp, rh = self.sht.measurements
+        #printflush('Initializing SHTC3...')
+        #self.sht = adafruit_shtc3.SHTC3(self.i2c)
+        #temp, rh = self.sht.measurements
         printflush("Initializing SGP30 sensor...")
         self.sensor = SGP30(self.i2c)
         # from: https://github.com/adafruit/Adafruit_CircuitPython_SGP30/blob/3e906600098d8d6049af2eedc6e93b5895f8a6f4/examples/sgp30_simpletest.py#L19
         self.sensor.set_indoor_air_quality_baseline(0x8973, 0x8AAE)
-        self.sensor.set_iaq_relative_humidity(temp, rh)
+        #self.sensor.set_iaq_relative_humidity(temp, rh)
         printflush("Serial number: %s", self.sensor.serial)
         printflush("Done initializing SGP30")
         printflush("Initializing PM25 sensor")
@@ -166,10 +166,10 @@ class AirQualitySensor(HassSender):
         data = self._read_sgp30()
         printflush('measuring PM25...')
         data.update(self._read_pm25())
-        temp_c, rh = self._read_shtc3()
-        temp_f = ((temp_c * 9.0) / 5.0) + 32
-        data['temperature_f'] = temp_f
-        data['relative_humidity'] = rh
+        #temp_c, rh = self._read_shtc3()
+        #temp_f = ((temp_c * 9.0) / 5.0) + 32
+        #data['temperature_f'] = temp_f
+        #data['relative_humidity'] = rh
         for k, v in data.items():
             self.http_post(json.dumps(v), suffix=k)
 
