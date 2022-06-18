@@ -73,7 +73,7 @@ class I2CDevice:
 
     def __enter__(self):
         """added by jantman for compatibility"""
-        pass
+        return self
 
     def readinto(self, buf, *, start=0, end=None):
         """
