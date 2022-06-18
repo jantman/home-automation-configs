@@ -25,6 +25,9 @@ class AirQualitySensor(HassSender):
         super().__init__()
         printflush("Initializing i2c...")
         self.i2c = I2C(0, freq=100000)  # ESP32 hardware I2C 0 - SCL on D18, SDA on D19
+        printflush('Scanning I2C bus...')
+        devices = self.i2c.scan()
+        printflush('I2C scan results: %s' % devices)
         printflush('Initializing SHTC3...')
         self.sht = adafruit_shtc3.SHTC3(self.i2c)
         temp, rh = self.sht.measurements
