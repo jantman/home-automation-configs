@@ -32,7 +32,7 @@ class AirQualitySensor(HassSender):
         printflush('Initializing SHTC3...')
         self.sht = SHTC3(self.i2c)
         printflush('Reading SHTC3')
-        temp, rh = self.sht._read()
+        temp, rh = self.sht.measurements
         printflush(
             "Temperature: %0.1fC Humidity: %0.1f %%" % (temp, rh)
         )
@@ -51,7 +51,7 @@ class AirQualitySensor(HassSender):
 
     def _read_shtc3(self):
         printflush('Reading SHTC3...')
-        temperature, relative_humidity = self.sht._read()
+        temperature, relative_humidity = self.sht.measurements
         printflush("Temperature: %0.1f C" % temperature)
         printflush("Humidity: %0.1f %%" % relative_humidity)
         return temperature, relative_humidity
@@ -175,8 +175,20 @@ class AirQualitySensor(HassSender):
         printflush('measuring PM25...')
         data.update(self._read_pm25())
         temp_f = ((temp_c * 9.0) / 5.0) + 32
-        data['temperature_f'] = temp_f
-        data['relative_humidity'] = rh
+        data['temperature_f'] = {
+            'state': temp_f,
+            'attributes': {
+                'friendly_name': '%s Temperature' % self.friendly_name,
+                'unit_of_measurement': '\u00b0F'
+            }
+        }
+        data['relative_humidity'] = {
+            'state': rh,
+            'attributes': {
+                'friendly_name': '%s RH' % self.friendly_name,
+                'unit_of_measurement': '%'
+            }
+        }
         for k, v in data.items():
             self.http_post(json.dumps(v), suffix=k)
 

@@ -44,8 +44,10 @@ PER_BOARD_FILES = {
         'adafruit_shtc3.py': 'adafruit_shtc3.py',
     },
     'f008d1d18790': {
-        'shtc3_test.py': 'main.py',
+        'air_sensor.py': 'main.py',
+        'sgp30.py': 'sgp30.py',
         'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
+        'pm25_i2c.py': 'pm25_i2c.py',
         'adafruit_shtc3.py': 'adafruit_shtc3.py',
     },
 }
