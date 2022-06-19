@@ -10,109 +10,13 @@ from micropython import const
 from machine import Pin, I2C, WDT
 from sgp30 import SGP30
 from pm25_i2c import PM25_I2C
-from i2c_device import I2CDevice
+from adafruit_shtc3 import SHTC3
 from time import sleep
 import json
 try:
     import struct
 except ImportError:
     import ustruct as struct
-
-
-# BEGIN Condensed version of https://github.com/adafruit/Adafruit_CircuitPython_SHTC3.git
-_SHTC3_DEFAULT_ADDRESS = const(0x70)
-REP_HIGH = "High"
-FREQUENCY_4 = 4
-_SHT31_PERIODIC_BREAK = const(0x3093)
-_SHTC3_SOFTRESET = const(0x805D)  # Soft Reset
-_SHT31_READSERIALNBR = const(0x3780)
-
-
-def _crc(data):
-    crc = 0xFF
-    for byte in data:
-        crc ^= byte
-        for _ in range(8):
-            if crc & 0x80:
-                crc <<= 1
-                crc ^= 0x131
-            else:
-                crc <<= 1
-    return crc
-
-
-def _unpack(data):
-    length = len(data)
-    crc = [None] * (length // 3)
-    word = [None] * (length // 3)
-    for i in range(length // 6):
-        word[i * 2], crc[i * 2], word[(i * 2) + 1], crc[(i * 2) + 1] = struct.unpack(
-            ">HBHB", data[i * 6 : (i * 6) + 6]
-        )
-        if crc[i * 2] == _crc(data[i * 6 : (i * 6) + 2]):
-            length = (i + 1) * 6
-    for i in range(length // 3):
-        if crc[i] != _crc(data[i * 3 : (i * 3) + 2]):
-            raise RuntimeError("CRC mismatch")
-    return word[: length // 3]
-
-
-class SHTC3:
-
-    def __init__(self, i2c_bus, address=_SHTC3_DEFAULT_ADDRESS):
-        sleep(0.00025)  # tPU
-        self.i2c_device = I2CDevice(i2c_bus, address)
-        self._last_read = 0
-        self._cached_temperature = None
-        self._cached_humidity = None
-        self._reset()
-
-    def _command(self, command):
-        self.i2c_device.write(struct.pack(">H", command))
-
-    def _reset(self):
-        """
-        Soft reset the device
-        The reset command is preceded by a break command as the
-        device will not respond to a soft reset when in 'Periodic' mode.
-        """
-        print("SHTC3._reset() Sending soft reset to device")
-        self._command(_SHTC3_SOFTRESET)
-        sleep(0.0015)
-
-    def _data(self):
-        data = bytearray(6)
-        data[0] = 0xFF
-        self._command(const(0x7866))
-        sleep(0.0155)
-        self.i2c_device.readinto(data)
-        word = _unpack(data)
-        length = len(word)
-        temperature = [None] * (length // 2)
-        humidity = [None] * (length // 2)
-        for i in range(length // 2):
-            temperature[i] = -45 + (175 * (word[i * 2] / 65535))
-            humidity[i] = 100 * (word[(i * 2) + 1] / 65535)
-        if (len(temperature) == 1) and (len(humidity) == 1):
-            return temperature[0], humidity[0]
-        return temperature, humidity
-
-    def _read(self):
-        self._cached_temperature, self._cached_humidity = self._data()
-        return self._cached_temperature, self._cached_humidity
-
-    @property
-    def serial_number(self):
-        """Device serial number."""
-        data = bytearray(6)
-        data[0] = 0xFF
-        self._command(_SHT31_READSERIALNBR)
-        sleep(0.001)
-        self.i2c_device.readinto(data)
-        word = _unpack(data)
-        return (word[0] << 16) | word[1]
-
-# END Condensed version of https://github.com/adafruit/Adafruit_CircuitPython_SHTC3.git
 
 
 class AirQualitySensor(HassSender):
@@ -127,7 +31,11 @@ class AirQualitySensor(HassSender):
         printflush('I2C scan results: %s' % devices)
         printflush('Initializing SHTC3...')
         self.sht = SHTC3(self.i2c)
+        printflush('Reading SHTC3')
         temp, rh = self.sht._read()
+        printflush(
+            "Temperature: %0.1fC Humidity: %0.1f %%" % (temp, rh)
+        )
         printflush("Initializing SGP30 sensor...")
         self.sensor = SGP30(self.i2c)
         # from: https://github.com/adafruit/Adafruit_CircuitPython_SGP30/blob/3e906600098d8d6049af2eedc6e93b5895f8a6f4/examples/sgp30_simpletest.py#L19
@@ -258,12 +166,14 @@ class AirQualitySensor(HassSender):
         }
 
     def send_data(self):
-        # sgp30.set_iaq_relative_humidity(celcius=22.1, relative_humidity=44)
+        temp_c, rh = self._read_shtc3()
+        self.sensor.set_iaq_relative_humidity(
+            celcius=temp_c, relative_humidity=rh
+        )
         printflush('measuring SGP30...')
         data = self._read_sgp30()
         printflush('measuring PM25...')
         data.update(self._read_pm25())
-        temp_c, rh = self._read_shtc3()
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         data['temperature_f'] = temp_f
         data['relative_humidity'] = rh
