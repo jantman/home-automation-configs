@@ -18,7 +18,6 @@ except ImportError:
 class Shtc3Tester:
 
     def __init__(self):
-        printflush('NOTE: can also try modifying adafruit_shtc3.py to use adafruit_bus_device_i2c instead of i2c_device')
         self.wdt = WDT(timeout=40000)  # 40-second watchdog timer
         printflush("Initializing i2c...")
         self.i2c = I2C(0, freq=100000)  # ESP32 hardware I2C 0 - SCL on D18, SDA on D19

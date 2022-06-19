@@ -42,7 +42,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SHTC3.git"
 
 from struct import unpack_from
 import time
-import i2c_device
+from adafruit_bus_device_i2c import I2CDevice
 
 
 # include "Arduino.h"
@@ -117,10 +117,11 @@ class SHTC3:
     """
 
     def __init__(self, i2c_bus):
-        self.i2c_device = i2c_device.I2CDevice(i2c_bus, _SHTC3_DEFAULT_ADDR)
+        self.i2c_device = I2CDevice(i2c_bus, _SHTC3_DEFAULT_ADDR)
         self._buffer = bytearray(6)
-        #self.low_power = False
-        #self.sleeping = False
+        time.sleep(0.002)
+        self.low_power = False
+        self.sleeping = False
         self.reset()
         self._chip_id = self._get_chip_id()
         if self._chip_id != _SHTC3_CHIP_ID:

@@ -7,6 +7,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 ## What's Here
 
 * [adafruit_bus_device_i2c.py](adafruit_bus_device_i2c.py) - Modified version of https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/blob/904ab2f199c5f865b75837a8999cfe2e3eec1d56/adafruit_bus_device/i2c_device.py to work with MicroPython.
+* [adafruit_shtc3.py](adafruit_shtc3.py) - Modified version of https://github.com/adafruit/Adafruit_CircuitPython_SHTC3/blob/519bf17361a132ecd5fc8f83ed2e32b42b3672a6/adafruit_shtc3.py to work with MicroPython.
 * [air_sensor.py](air_sensor.py) - Indoor air quality sensor using an [Adafruit SGP30](https://www.adafruit.com/product/3709) equivalent carbon dioxide (eCO2) and total volatile organic compounds (TVOC) and an [Adafruit PMSA003I](https://www.adafruit.com/product/4632) particulate size and concentration sensor.
 * [boot.py](boot.py) - the original boot file that came with MicroPython
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
@@ -20,6 +21,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 * [rgb_led_test.py](rgb_led_test.py) - A script for testing RGB LEDs, mainly for quickly turning on and off different colors/combinations when tuning resistors.
 * [sgp30.py](sgp30.py) - needed by air_sensor.py - https://github.com/safuya/micropython-sgp30/blob/09115cf788e0c1417c2fb5f77246f5a7dcc58b15/sgp30.py
 * [sht85.md](sht85.md) - Notes on the SHT85 sensor and WeMos setup.
+* [shtc3_test.py](shtc3_test.py) - Test script for I2C SHTC3 temp/humidity sensors; just prints temperature and humidity every 60 seconds.
 * [skeleton.py](skeleton.py) - Skeleton of a script for reading a sensor and sending the result to HomeAssistant.
 * [sync.py](sync.py) - Wrapper script around [rshell](https://github.com/dhylands/rshell) to automate syncing scripts to my boards.
 * [temp_sensor.fzz](temp_sensor.fzz) - Schematic for the temperature sensor.

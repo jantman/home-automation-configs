@@ -99,12 +99,12 @@ class I2CDevice:
         if start != 0 or end is not None:
             if end is None:
                 return self.i2c.writeto(
-                    self.device_address, memoryview(buf)[start:], stop=stop
+                    self.device_address, memoryview(buf)[start:], stop
                 )
             return self.i2c.writeto(
-                self.device_address, memoryview(buf)[start:end], stop=stop
+                self.device_address, memoryview(buf)[start:end], stop
             )
-        return self.i2c.writeto(self.device_address, buf, stop=stop)
+        return self.i2c.writeto(self.device_address, buf, stop)
 
     # pylint: disable-msg=too-many-arguments
     def write_then_readinto(
