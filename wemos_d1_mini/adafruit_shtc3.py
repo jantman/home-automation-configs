@@ -118,7 +118,6 @@ class SHTC3:
 
     def __init__(self, i2c_bus):
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, _SHTC3_DEFAULT_ADDR)
-
         self._buffer = bytearray(6)
         self.low_power = False
         self.sleeping = False
@@ -131,17 +130,13 @@ class SHTC3:
         """helper function to write a command to the i2c device"""
         self._buffer[0] = command >> 8
         self._buffer[1] = command & 0xFF
-
-        with self.i2c_device as i2c:
-            i2c.write(self._buffer, start=0, end=2)
+        self.i2c_device.write(self._buffer, start=0, end=2)
 
     def _get_chip_id(self):  #   readCommand(SHTC3_READID, data, 3);
         """Determines the chip id of the sensor"""
         self._write_command(_SHTC3_READID)
         time.sleep(0.001)
-        with self.i2c_device as i2c:
-            i2c.readinto(self._buffer)
-
+        self.i2c_device.readinto(self._buffer)
         return unpack_from(">H", self._buffer)[0] & 0x083F
 
     def reset(self):
@@ -207,8 +202,7 @@ class SHTC3:
 
         # self._buffer = bytearray(6)
         # read the measured data into our buffer
-        with self.i2c_device as i2c:
-            i2c.readinto(self._buffer)
+        self.i2c_device.readinto(self._buffer)
 
         # separate the read data
         temp_data = self._buffer[0:2]
