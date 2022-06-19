@@ -141,7 +141,7 @@ class SHTC3:
 
     def reset(self):
         """Perform a soft reset of the sensor, resetting all settings to their power-on defaults"""
-        self.sleeping = False
+        #self.sleeping = False
         try:
             self._write_command(_SHTC3_SOFTRESET)
 
