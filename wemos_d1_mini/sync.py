@@ -44,6 +44,11 @@ PER_BOARD_FILES = {
         'adafruit_shtc3.py': 'adafruit_shtc3.py',
         'i2c_device.py': 'i2c_device.py',
     },
+    'f008d1d18790': {
+        'shtc3_test.py': 'main.py',
+        'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
+        'i2c_device.py': 'i2c_device.py',
+    },
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
