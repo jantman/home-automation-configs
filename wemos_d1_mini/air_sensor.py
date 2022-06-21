@@ -11,7 +11,7 @@ from machine import Pin, I2C, WDT
 from sgp30 import SGP30
 from pm25_i2c import PM25_I2C
 from adafruit_shtc3 import SHTC3
-from time import sleep
+from time import sleep, time
 import json
 try:
     import struct
@@ -58,9 +58,11 @@ class AirQualitySensor(HassSender):
 
     def run(self):
         printflush("Enter loop...")
+        i = 0
         while True:
+            i += 1
             self.wdt.feed()
-            self.send_data()
+            self.send_data(i=i)
             self.wdt.feed()
             sleep(20)
             self.wdt.feed()
@@ -68,32 +70,13 @@ class AirQualitySensor(HassSender):
             self.wdt.feed()
             sleep(20)
 
-    def _read_sgp30(self):
-        printflush('Reading baseline...')
-        baseline_co2, baseline_tvoc = self.sensor.indoor_air_quality_baseline
-        printflush(
-            'Baseline: eCO2=%s TVOC=%s' % (baseline_co2, baseline_tvoc)
-        )
+    def _read_sgp30(self, read_baseline=False):
         printflush('Readling air quality...')
         co2_ppm, tvoc_ppb = self.sensor.indoor_air_quality
         printflush(
             'Indoor Air Quality: eCO2=%s ppm TVOC=%s ppb' % (co2_ppm, tvoc_ppb)
         )
-        return {
-            'baseline_eco2_ppm': {
-                'state': baseline_co2,
-                'attributes': {
-                    'friendly_name': '%s Baseline eCO2' % self.friendly_name,
-                    'unit_of_measurement': 'PPM'
-                }
-            },
-            'baseline_tvoc_ppb': {
-                'state': baseline_tvoc,
-                'attributes': {
-                    'friendly_name': '%s Baseline TVOC' % self.friendly_name,
-                    'unit_of_measurement': 'PPB'
-                }
-            },
+        result = {
             'eco2_ppm': {
                 'state': co2_ppm,
                 'attributes': {
@@ -109,6 +92,29 @@ class AirQualitySensor(HassSender):
                 }
             },
         }
+        if read_baseline:
+            printflush('Reading baseline...')
+            baseline_co2, baseline_tvoc = self.sensor.indoor_air_quality_baseline
+            printflush(
+                'Baseline: eCO2=%s TVOC=%s' % (baseline_co2, baseline_tvoc)
+            )
+            result.update({
+                'baseline_eco2_ppm': {
+                    'state': baseline_co2,
+                    'attributes': {
+                        'friendly_name': '%s Baseline eCO2' % self.friendly_name,
+                        'unit_of_measurement': 'PPM'
+                    }
+                },
+                'baseline_tvoc_ppb': {
+                    'state': baseline_tvoc,
+                    'attributes': {
+                        'friendly_name': '%s Baseline TVOC' % self.friendly_name,
+                        'unit_of_measurement': 'PPB'
+                    }
+                },
+            })
+        return result
 
     def _read_pm25(self):
         measures = {
@@ -165,13 +171,13 @@ class AirQualitySensor(HassSender):
             } for k, v in measures.items()
         }
 
-    def send_data(self):
+    def send_data(self, i):
         temp_c, rh = self._read_shtc3()
         self.sensor.set_iaq_relative_humidity(
             celcius=temp_c, relative_humidity=rh
         )
         printflush('measuring SGP30...')
-        data = self._read_sgp30()
+        data = self._read_sgp30(read_baseline=i >= 720)
         printflush('measuring PM25...')
         data.update(self._read_pm25())
         temp_f = ((temp_c * 9.0) / 5.0) + 32
@@ -187,6 +193,13 @@ class AirQualitySensor(HassSender):
             'attributes': {
                 'friendly_name': '%s RH' % self.friendly_name,
                 'unit_of_measurement': '%'
+            }
+        }
+        data['uptime_sec'] = {
+            'state': time(),
+            'attributes': {
+                'friendly_name': 'Uptime',
+                'unit_of_measurement': 'sec'
             }
         }
         for k, v in data.items():
