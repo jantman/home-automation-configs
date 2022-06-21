@@ -7,6 +7,7 @@ import machine
 import socket
 from time import sleep, sleep_ms
 from binascii import hexlify
+import ntptime
 
 from config import (
     SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN, ENTITIES, FRIENDLY_NAMES
@@ -26,7 +27,7 @@ def printflush(*args):
 
 class HassSender:
 
-    def __init__(self, leds={}):
+    def __init__(self, leds={}, set_ntptime=True):
         printflush("Init")
         self.leds = leds
         self.led_on('red')
@@ -45,9 +46,26 @@ class HassSender:
         ))
         self.post_path = '/api/states/' + self.entity_id
         printflush('POST path: %s' % self.post_path)
+        if set_ntptime:
+            self._set_time_from_ntp()
 
     def run(self):
         raise NotImplementedError()
+
+    def _set_time_from_ntp(self):
+        printflush('Setting time from NTP...')
+        printflush('Current RTC time: %s', machine.RTC().now())
+        for _ in range(0, 5):
+            try:
+                ntptime.settime()
+                printflush('Time set via NTP; new time: %s', machine.RTC().now())
+                return
+            except Exception as ex:
+                printflush(
+                    'Failed setting time via NTP: %s; try again in 5s' % ex
+                )
+                sleep(5)
+        printflush('ERROR: Could not set time via NTP')
 
     def connect_wlan(self):
         printflush('set wlan to active')
