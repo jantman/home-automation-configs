@@ -5,7 +5,7 @@ Base class for connecting to WiFi and sending metrics to HomeAssistant
 import network
 import machine
 import socket
-from time import sleep, sleep_ms
+from time import sleep, sleep_ms, time
 from binascii import hexlify
 import ntptime
 
@@ -48,17 +48,18 @@ class HassSender:
         printflush('POST path: %s' % self.post_path)
         if set_ntptime:
             self._set_time_from_ntp()
+        self.boot_time = time()
 
     def run(self):
         raise NotImplementedError()
 
     def _set_time_from_ntp(self):
         printflush('Setting time from NTP...')
-        printflush('Current RTC time: %s', machine.RTC().now())
+        printflush('Current time: %s' % time())
         for _ in range(0, 5):
             try:
                 ntptime.settime()
-                printflush('Time set via NTP; new time: %s', machine.RTC().now())
+                printflush('Time set via NTP; new time: %s' % time())
                 return
             except Exception as ex:
                 printflush(
