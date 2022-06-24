@@ -38,7 +38,7 @@ zone:
   - name: Home
     latitude: 33.753790
     longitude: -84.245627
-    radius: 100
+    radius: 200
     icon: mdi:house
 
 # Enables the frontend
