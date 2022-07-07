@@ -71,7 +71,9 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
                 continue
             a = e.get('attributes', {})
             ename = f"{e['entity_id']} ({a['friendly_name']})"
-            if e.get('state', 0) <= BATTERY_THRESHOLD:
+            state = e.get('state', 0)
+            self._log.debug(f'{ename} state is {state} ({type(state)})')
+            if state <= BATTERY_THRESHOLD:
                 problems.append(f'{ename} is {e["state"]}')
         for e in self.get_state('sensor').values():
             if not ID_RE.match(e['entity_id']):
