@@ -11,21 +11,13 @@ import appdaemon.plugins.hass.hassapi as hass
 from dateutil.parser import parse
 from datetime import timedelta, datetime
 from humanize import naturaltime
+import re
 
 from sane_app_logging import SaneLoggingApp
 from pushover_notifier import PushoverNotifier
 
 #: Threshold below which battery level will trigger an alert.
 BATTERY_THRESHOLD = 60
-
-#: Threshold for last message received from node
-LAST_RECV_THRESHOLD = timedelta(hours=24)
-
-#: ignore last receive for these entities
-IGNORE_RECV_ENTITIES = [
-    'zwave.linear_wa105dbz1_main_operated_siren',
-    'zwave.inovelli_unknown_type_ff00_id_ff07_2',
-]
 
 #: Time to run every day.
 RUN_AT_TIME = time(4, 0, 0)
@@ -38,13 +30,13 @@ NOTIFY_SERVICE = 'notify/gmail'
 LOG_DEBUG = False
 
 #: Entities to ignore
-IGNORE_ENTITIES = [
-    'zwave.aeotec_zw090_zstick_gen5_us',
-    'zwave.unknown_node_6_2',
-]
+IGNORE_ENTITIES = []
 
 #: states that are OK
-OK_STATES = ['ready', 'sleeping']
+OK_STATES = ['alive', 'asleep']
+
+#: Entity ID regex
+ID_RE = re.compile(r'^sensor\.node_\d+_node_status$')
 
 
 class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
@@ -57,46 +49,34 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
         self._log.info('Done initializing ZWaveChecker')
         self.listen_event(self._check_zwave, event='ZWAVE_CHECKER')
 
-    def _check_zwave_entity(self, e):
-        if e is None:
-            return []
-        a = e.get('attributes', {})
-        ename = '%s (%s)' % (e['entity_id'], a['friendly_name'])
-        failed = a.get('is_failed', False)
-        batt = a.get('battery_level', 100)
-        prob = []
-        if failed:
-            prob.append('Failed')
-        if batt <= BATTERY_THRESHOLD:
-            prob.append('Battery Level: %d' % batt)
-        a['receivedTS'] = a['receivedTS'].strip()
-        if len(a['receivedTS']) == 23:
-            ts = parse(a['receivedTS'][:19])
-        else:
-            ts = parse(a['receivedTS'])
-        age = datetime.now() - ts
-        if age > LAST_RECV_THRESHOLD and e['entity_id'] not in IGNORE_RECV_ENTITIES:
-            prob.append(
-                'Last message received %s' % naturaltime(age)
-            )
-        state = e.get('state')
-        if state not in OK_STATES:
-            prob.append('State: %s' % state)
-        if len(prob) == 0:
-            self._log.debug(
-                '%s - failed=%s battery_level=%s last_recv=%s state=%s',
-                ename, failed, batt, naturaltime(age), state
-            )
-            return []
-        return ['%s: %s' % (ename, '; '.join(prob))]
-
     def _check_zwave(self, *args, **kwargs):
         problems = []
-        for e in self.get_state('zwave').values():
+        for e in self.get_state('binary_sensor').values():
+            if e.get('attributes', {}).get('device_class') != 'battery':
+                continue
             if e['entity_id'] in IGNORE_ENTITIES:
                 self._log.debug('Ignore entity %s', e['entity_id'])
                 continue
-            problems.extend(self._check_zwave_entity(e))
+            ename = f"{e['entity_id']} ({a['friendly_name']})"
+            if e.get('state') == 'on':
+                problems.append(f'{ename} is triggered (on)')
+        for e in self.get_state('sensor').values():
+            if e.get('attributes', {}).get('device_class') != 'battery':
+                continue
+            if e.get('attributes', {}).get('state_class') != 'measurement':
+                continue
+            if e['entity_id'] in IGNORE_ENTITIES:
+                self._log.debug('Ignore entity %s', e['entity_id'])
+                continue
+            ename = f"{e['entity_id']} ({a['friendly_name']})"
+            if e.get('state', 0) <= BATTERY_THRESHOLD:
+                problems.append(f'{ename} is {e["state"]}')
+        for e in self.get_state('sensor').values():
+            if not ID_RE.match(e['entity_id']):
+                continue
+            ename = f"{e['entity_id']} ({a['friendly_name']})"
+            if e.get('state') not in OK_STATES:
+                problems.append(f'{ename} is in state {e["state"]}')
         if len(problems) < 1:
             self._log.info('No problems found.')
             return
