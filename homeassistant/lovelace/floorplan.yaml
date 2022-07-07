@@ -246,14 +246,3 @@ elements:
     style:
       top: 72%
       left: 30%
-  # octoprint
-  - type: state-icon
-    entity: camera.octopi
-    style:
-      top: 78%
-      left: 60%
-  - type: state-label
-    entity: sensor.octoprint_current_state
-    style:
-      top: 71%
-      left: 59%

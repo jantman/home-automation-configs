@@ -42,10 +42,6 @@ IGNORE_IDS = [
     'sensor.humidor_temp',
     'sensor.500291c9b1a3_temp',
     'sensor.f4cfa2d0de01_temp',
-    'sensor.octoprint_actual_bed_temp',
-    'sensor.octoprint_target_bed_temp',
-    'sensor.octoprint_actual_tool0_temp',
-    'sensor.octoprint_target_tool0_temp',
     'sensor.officelightswitch_temperature_2',
 ]
 
