@@ -59,7 +59,6 @@ recorder:
       - media_player
       - scan_store
       - zone
-      - zwave
       - automation
       - updater
       - camera
@@ -416,8 +415,6 @@ alexa:
         - binary_sensor.ecolink_doorwindow_sensor_sensor_4
         # Back Bedroom Motion
         - binary_sensor.ecolink_motion_detector_sensor
-        # garage motion
-        - zwave.ecolink_motion_detector_2
         # Kitchen Motion
         - binary_sensor.kitchen_motion
         # KitchenSensor Sensor
