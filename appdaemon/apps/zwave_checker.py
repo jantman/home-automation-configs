@@ -57,6 +57,7 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             if e['entity_id'] in IGNORE_ENTITIES:
                 self._log.debug('Ignore entity %s', e['entity_id'])
                 continue
+            a = e.get('attributes', {})
             ename = f"{e['entity_id']} ({a['friendly_name']})"
             if e.get('state') == 'on':
                 problems.append(f'{ename} is triggered (on)')
@@ -68,12 +69,14 @@ class ZwaveChecker(hass.Hass, SaneLoggingApp, PushoverNotifier):
             if e['entity_id'] in IGNORE_ENTITIES:
                 self._log.debug('Ignore entity %s', e['entity_id'])
                 continue
+            a = e.get('attributes', {})
             ename = f"{e['entity_id']} ({a['friendly_name']})"
             if e.get('state', 0) <= BATTERY_THRESHOLD:
                 problems.append(f'{ename} is {e["state"]}')
         for e in self.get_state('sensor').values():
             if not ID_RE.match(e['entity_id']):
                 continue
+            a = e.get('attributes', {})
             ename = f"{e['entity_id']} ({a['friendly_name']})"
             if e.get('state') not in OK_STATES:
                 problems.append(f'{ename} is in state {e["state"]}')
