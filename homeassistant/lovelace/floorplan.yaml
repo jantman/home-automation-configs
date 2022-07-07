@@ -66,7 +66,7 @@ elements:
     tap_action:
       action: toggle
     entity: switch.inovelli_unknown_type_ff00_id_ff07_switch
-    icon: mdi:lightbulb
+    icon: mdi:string-lights
     style:
       top: 22%
       left: 20%
