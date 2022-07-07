@@ -17,6 +17,9 @@ views:
         - type: picture-entity
           entity: switch.hall_state
           camera_image: camera.hall
+        - type: thermostat
+          name: Climate
+          entity: climate.z_wave_thermostat
       # CENTER COLUMN
       - type: vertical-stack
         cards:
@@ -41,9 +44,6 @@ views:
         - type: picture-entity
           entity: switch.bedrm_state
           camera_image: camera.bedrm
-        - type: thermostat
-          name: Climate
-          entity: climate.officelightswitch_mode
         - !include /config/lovelace/lights.yaml
         - !include /config/lovelace/alarm-ignore.yaml
       # RIGHT COLUMN
