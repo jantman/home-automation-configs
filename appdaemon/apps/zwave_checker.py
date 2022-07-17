@@ -33,7 +33,7 @@ LOG_DEBUG = False
 IGNORE_ENTITIES = []
 
 #: states that are OK
-OK_STATES = ['alive', 'asleep']
+OK_STATES = ['alive', 'asleep', 'awake']
 
 #: Entity ID regex
 ID_RE = re.compile(r'^sensor\.node_\d+_node_status$')
