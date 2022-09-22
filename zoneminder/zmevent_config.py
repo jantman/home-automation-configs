@@ -58,7 +58,7 @@ if node() == 'telescreen':
     CONFIG['BASE_URL'] = 'http://redirect.jasonantman.com/telescreen/'
     ZM_HOSTNAME = 'telescreen'
     CONFIG['HASS_API_URL'] = 'http://192.168.0.102:8123/api'
-    RETRY_START_ID = 927993
+    RETRY_START_ID = 1729301
 
 
 def populate_secrets():
