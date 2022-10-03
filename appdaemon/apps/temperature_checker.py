@@ -27,7 +27,6 @@ CHECK_STALE_IDS = [
     'sensor.porch_temp',
     'sensor.air_quality_temperature_f',
     'sensor.air_quality_class_uptime_sec',
-    'sensor.air_quality_eco2_ppm',
     'sensor.air_quality_particles_03um_ppdl',
     # 'sensor.tv_temp',
 ]
