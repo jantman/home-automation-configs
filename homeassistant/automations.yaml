@@ -415,6 +415,36 @@
 # END Aqara Zigbee Buttons                                                     #
 ################################################################################
 ################################################################################
+# BEGIN sengled zigbee remote 1                                                #
+################################################################################
+- alias: Sengled BackRoom Lights On
+  id: sengled-backroom-lights-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:6a:0e:16
+      unique_id: b0:ce:18:14:03:6a:0e:16:1:0x0006
+      command: on
+  action:
+    - service: homeassistant.turn_on
+      entity_id: group.backroomlights
+- alias: Sengled BackRoom Lights Off
+  id: sengled-backroom-lights-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:6a:0e:16
+      unique_id: b0:ce:18:14:03:6a:0e:16:1:0x0006
+      command: off
+  action:
+    - service: homeassistant.turn_off
+      entity_id: group.backroomlights
+################################################################################
+# END sengled zigbee remote 1                                                  #
+################################################################################
+################################################################################
 # Alarm Automations                                                            #
 ################################################################################
 - alias: Arm after motion in bedroom, at night, when home, and house is dark.
