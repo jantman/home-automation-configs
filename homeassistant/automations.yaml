@@ -425,7 +425,7 @@
     event_data:
       device_ieee: b0:ce:18:14:03:6a:0e:16
       unique_id: b0:ce:18:14:03:6a:0e:16:1:0x0006
-      command: on
+      command: "on"
   action:
     - service: homeassistant.turn_on
       entity_id: group.backroomlights
@@ -437,7 +437,7 @@
     event_data:
       device_ieee: b0:ce:18:14:03:6a:0e:16
       unique_id: b0:ce:18:14:03:6a:0e:16:1:0x0006
-      command: off
+      command: "off"
   action:
     - service: homeassistant.turn_off
       entity_id: group.backroomlights
