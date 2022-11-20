@@ -24,7 +24,7 @@ STALE_THRESHOLD = timedelta(hours=1)
 CHECK_STALE_IDS = [
     'sensor.chest_freezer_temp',
     'sensor.kitchen_freezer_temp',
-    'sensor.porch_temp',
+    #'sensor.porch_temp',
     'sensor.air_quality_temperature_f',
     'sensor.air_quality_class_uptime_sec',
     'sensor.air_quality_particles_03um_ppdl',
