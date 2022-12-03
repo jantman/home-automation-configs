@@ -75,10 +75,10 @@ elements:
     tap_action:
       action: toggle
     entity: switch.bug_zapper
-    icon: mdi:bug
+    icon: mdi:string-lights
     style:
-      top: 5%
-      left: 15%
+      top: 95%
+      left: 2%
   - type: state-icon
     # back room light
     tap_action:
@@ -97,6 +97,15 @@ elements:
     style:
       top: 12%
       left: 76%
+  - type: state-icon
+    title: Christmas Tree
+    entity: switch.christmastree_on_off
+    tap_action:
+      action: toggle
+    icon: mdi:pine-tree
+    style:
+      top: 95%
+      left: 64%
   # DOORS
   - type: state-icon
     title: Crawlspace Door

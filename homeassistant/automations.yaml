@@ -548,3 +548,42 @@
     - event: CUSTOM_ALARM_STATE_SET
       event_data:
         state: Home
+################################################################################
+# Christmas stuff                                                              #
+################################################################################
+- id: PorchChristmasLightsOffAfterSunrise
+  alias: Turn Porch Christmas Lights Off After Sunrise
+  trigger:
+      platform: sun
+      event: sunrise
+      offset: '+01:00:00'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: switch.bug_zapper
+- id: PorchChristmasLightsOnBeforeSunset
+  alias: Turn Porch Christmas Lights On Before Sunset
+  trigger:
+      platform: sun
+      event: sunset
+      offset: '-01:00:00'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: switch.bug_zapper
+- id: ChristmasTreeOffWhenAway
+  alias: Turn Christmas Tree Off When Away
+  trigger:
+      platform: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      from: 'home'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: switch.christmastree_on_off
+- id: ChristmasTreeOnWhenHome
+  alias: Turn Christmas Tree On When Home
+  trigger:
+      platform: state
+      entity_id: device_tracker.555924e18d8ed3d2
+      to: 'home'
+  action:
+    - service: homeassistant.turn_on
+      entity_id: switch.christmastree_on_off
