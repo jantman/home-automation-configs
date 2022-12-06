@@ -131,11 +131,11 @@ LIGHT_ENTITIES = [
     # TV
     'switch.workbenchlight_switch',
     # Living Room
-    'light.jasco_products_45606_2_way_dimmer_switch_level',
+    'group.lrbulbs',
     # Bedroom
-    'light.ge_45606_2way_dimmer_switch_level',
+    'group.brbulbs',
     # Office
-    'light.ge_45606_2way_dimmer_switch_level_2',
+    'group.officebulbs',
     # Deck string lights
     'switch.inovelli_unknown_type_ff00_id_ff07_switch',
     # back room light

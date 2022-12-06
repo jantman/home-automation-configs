@@ -13,14 +13,32 @@ motion:
     - binary_sensor.livingroom_motion
     - binary_sensor.kitchen_motion
     - binary_sensor.bedroom_motion
+officebulbs:
+  name: Office Lightbulbs
+  entities:
+    - light.office_bulb_1
+    - light.office_bulb_2
+    - light.office_bulb_3
+lrbulbs:
+  name: Living Room Lightbulbs
+  entities:
+    - light.living_room_bulb_1
+    - light.living_room_bulb_2
+    - light.living_room_bulb_3
+brbulbs:
+  name: Bedroom Lightbulbs
+  entities:
+    - light.bedroom_bulb_1
+    - light.bedroom_bulb_2
+    - light.bedroom_bulb_3
 lights:
   name: Lights
   entities:
     - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
-    - light.ge_45606_2way_dimmer_switch_level
-    - light.ge_45606_2way_dimmer_switch_level_2
-    - light.jasco_products_45606_2_way_dimmer_switch_level
+    - group.lrbulbs
+    - group.brbulbs
+    - group.officebulbs
     - light.kitchenbulb1level_on_off
     - light.kitchenbulb2level_on_off
     - switch.workbenchlight_switch
@@ -42,7 +60,7 @@ lrlights:
   name: Living Room Lights
   entities:
     - switch.workbenchlight_switch
-    - light.jasco_products_45606_2_way_dimmer_switch_level
+    - group.lrbulbs
 tvlight:
   name: TV Light
   entities:
@@ -63,9 +81,9 @@ backroomlights:
 commonlights:
   name: Common Lights
   entities:
-    - light.ge_45606_2way_dimmer_switch_level
-    - light.ge_45606_2way_dimmer_switch_level_2
-    - light.jasco_products_45606_2_way_dimmer_switch_level
+    - group.brbulbs
+    - group.officebulbs
+    - group.lrbulbs
     - light.kitchenbulb1level_on_off
     - light.kitchenbulb2level_on_off
 indoorlights:

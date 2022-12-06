@@ -389,11 +389,11 @@ alexa:
       group.lights:
         name: 'All Lights'
         display_categories: LIGHT
-      light.ge_45606_2way_dimmer_switch_level:
+      group.brbulbs:
         name: 'Bedroom Light'
-      light.ge_45606_2way_dimmer_switch_level_2:
+      group.officebulbs:
         name: 'Office Light'
-      light.jasco_products_45606_2_way_dimmer_switch_level:
+      group.lrbulbs:
         name: 'Living Room Lights'
       switch.workbenchlight_switch:
         name: 'TV Light'
@@ -434,9 +434,9 @@ alexa:
         # GalaxyS10
         - device_tracker.555924e18d8ed3d2
         # Bedroom Light
-        - light.ge_45606_2way_dimmer_switch_level
+        - group.brbulbs
         # Office Light
-        - light.ge_45606_2way_dimmer_switch_level_2
+        - group.officebulbs
         # Kitchen Lights
         - group.kitchenlights
         # Lights
@@ -464,7 +464,7 @@ alexa:
         # LivingRoomLight Switch
         - switch.workbenchlight_switch
         # Living Room Light
-        - light.jasco_products_45606_2_way_dimmer_switch_level
+        - group.lrbulbs
 
 scene: !include scenes.yaml
 

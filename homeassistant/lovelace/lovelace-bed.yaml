@@ -10,7 +10,7 @@ views:
       - type: grid
         cards:
           - type: button
-            entity: light.ge_45606_2way_dimmer_switch_level
+            entity: group.brbulbs
             tap_action:
               action: more-info
           - type: button

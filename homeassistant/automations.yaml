@@ -22,15 +22,15 @@
     - service: homeassistant.turn_off
       entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level
+      entity_id: group.brbulbs
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
     - service: homeassistant.turn_off
       entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights Off During Day When Away
@@ -51,15 +51,15 @@
     - service: homeassistant.turn_off
       entity_id: switch.workbenchlight_switch
     - service: homeassistant.turn_off
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0b0886_10
     - service: homeassistant.turn_off
       entity_id: light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level
+      entity_id: group.brbulbs
     - service: homeassistant.turn_off
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
     - service: homeassistant.turn_off
       entity_id: switch.inovelli_unknown_type_ff00_id_ff07_switch
 - alias: Turn Lights On 30m Before Sunset When Away and Randomlights Off
@@ -79,13 +79,13 @@
         state: 'off'
   action:
     - service: homeassistant.turn_on
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
 - alias: Turn Lights On At Sunset If Away and Randomlights Off
   id: turn-lights-on-at-sunset-if-away-and-random-off
   trigger:
@@ -102,13 +102,13 @@
         state: 'off'
   action:
     - service: homeassistant.turn_on
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
 - alias: Turn Lights On If Away After Sunset and Randomlights Off
   id: turn-lights-on-if-away-after-sunset-and-random-off
   trigger:
@@ -129,13 +129,13 @@
         state: 'off'
   action:
     - service: homeassistant.turn_on
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
 ################################################################################
 # Kitchen Lights                                                               #
 ################################################################################
@@ -301,7 +301,7 @@
         before: sunrise
   action:
     - service: homeassistant.turn_on
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
 ################################################################################
 # BEGIN "first morning" routine                                                #
 # from https://www.home-assistant.io/cookbook/automation_first_light/          #
@@ -348,15 +348,15 @@
     - service: homeassistant.turn_off
       entity_id: input_boolean.trigger_first_morning
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level
+      entity_id: group.brbulbs
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb1level_on_off
     - service: homeassistant.turn_on
       entity_id: light.kitchenbulb2level_on_off
     - service: homeassistant.turn_on
-      entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+      entity_id: group.lrbulbs
     - service: homeassistant.turn_on
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
 ################################################################################
 # END "first morning" routine                                                  #
 ################################################################################
@@ -477,11 +477,11 @@
           before: '05:00:00'
     # bedroom light must be off
     - condition: state
-      entity_id: light.ge_45606_2way_dimmer_switch_level
+      entity_id: group.brbulbs
       state: 'off'
     # office light must be off
     - condition: state
-      entity_id: light.ge_45606_2way_dimmer_switch_level_2
+      entity_id: group.officebulbs
       state: 'off'
     # living room luminance must be less than 5 PERCENT (Zooz multi-sensor)
     - condition: numeric_state
@@ -495,7 +495,7 @@
   id: arm-after-living-room-light-is-shut-off-at-night-when-home
   trigger:
     platform: state
-    entity_id: light.jasco_products_45606_2_way_dimmer_switch_level
+    entity_id: group.lrbulbs
     to: 'off'
   condition:
     # device must be home

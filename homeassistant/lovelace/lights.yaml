@@ -9,11 +9,11 @@ entities:
   - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
   # Living Room
   - switch.workbenchlight_switch
-  - light.jasco_products_45606_2_way_dimmer_switch_level
+  - group.lrbulbs
   # Bedroom
-  - light.ge_45606_2way_dimmer_switch_level
+  - group.brbulbs
   # Office
-  - light.ge_45606_2way_dimmer_switch_level_2
+  - group.officebulbs
   # string lights
   - switch.inovelli_unknown_type_ff00_id_ff07_switch
   # back room light

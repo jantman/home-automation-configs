@@ -26,9 +26,9 @@ LIGHT_ENTITIES = [
     'group.kitchenlights',
     'group.porchlights',
     'switch.workbenchlight_switch',
-    'light.ge_45606_2way_dimmer_switch_level',
-    'light.ge_45606_2way_dimmer_switch_level_2',
-    'light.jasco_products_45606_2_way_dimmer_switch_level',
+    'group.brbulbs',
+    'group.officebulbs',
+    'group.lrbulbs',
     'light.backroomlightlevel_on_off',
     'switch.backroomshoplights_on_off',
 ]

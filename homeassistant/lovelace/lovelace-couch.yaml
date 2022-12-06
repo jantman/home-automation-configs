@@ -342,7 +342,7 @@ views:
     badges: []
     cards:
       - type: light
-        entity: light.jasco_products_45606_2_way_dimmer_switch_level
+        entity: group.lrbulbs
       - !include /config/lovelace/lights.yaml
   - title: Climate
     path: climate
