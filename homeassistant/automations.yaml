@@ -445,6 +445,66 @@
 # END sengled zigbee remote 1                                                  #
 ################################################################################
 ################################################################################
+# BEGIN sengled zigbee remote 2                                                #
+################################################################################
+- alias: Sengled LivingRoom Lights On
+  id: sengled-livingroom-lights-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
+      command: "on"
+  action:
+    - service: homeassistant.turn_on
+      entity_id: group.lrbulbs
+- alias: Sengled LivingRoom Lights Bright
+  id: sengled-livingroom-lights-bright
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
+      command: "step"
+      args: [0, 1, 0]
+  action:
+    - service: light.turn_on
+      entity_id: group.lrbulbs
+      data_template:
+        brightness: '{{states.group.lrbulbs.attributes.brightness + 25}}'
+- alias: Sengled LivingRoom Lights Dim
+  id: sengled-livingroom-lights-dim
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
+      command: "step"
+      args: [1, 1, 0]
+  action:
+    - service: light.turn_on
+      entity_id: group.lrbulbs
+      data_template:
+        brightness: '{{states.group.lrbulbs.attributes.brightness - 25}}'
+- alias: Sengled LivingRoom Lights Off
+  id: sengled-livingroom-lights-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
+      command: "off"
+  action:
+    - service: homeassistant.turn_off
+      entity_id: group.lrbulbs
+################################################################################
+# END sengled zigbee remote 2                                                  #
+################################################################################
+################################################################################
 # Alarm Automations                                                            #
 ################################################################################
 - alias: Arm after motion in bedroom, at night, when home, and house is dark.
