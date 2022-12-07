@@ -489,8 +489,7 @@
     - service: light.turn_on
       data:
         entity_id: group.lrbulbs
-        #brightness: '{{states.light.living_room_bulb_1.attributes.brightness|int - 50}}'
-        brightness_step_pct: "{{ 10 if state_attr('light.living_room_bulb_1', 'brightness')|int <= 250 else 0 }}"
+        brightness: '{{state_attr('light.living_room_bulb_1', 'brightness')|int - 50}}'
 - alias: Sengled LivingRoom Lights Off
   id: sengled-livingroom-lights-off
   trigger:
