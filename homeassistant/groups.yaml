@@ -13,32 +13,14 @@ motion:
     - binary_sensor.livingroom_motion
     - binary_sensor.kitchen_motion
     - binary_sensor.bedroom_motion
-officebulbs:
-  name: Office Lightbulbs
-  entities:
-    - light.office_bulb_1
-    - light.office_bulb_2
-    - light.office_bulb_3
-lrbulbs:
-  name: Living Room Lightbulbs
-  entities:
-    - light.living_room_bulb_1
-    - light.living_room_bulb_2
-    - light.living_room_bulb_3
-brbulbs:
-  name: Bedroom Lightbulbs
-  entities:
-    - light.bedroom_bulb_1
-    - light.bedroom_bulb_2
-    - light.bedroom_bulb_3
 lights:
   name: Lights
   entities:
     - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
     - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
-    - group.lrbulbs
-    - group.brbulbs
-    - group.officebulbs
+    - light.lrbulbs
+    - light.brbulbs
+    - light.officebulbs
     - light.kitchenbulb1level_on_off
     - light.kitchenbulb2level_on_off
     - switch.workbenchlight_switch
@@ -46,16 +28,6 @@ lights:
     - switch.bug_zapper
     - switch.backroomshoplights_on_off
     - light.backroomlightlevel_on_off
-porchlights:
-  name: Porch Lights
-  entities:
-    - light.cree_connected_a_19_60w_equivalent_fe0afc46_10
-    - light.cree_connected_a_19_60w_equivalent_fe0b0886_10
-kitchenlights:
-  name: Kitchen Lights
-  entities:
-    - light.kitchenbulb1level_on_off
-    - light.kitchenbulb2level_on_off
 lrlights:
   name: Living Room Lights
   entities:
