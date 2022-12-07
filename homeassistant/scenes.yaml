@@ -4,7 +4,7 @@
     switch.workbenchlight_switch: "off"
     group.lrbulbs:
       state: "on"
-      brightness: 149
+      brightness: 102
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
     light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
     light.kitchenbulb2level_on_off: "off"
