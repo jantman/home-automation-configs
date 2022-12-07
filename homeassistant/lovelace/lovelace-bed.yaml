@@ -10,7 +10,7 @@ views:
       - type: grid
         cards:
           - type: button
-            entity: group.brbulbs
+            entity: light.br_bulbs
             tap_action:
               action: more-info
           - type: button

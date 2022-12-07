@@ -342,7 +342,7 @@ views:
     badges: []
     cards:
       - type: light
-        entity: group.lrbulbs
+        entity: light.lr_bulbs
       - !include /config/lovelace/lights.yaml
   - title: Climate
     path: climate

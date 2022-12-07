@@ -131,11 +131,11 @@ LIGHT_ENTITIES = [
     # TV
     'switch.workbenchlight_switch',
     # Living Room
-    'group.lrbulbs',
+    'light.lr_bulbs',
     # Bedroom
-    'group.brbulbs',
+    'light.br_bulbs',
     # Office
-    'group.officebulbs',
+    'light.office_bulbs',
     # Deck string lights
     'switch.inovelli_unknown_type_ff00_id_ff07_switch',
     # back room light

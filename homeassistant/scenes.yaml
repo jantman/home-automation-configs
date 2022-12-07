@@ -2,7 +2,7 @@
   icon: "mdi:food-fork-drink"
   entities:
     switch.workbenchlight_switch: "off"
-    group.lrbulbs:
+    light.lr_bulbs:
       state: "on"
       brightness: 102
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
@@ -10,25 +10,25 @@
     light.kitchenbulb2level_on_off: "off"
     light.kitchenbulb1level_on_off: "off"
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
-    group.officebulbs: "off"
-    group.brbulbs: "off"
+    light.office_bulbs: "off"
+    light.br_bulbs: "off"
 - name: Movies
   icon: "mdi:projector-screen"
   entities:
     switch.workbenchlight_switch: "off"
-    group.lrbulbs: "off"
+    light.lr_bulbs: "off"
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10: "off"
     light.cree_connected_a_19_60w_equivalent_fe0b0886_10: "off"
     light.kitchenbulb2level_on_off: "off"
     light.kitchenbulb1level_on_off: "off"
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "off"
-    group.officebulbs: "off"
-    group.brbulbs: "off"
+    light.office_bulbs: "off"
+    light.br_bulbs: "off"
 - name: AllLightsOn
   icon: "mdi:lightbulb-group"
   entities:
     switch.workbenchlight_switch: "on"
-    group.lrbulbs:
+    light.lr_bulbs:
       state: "on"
       brightness: 255
     light.cree_connected_a_19_60w_equivalent_fe0afc46_10:
@@ -44,16 +44,16 @@
       state: "on"
       brightness: 255
     switch.inovelli_unknown_type_ff00_id_ff07_switch: "on"
-    group.officebulbs:
+    light.office_bulbs:
       state: "on"
       brightness: 255
-    group.brbulbs:
+    light.br_bulbs:
       state: "on"
       brightness: 255
 - name: AllInterior
   icon: "mdi:home-lightbulb"
   entities:
-    group.lrbulbs:
+    light.lr_bulbs:
       state: "on"
       brightness: 255
     light.kitchenbulb2level_on_off:
@@ -62,9 +62,9 @@
     light.kitchenbulb1level_on_off:
       state: "on"
       brightness: 255
-    group.officebulbs:
+    light.office_bulbs:
       state: "on"
       brightness: 255
-    group.brbulbs:
+    light.br_bulbs:
       state: "on"
       brightness: 255

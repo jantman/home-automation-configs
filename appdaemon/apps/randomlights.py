@@ -23,12 +23,12 @@ LOG_DEBUG = False
 
 #: List of entities to select from
 LIGHT_ENTITIES = [
-    'group.kitchenlights',
-    'group.porchlights',
+    'light.kitchen_bulbs',
+    'light.porch_bulbs',
     'switch.workbenchlight_switch',
-    'group.brbulbs',
-    'group.officebulbs',
-    'group.lrbulbs',
+    'light.br_bulbs',
+    'light.office_bulbs',
+    'light.lr_bulbs',
     'light.backroomlightlevel_on_off',
     'switch.backroomshoplights_on_off',
 ]

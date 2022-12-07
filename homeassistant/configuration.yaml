@@ -380,20 +380,20 @@ climate:
 alexa:
   smart_home:
     entity_config:
-      group.porchlights:
+      light.porch_bulbs:
         display_categories: LIGHT
       group.lrlights:
         display_categories: LIGHT
-      group.kitchenlights:
+      light.kitchen_bulbs:
         display_categories: LIGHT
       group.lights:
         name: 'All Lights'
         display_categories: LIGHT
-      group.brbulbs:
+      light.br_bulbs:
         name: 'Bedroom Light'
-      group.officebulbs:
+      light.office_bulbs:
         name: 'Office Light'
-      group.lrbulbs:
+      light.lr_bulbs:
         name: 'Living Room Lights'
       switch.workbenchlight_switch:
         name: 'TV Light'
@@ -434,17 +434,17 @@ alexa:
         # GalaxyS10
         - device_tracker.555924e18d8ed3d2
         # Bedroom Light
-        - group.brbulbs
+        - light.br_bulbs
         # Office Light
-        - group.officebulbs
+        - light.office_bulbs
         # Kitchen Lights
-        - group.kitchenlights
+        - light.kitchen_bulbs
         # Lights
         - group.lights
         # Living Room Lights
         - group.lrlights
         # Porch Lights
-        - group.porchlights
+        - light.porch_bulbs
         # Thermostat Current
         - sensor.2gig_technologies_ct101_thermostat_iris_temperature
         # BedroomSensor Temperature
@@ -464,7 +464,7 @@ alexa:
         # LivingRoomLight Switch
         - switch.workbenchlight_switch
         # Living Room Light
-        - group.lrbulbs
+        - light.lr_bulbs
 
 scene: !include scenes.yaml
 

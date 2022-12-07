@@ -32,7 +32,7 @@ lrlights:
   name: Living Room Lights
   entities:
     - switch.workbenchlight_switch
-    - group.lrbulbs
+    - light.lr_bulbs
 tvlight:
   name: TV Light
   entities:
@@ -53,9 +53,9 @@ backroomlights:
 commonlights:
   name: Common Lights
   entities:
-    - group.brbulbs
-    - group.officebulbs
-    - group.lrbulbs
+    - light.br_bulbs
+    - light.office_bulbs
+    - light.lr_bulbs
     - light.kitchenbulb1level_on_off
     - light.kitchenbulb2level_on_off
 indoorlights:
