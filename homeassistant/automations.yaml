@@ -461,40 +461,6 @@
       entity_id: light.office_bulbs
       data:
         brightness: 254
-- alias: Sengled Office Lights Brighten
-  id: sengled-office-lights-brighten
-  mode: queued
-  max: 10
-  trigger:
-    platform: event
-    event_type: zha_event
-    event_data:
-      device_ieee: b0:ce:18:14:03:5d:fa:25
-      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
-      command: "step"
-      args: [0, 1, 0]
-  action:
-    - service: light.turn_on
-      entity_id: light.office_bulbs
-      data:
-        brightness: '{{states.light.office_bulbs.attributes.brightness|int + 50}}'
-- alias: Sengled Office Lights Dim
-  id: sengled-office-lights-dim
-  mode: queued
-  max: 10
-  trigger:
-    platform: event
-    event_type: zha_event
-    event_data:
-      device_ieee: b0:ce:18:14:03:5d:fa:25
-      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
-      command: "step"
-      args: [1, 1, 0]
-  action:
-    - service: light.turn_on
-      entity_id: light.office_bulbs
-      data:
-        brightness: '{{states.light.office_bulbs.attributes.brightness|int - 50}}'
 - alias: Sengled Office Lights Off
   id: sengled-office-lights-off
   trigger:
