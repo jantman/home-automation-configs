@@ -445,6 +445,36 @@
 # END sengled zigbee remote 1                                                  #
 ################################################################################
 ################################################################################
+# BEGIN sengled zigbee remote 2                                                #
+################################################################################
+- alias: Sengled Office Lights On
+  id: sengled-office-lights-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0006
+      command: "on"
+  action:
+    - service: light.turn_on
+      entity_id: light.office_bulbs
+- alias: Sengled Office Lights Off
+  id: sengled-office-lights-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:5d:fa:25
+      unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0006
+      command: "off"
+  action:
+    - service: light.turn_off
+      entity_id: light.office_bulbs
+################################################################################
+# END sengled zigbee remote 2                                                  #
+################################################################################
+################################################################################
 # Alarm Automations                                                            #
 ################################################################################
 - alias: Arm after motion in bedroom, at night, when home, and house is dark.
