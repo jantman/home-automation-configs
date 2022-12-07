@@ -473,7 +473,7 @@
     - service: light.turn_on
       entity_id: group.lrbulbs
       data_template:
-        brightness: '{{states.group.lrbulbs.attributes.brightness + 25}}'
+        brightness: '{{states.light.living_room_bulb_1.attributes.brightness + 25}}'
 - alias: Sengled LivingRoom Lights Dim
   id: sengled-livingroom-lights-dim
   trigger:
@@ -488,7 +488,7 @@
     - service: light.turn_on
       entity_id: group.lrbulbs
       data_template:
-        brightness: '{{states.group.lrbulbs.attributes.brightness - 25}}'
+        brightness: '{{states.light.living_room_bulb_1.attributes.brightness - 25}}'
 - alias: Sengled LivingRoom Lights Off
   id: sengled-livingroom-lights-off
   trigger:
