@@ -477,6 +477,70 @@
 # END sengled zigbee remote 2                                                  #
 ################################################################################
 ################################################################################
+# BEGIN sengled zigbee remote 3                                                #
+################################################################################
+- alias: Sengled LivingRoom Lights On
+  id: sengled-lr-lights-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:69:ff:9f
+      unique_id: b0:ce:18:14:03:69:ff:9f:1:0x0006
+      command: "on"
+  action:
+    - service: light.turn_on
+      entity_id: light.lr_bulbs
+      data:
+        brightness: 254
+- alias: Sengled LivingRoom Lights Off
+  id: sengled-lr-lights-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:69:ff:9f
+      unique_id: b0:ce:18:14:03:69:ff:9f:1:0x0006
+      command: "off"
+  action:
+    - service: light.turn_off
+      entity_id: light.lr_bulbs
+################################################################################
+# END sengled zigbee remote 3                                                  #
+################################################################################
+################################################################################
+# BEGIN sengled zigbee remote 4                                                #
+################################################################################
+- alias: Sengled BedRoom Lights On
+  id: sengled-br-lights-on
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:69:f5:7b
+      unique_id: b0:ce:18:14:03:69:f5:7b:1:0x0006
+      command: "on"
+  action:
+    - service: light.turn_on
+      entity_id: light.br_bulbs
+      data:
+        brightness: 254
+- alias: Sengled BedRoom Lights Off
+  id: sengled-br-lights-off
+  trigger:
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_ieee: b0:ce:18:14:03:69:f5:7b
+      unique_id: b0:ce:18:14:03:69:f5:7b:1:0x0006
+      command: "off"
+  action:
+    - service: light.turn_off
+      entity_id: light.br_bulbs
+################################################################################
+# END sengled zigbee remote 4                                                  #
+################################################################################
+################################################################################
 # Alarm Automations                                                            #
 ################################################################################
 - alias: Arm after motion in bedroom, at night, when home, and house is dark.
