@@ -457,7 +457,7 @@
       unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
       command: "on"
   action:
-    - service: homeassistant.turn_on
+    - service: light.turn_on
       entity_id: group.lrbulbs
 - alias: Sengled LivingRoom Lights Bright
   id: sengled-livingroom-lights-bright
@@ -473,8 +473,8 @@
     - service: light.turn_on
       target:
         entity_id: group.lrbulbs
-      data_template:
-        brightness: '{{states.light.living_room_bulb_1.attributes.brightness|int + 25}}'
+      data:
+        brightness: '{{states.light.living_room_bulb_1.attributes.brightness|int + 50}}'
 - alias: Sengled LivingRoom Lights Dim
   id: sengled-livingroom-lights-dim
   trigger:
@@ -489,8 +489,8 @@
     - service: light.turn_on
       target:
         entity_id: group.lrbulbs
-      data_template:
-        brightness: '{{states.light.living_room_bulb_1.attributes.brightness|int - 25}}'
+      data:
+        brightness: '{{states.light.living_room_bulb_1.attributes.brightness|int - 50}}'
 - alias: Sengled LivingRoom Lights Off
   id: sengled-livingroom-lights-off
   trigger:
@@ -501,7 +501,7 @@
       unique_id: b0:ce:18:14:03:5d:fa:25:1:0x0008
       command: "off"
   action:
-    - service: homeassistant.turn_off
+    - service: light.turn_off
       entity_id: group.lrbulbs
 ################################################################################
 # END sengled zigbee remote 2                                                  #
