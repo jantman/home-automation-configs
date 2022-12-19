@@ -8,7 +8,7 @@ I've flashed the boards with [MicroPython](https://micropython.org/), both becau
 
 * [adafruit_bus_device_i2c.py](adafruit_bus_device_i2c.py) - Modified version of https://github.com/adafruit/Adafruit_CircuitPython_BusDevice/blob/904ab2f199c5f865b75837a8999cfe2e3eec1d56/adafruit_bus_device/i2c_device.py to work with MicroPython.
 * [adafruit_shtc3.py](adafruit_shtc3.py) - Modified version of https://github.com/adafruit/Adafruit_CircuitPython_SHTC3/blob/519bf17361a132ecd5fc8f83ed2e32b42b3672a6/adafruit_shtc3.py to work with MicroPython.
-* [air_sensor.py](air_sensor.py) - Indoor air quality sensor using an [Adafruit SGP30](https://www.adafruit.com/product/3709) equivalent carbon dioxide (eCO2) and total volatile organic compounds (TVOC) and an [Adafruit PMSA003I](https://www.adafruit.com/product/4632) particulate size and concentration sensor.
+* [air_sensor.py](air_sensor.py) - Indoor air quality sensor using an [Adafruit SGP30](https://www.adafruit.com/product/3709) equivalent carbon dioxide (eCO2) and total volatile organic compounds (TVOC) and an [Adafruit PMSA003I](https://www.adafruit.com/product/4632) particulate size and concentration sensor. A photo of this and information on the physical construction is at https://github.com/jantman/laser-cutter-projects/tree/main/air_quality_sensor_mounting_plate
 * [boot.py](boot.py) - the original boot file that came with MicroPython
 * [config_example.py](config_example.py) - An example configuration file for these scripts, containing WiFi settings and your HASS URL. Copy to ``config.py`` and update for your values, then copy to the board.
 * [hass_sender.py](hass_sender.py) - Base class for connecting to WiFi and sending metrics to HomeAssistant.
