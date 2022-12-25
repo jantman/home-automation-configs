@@ -16,6 +16,12 @@ class Dimmer(hass.Hass, SaneLoggingApp):
         'b0:ce:18:14:03:69:ff:9f': 'light.lr_bulbs',
     }
 
+    MAX_BRIGHTNESS = 254
+
+    BRIGHTNESS_STEPS = 10
+
+    STEP_VAL = int(MAX_BRIGHTNESS / BRIGHTNESS_STEPS)
+
     def initialize(self):
         self._setup_logging(self.__class__.__name__, False)
         self._log.info("Initializing Dimmer...")
@@ -73,9 +79,34 @@ class Dimmer(hass.Hass, SaneLoggingApp):
     def dim(self, entity_id):
         self._log.debug('Request to dim %s', entity_id)
         state = self.get_state(entity_id, attribute='all')
-        self._log.debug('Entity %s current state: %s', entity_id, state)
+        brightness = state['attributes'].get('brightness', 0)
+        self._log.debug(
+            'Entity %s brightness=%s current state: %s',
+            entity_id, brightness, state
+        )
+        if state['state'] == 'off':
+            self._log.debug('Entity %s is already off', entity_id)
+            return
+        newval = brightness - self.STEP_VAL
+        if newval <= 0:
+            self._log.info('Turn off %s', entity_id)
+            self.turn_off(entity_id)
+            return
+        self._log.info('Dim %s from %s to %s', entity_id, brightness, newval)
+        self.turn_on(entity_id, brightness=brightness)
 
     def brighten(self, entity_id):
         self._log.debug('Request to brighten %s', entity_id)
         state = self.get_state(entity_id, attribute='all')
-        self._log.debug('Entity %s current state: %s', entity_id, state)
+        brightness = state['attributes'].get('brightness', 0)
+        self._log.debug(
+            'Entity %s brightness=%s current state: %s',
+            entity_id, brightness, state
+        )
+        newval = brightness + self.STEP_VAL
+        if newval > self.MAX_BRIGHTNESS:
+            newval = self.MAX_BRIGHTNESS
+        self._log.info(
+            'Brighten %s from %s to %s', entity_id, brightness, newval
+        )
+        self.turn_on(entity_id, brightness=brightness)
