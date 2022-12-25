@@ -1,7 +1,7 @@
 from sane_app_logging import SaneLoggingApp
 
 
-class Dimmer(hass.Hass, SaneLoggingApp):
+class Dimmer(SaneLoggingApp):
     """
     Dimmer AppDaemon app.
 
@@ -17,3 +17,12 @@ class Dimmer(hass.Hass, SaneLoggingApp):
 
     def _handle_event(self, event_name, data, _):
         self._log.info('Got %s event data=%s', event_name, data)
+        """
+        Living Room
+        
+        Dim:
+        
+        
+        Brighten:
+        
+        """
