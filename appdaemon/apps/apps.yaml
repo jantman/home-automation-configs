@@ -44,3 +44,8 @@ humidor_checker:
   global_dependencies:
     - sane_app_logging
     - pushover_notifier
+dimmer:
+  module: dimmer
+  class: Dimmer
+  global_dependencies:
+    - sane_app_logging
