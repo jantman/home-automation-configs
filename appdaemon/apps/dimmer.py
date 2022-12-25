@@ -78,7 +78,8 @@ class Dimmer(hass.Hass, SaneLoggingApp):
 
     def dim(self, entity_id):
         self._log.debug('Request to dim %s', entity_id)
-        state = self.get_state(entity_id, attribute='all')
+        entity = self.get_entity(entity_id)
+        state = entity.get_state(attribute='all')
         brightness = state['attributes'].get('brightness', 0)
         self._log.debug(
             'Entity %s brightness=%s current state: %s',
@@ -90,14 +91,15 @@ class Dimmer(hass.Hass, SaneLoggingApp):
         newval = brightness - self.STEP_VAL
         if newval <= 0:
             self._log.info('Turn off %s', entity_id)
-            self.turn_off(entity_id)
+            entity.turn_off()
             return
         self._log.info('Dim %s from %s to %s', entity_id, brightness, newval)
-        self.turn_on(entity_id, brightness=brightness)
+        entity.turn_on(brightness=brightness)
 
     def brighten(self, entity_id):
         self._log.debug('Request to brighten %s', entity_id)
-        state = self.get_state(entity_id, attribute='all')
+        entity = self.get_entity(entity_id)
+        state = entity.get_state(attribute='all')
         brightness = state['attributes'].get('brightness', 0)
         self._log.debug(
             'Entity %s brightness=%s current state: %s',
@@ -109,4 +111,4 @@ class Dimmer(hass.Hass, SaneLoggingApp):
         self._log.info(
             'Brighten %s from %s to %s', entity_id, brightness, newval
         )
-        self.turn_on(entity_id, brightness=brightness)
+        entity.turn_on(brightness=brightness)
