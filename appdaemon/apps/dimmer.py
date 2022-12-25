@@ -1,7 +1,9 @@
+import appdaemon.plugins.hass.hassapi as hass
+
 from sane_app_logging import SaneLoggingApp
 
 
-class Dimmer(SaneLoggingApp):
+class Dimmer(hass.Hass, SaneLoggingApp):
     """
     Dimmer AppDaemon app.
 
@@ -16,7 +18,6 @@ class Dimmer(SaneLoggingApp):
         self._log.info('Done initializing Dimmer')
 
     def _handle_event(self, event_name, data, _):
-        self._log.info('Got %s event data=%s', event_name, data)
         """
         Living Room
         
@@ -26,3 +27,4 @@ class Dimmer(SaneLoggingApp):
         Brighten:
         
         """
+        self._log.info('Got %s event data=%s', event_name, data)
