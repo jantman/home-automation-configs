@@ -94,7 +94,7 @@ class Dimmer(hass.Hass, SaneLoggingApp):
             entity.turn_off()
             return
         self._log.info('Dim %s from %s to %s', entity_id, brightness, newval)
-        entity.turn_on(brightness=brightness)
+        entity.turn_on(brightness=newval)
 
     def brighten(self, entity_id):
         self._log.debug('Request to brighten %s', entity_id)
@@ -111,4 +111,4 @@ class Dimmer(hass.Hass, SaneLoggingApp):
         self._log.info(
             'Brighten %s from %s to %s', entity_id, brightness, newval
         )
-        entity.turn_on(brightness=brightness)
+        entity.turn_on(brightness=newval)
