@@ -91,7 +91,7 @@ function handleEvent(e) {
  */
 function handleLightStateChange(entityId, newState) {
   console.log('handleLightStateChange(%s, %s)', entityId, newState);
-  classPart = entityId.replace(".", "-");
+  var classPart = entityId.replace(".", "-");
   if(newState == 'on') {
     $('.light-' + classPart + ' i').removeClass('mdi-lightbulb-outline');
     $('.light-' + classPart + ' i').addClass('mdi-lightbulb-on');
