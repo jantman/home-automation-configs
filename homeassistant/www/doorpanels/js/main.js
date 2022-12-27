@@ -36,8 +36,8 @@ import {
   hawsConn = connection;
   getUser(connection).then(
     user => {
-      $('#status').html('Connected to ' + hassBaseUrl + ' as ' + user + '.<br />my IP: ' + myIP);
-      console.log('Connected to ' + hassBaseUrl + ' as ' + user.name + '.<br />my IP: ' + myIP);
+      $('#status').html('Connected to ' + hassBaseUrl + ' as ' + user.name + ' (' + user.id + ').<br />my IP: ' + myIP);
+      console.log('Connected to ' + hassBaseUrl + ' as ' + user.name + ' (' + user.id + ').<br />my IP: ' + myIP);
     }
   );
   connection.subscribeEvents(handleEvent);
@@ -91,7 +91,7 @@ function handleEvent(e) {
  */
 function handleLightStateChange(entityId, newState) {
   console.log('handleLightStateChange(%s, %s)', entityId, newState);
-  classPart = groupName.replace(".", "-");
+  classPart = entityId.replace(".", "-");
   if(newState == 'on') {
     $('.light-' + classPart + ' i').removeClass('mdi-lightbulb-outline');
     $('.light-' + classPart + ' i').addClass('mdi-lightbulb-on');
