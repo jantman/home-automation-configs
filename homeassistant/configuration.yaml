@@ -10,6 +10,7 @@ homeassistant:
   unit_system: imperial
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: America/New_York
+  country: US
   # Customization file
   customize: !include customize.yaml
   auth_providers:
@@ -292,10 +293,6 @@ notify:
     password: !secret gmail_password
     encryption: starttls
     sender_name: HomeAssistant
-  - name: pushover
-    platform: pushover
-    api_key: !secret pushover_api_key
-    user_key: !secret pushover_user_key
 
 input_boolean:
   alarm_duress:
