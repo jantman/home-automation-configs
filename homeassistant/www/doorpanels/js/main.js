@@ -45,10 +45,9 @@ import {
     states.forEach(function(s) {
       if (s.entity_id == 'input_select.alarmstate') { handleAlarmState(s.state); }
       if (s.entity_id == 'input_boolean.alarm_duress') { handleAlarmDuress(s.state); }
-      if (s.entity_id.startsWith('group.')) {
-        var groupName = s.entity_id.split(".")[1];
-        groupStates[groupName] = s.state;
-        handleLightStateChange(groupName, s.state);
+      if (s.entity_id.startsWith('group.') || s.entity_id.startsWith('light.')) {
+        groupStates[s.entity_id] = s.state;
+        handleLightStateChange(s.entity_id, s.state);
       }
     });
   });
@@ -65,10 +64,9 @@ import {
 function handleEvent(e) {
   if(e.event_type == 'state_changed') {
     if(e.data.entity_id == 'input_select.alarmstate') { handleAlarmState(e.data.new_state.state); }
-    if(e.data.entity_id.startsWith('group.')) {
-      var groupName = e.data.entity_id.split(".")[1];
-      groupStates[groupName] = e.data.new_state.state;
-      handleLightStateChange(groupName, e.data.new_state.state);
+    if(e.data.entity_id.startsWith('group.') || e.data.entity_id.startsWith('light.')) {
+      groupStates[e.data.entity_id] = e.data.new_state.state;
+      handleLightStateChange(e.data.entity_id, e.data.new_state.state);
     }
     if(e.data.entity_id == 'input_boolean.arming_away') {
       if(e.data.new_state.state == 'on') {
@@ -91,14 +89,15 @@ function handleEvent(e) {
 /**
  * Handle state change for a light.
  */
-function handleLightStateChange(groupName, newState) {
-  console.log('handleLightStateChange(%s, %s)', groupName, newState);
+function handleLightStateChange(entityId, newState) {
+  console.log('handleLightStateChange(%s, %s)', entityId, newState);
+  classPart = groupName.replace(".", "-");
   if(newState == 'on') {
-    $('.light-' + groupName + ' i').removeClass('mdi-lightbulb-outline');
-    $('.light-' + groupName + ' i').addClass('mdi-lightbulb-on');
+    $('.light-' + classPart + ' i').removeClass('mdi-lightbulb-outline');
+    $('.light-' + classPart + ' i').addClass('mdi-lightbulb-on');
   } else {
-    $('.light-' + groupName + ' i').removeClass('mdi-lightbulb-on');
-    $('.light-' + groupName + ' i').addClass('mdi-lightbulb-outline');
+    $('.light-' + classPart + ' i').removeClass('mdi-lightbulb-on');
+    $('.light-' + classPart + ' i').addClass('mdi-lightbulb-outline');
   }
 }
 
@@ -165,14 +164,14 @@ window.handleCode = handleCode;
 /**
  * Handle the click of a light-control button.
  *
- * @param name [String] light or group name - "porch", "lr" or "kitchen".
+ * @param name [String] light or group entity_id - "light.porch", "group.lr" or "light.kitchen".
  */
 export function handleLightButton(name) {
   console.log('Got light button: %s', name);
   if(groupStates[name] == 'on') {
-    callService(hawsConn, 'homeassistant', 'turn_off', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_off', { 'entity_id': name });
   } else {
-    callService(hawsConn, 'homeassistant', 'turn_on', { 'entity_id': 'group.' + name });
+    callService(hawsConn, 'homeassistant', 'turn_on', { 'entity_id': name });
   }
 }
 window.handleLightButton = handleLightButton;
