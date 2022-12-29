@@ -30,7 +30,12 @@ NOTIFY_SERVICE = 'notify/gmail'
 LOG_DEBUG = False
 
 #: Entities to ignore
-IGNORE_ENTITIES = []
+IGNORE_ENTITIES = [
+    'sensor.kitchensensor_maximum_capacity',
+    'sensor.kitchensensor_temperature_2',
+    'sensor.kitchensensor_charging_status',
+    'sensor.kitchensensor_charging_status',
+]
 
 #: states that are OK
 OK_STATES = ['alive', 'asleep', 'awake']
