@@ -34,7 +34,7 @@ IGNORE_ENTITIES = [
     'sensor.kitchensensor_maximum_capacity',
     'sensor.kitchensensor_temperature_2',
     'sensor.kitchensensor_charging_status',
-    'sensor.kitchensensor_charging_status',
+    'sensor.kitchensensor_recharge_or_replace',
 ]
 
 #: states that are OK
