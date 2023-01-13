@@ -405,6 +405,9 @@ HASS_IGNORE_MONITOR_IDS = {
     'guarddog': [
         11,
         12
+    ],
+    'telescreen': [
+        4,
     ]
 }
 
