@@ -1,10 +1,17 @@
+import logging
 from homeassistant import config_entries
 
 from .const import DOMAIN
 
-class BrowserModConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+_LOGGER = logging.getLogger(__name__)
 
-    VERSION = 1
 
-    async def async_step_import(self, import_info):
+@config_entries.HANDLERS.register(DOMAIN)
+class BrowserModConfigFlow(config_entries.ConfigFlow):
+
+    VERSION = 2
+
+    async def async_step_user(self, user_input=None):
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
         return self.async_create_entry(title="Browser Mod", data={})
