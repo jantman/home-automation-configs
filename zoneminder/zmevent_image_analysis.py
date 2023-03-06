@@ -141,9 +141,15 @@ class ImageAnalyzer:
         :return: yolo3 detection results
         :rtype: list of DetectedObject instances
         """
+        s = time.time()
         img = cv2.imread(fname)
+        e = time.time()
+        statsd_send_time(f'image_analysis.imread_time.{self._hostname}', e - s)
         logger.info('Analyzing: %s', fname)
+        s = time.time()
         newimg, results = self._detector.detect(fname, img)
+        e = time.time()
+        statsd_send_time(f'image_analysis.detect_time.{self._hostname}', e - s)
         logger.debug('Raw Results: %s', results)
         retval = {'detections': [], 'ignored_detections': []}
         for cat, score, bounds in results:
@@ -202,7 +208,10 @@ class ImageAnalyzer:
                 cv2.FONT_HERSHEY_COMPLEX, 1, text_color, 2
             )
         logger.info('Writing: %s', detected_fname)
+        s = time.time()
         cv2.imwrite(detected_fname, img)
+        e = time.time()
+        statsd_send_time(f'image_analysis.imwrite_time.{self._hostname}', e - s)
         logger.info('Done with: %s', fname)
         return retval
 
@@ -234,6 +243,7 @@ class ImageAnalyzer:
         output_path = frame_path.replace('.jpg', '.yolo4.jpg')
         res = self._do_image(event_id, frame_id, frame_path, output_path)
         _end = time.time()
+        statsd_send_time(f'image_analysis.do_image_time.{self._hostname}', _end - _start)
         return ObjectDetectionResult(
             self.__class__.__name__,
             event_id,
