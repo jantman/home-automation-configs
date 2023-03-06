@@ -40,7 +40,7 @@ STATSD_HOST = '192.168.0.24'
 STATSD_PORT = 8125
 
 #: Minimum event ID to backfill or retry
-RETRY_START_ID = 1425497
+RETRY_START_ID = 1577528
 
 #: Configuration populated from environment variables; see
 #: :py:func:`~.populate_secrets`
@@ -405,6 +405,9 @@ HASS_IGNORE_MONITOR_IDS = {
     'guarddog': [
         11,
         12
+    ],
+    'telescreen': [
+        4,
     ]
 }
 

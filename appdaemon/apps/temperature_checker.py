@@ -50,6 +50,7 @@ IGNORE_IDS = [
     'sensor.octoprint_target_bed_temp',
     'sensor.octoprint_actual_tool0_temp',
     'sensor.octoprint_target_tool0_temp',
+    'sensor.thermostat_exhaust_temperature',
 ]
 
 #: List of entity IDs that are freezers

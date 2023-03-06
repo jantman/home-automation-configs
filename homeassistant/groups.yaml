@@ -25,7 +25,6 @@ lights:
     - light.kitchenbulb2level_on_off
     - switch.workbenchlight_switch
     - switch.inovelli_unknown_type_ff00_id_ff07_switch
-    - switch.bug_zapper
     - switch.backroomshoplights_on_off
     - light.backroomlightlevel_on_off
 lrlights:
