@@ -320,7 +320,13 @@ class ZMEventAlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
         if self.get_state('input_boolean.couchpi_display_wake') == 'on':
             self.turn_off('switch.couchpi_display')
         self.call_service(
-            'browser_mod/more_info', entity_id=camera_entity
+            'browser_mod/popup',
+            size='wide',
+            content={
+                'type': 'picture-entity',
+                'entity': camera_entity,
+            },
+            timeout=60000,  # 60 seconds
         )
 
 

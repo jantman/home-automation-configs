@@ -1178,6 +1178,13 @@ class AlarmHandler(hass.Hass, SaneLoggingApp, PushoverNotifier):
             self._turn_off_callback, 1, entity_id='switch.bedpi_display'
         )
         self.run_in(
-            self._call_service_callback, 1, service='browser_mod/more_info',
-            service_kwargs={'entity_id': camera_entity}
+            self._call_service_callback, 1, service='browser_mod/popup',
+            service_kwargs={
+                'size': 'wide',
+                'content': {
+                    'type': 'picture-entity',
+                    'entity': camera_entity,
+                },
+                'timeout': 60000,  # 60 seconds
+            }
         )
