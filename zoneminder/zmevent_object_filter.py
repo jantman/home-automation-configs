@@ -111,6 +111,6 @@ class IgnoredObject(object):
             not self._callable(self, label, x, y, w, h, zones, score)
         ):
             return False
-        if self._no_zone and self._zone_names is None:
+        if self._no_zone and not zones:
             return True
         return True
