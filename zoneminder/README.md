@@ -4,6 +4,7 @@
 
 * [amcrest_profile_diff.py](amcrest_profile_diff.py) - Diff Normal/Day/Night profiles from an Amcrest camera config.json file.
 * [ensure_tables.py](ensure_tables.py) - Script that creates/ensures the existence of the tables used by [zmevent_handler.py](zmevent_handler.py) (for storing image analysis results) in ZoneMinder's MySQL database.
+* [event_label_analysis_stats.py](event_label_analysis_stats.py) - Script to query the database for all analysis results of a given label for a given event, and print them. Used to help tune filters.
 * [logrotate-zmevent_handler](logrotate-zmevent_handler) - logrotate config for [zmevent_handler.py](zmevent_handler.py)
 * [statsd_utils.py](statsd_utils.py) - utility module for sending metrics to statsd
 * [zm_dir_lister.py](zm_dir_lister.py) - Print information on matching event IDs.
