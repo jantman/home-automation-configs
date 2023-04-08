@@ -86,15 +86,16 @@ class IgnoredObject(object):
             # labels specified, but no matches with this detection
             return False
         if self._zone_names is not None:
-            zone_match = None
-            for zn in self._zone_names:
-                if zn in zones:
-                    zone_match = zn
-                    break
-            if zone_match is None:
-                # zones specified, but none match
-                return False
-            # else zones specified, and we have a match
+            # a single detection can span multiple zones.
+            # previously, this logic was inverted and would ignore if
+            # *any* of self._zone_names was in the zones list... which resulted
+            # in ignoring an object even if just a tiny fraction of it was in
+            # an ignored zone. On 2023-04-08 this logic was reversed, so that
+            # the object will only be ignored here if ALL of its zones are in
+            # self._zone_names
+            for zn in zones:
+                if zn not in self._zone_names:
+                    return False
         # else zones not specified
         if self._bounding_box is not None:
             bb_x, bb_y, bb_w, bb_h = self._bounding_box
