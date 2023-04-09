@@ -72,17 +72,21 @@ class Yolo4Analyzer:
         logger.debug('Darknet network width=%s height=%s', width, height)
         darknet_image = darknet.make_image(width, height, 3)
         logger.debug('Generating RGB resized image for Darknet')
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_resized = cv2.resize(image_rgb, (width, height),
-                                   interpolation=cv2.INTER_LINEAR)
-        logger.debug('Copying image to darknet')
-        darknet.copy_image_from_bytes(darknet_image, image_resized.tobytes())
-        logger.debug('Running darknet.detect_image()')
-        with suppress_stdout_stderr(suppress=not self.debug):
-            detections = darknet.detect_image(
-                self._network, self._names, darknet_image, thresh=thresh
-            )
-        darknet.free_image(darknet_image)
+        try:
+            image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image_resized = cv2.resize(image_rgb, (width, height),
+                                       interpolation=cv2.INTER_LINEAR)
+            logger.debug('Copying image to darknet')
+            darknet.copy_image_from_bytes(darknet_image, image_resized.tobytes())
+            logger.debug('Running darknet.detect_image()')
+            with suppress_stdout_stderr(suppress=not self.debug):
+                detections = darknet.detect_image(
+                    self._network, self._names, darknet_image, thresh=thresh
+                )
+            darknet.free_image(darknet_image)
+        except Exception:
+            darknet.free_image(darknet_image)
+            raise
         logger.info('Darknet result: %s', detections)
         image = darknet.draw_boxes(detections, image_resized, self._colors)
         return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), detections
