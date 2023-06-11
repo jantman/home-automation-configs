@@ -128,6 +128,7 @@ class ZmEventArchiver(object):
             logger.warning('WOULD EXECUTE: %s', sql)
             return
         with self._conn.cursor() as cursor:
+            cursor.execute('SET SESSION MAX_EXECUTION_TIME=360000;')
             logger.debug('EXECUTING: %s', sql)
             num_rows = cursor.execute(sql)
             logger.info(
