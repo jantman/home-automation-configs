@@ -17,6 +17,7 @@ import json
 from datetime import datetime
 import pymysql
 import requests
+from platform import node
 
 # This is running from a git clone, not really installed
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -128,7 +129,8 @@ class ZmEventArchiver(object):
             logger.warning('WOULD EXECUTE: %s', sql)
             return
         with self._conn.cursor() as cursor:
-            cursor.execute('SET SESSION MAX_EXECUTION_TIME=360000;')
+            if node() == 'telescreen':
+                cursor.execute('SET SESSION MAX_EXECUTION_TIME=360000;')
             logger.debug('EXECUTING: %s', sql)
             num_rows = cursor.execute(sql)
             logger.info(
