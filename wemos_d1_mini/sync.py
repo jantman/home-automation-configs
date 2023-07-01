@@ -32,7 +32,7 @@ PER_BOARD_FILES = {
     'bcddc2b67528': {
         'temp_sensor.py': 'main.py'
     },
-    '500291c9b1a3': {
+    'f4cfa2d0a226': {
         'humidor_sht85.py': 'main.py',
         'i2c_device.py': 'i2c_device.py',
     },
