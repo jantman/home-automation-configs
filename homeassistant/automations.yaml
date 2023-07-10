@@ -322,8 +322,10 @@
       event: sunrise
       offset: "05:00:00"
   action:
-    service: homeassistant.turn_off
-    entity_id: input_boolean.trigger_first_morning
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.trigger_first_morning
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.disable_alarmclock_light
 # "first morning" motion trigger
 - alias: First Morning Button Trigger
   id: first-morning-button-trigger

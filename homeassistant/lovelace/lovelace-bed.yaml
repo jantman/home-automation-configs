@@ -34,8 +34,12 @@ views:
         title: Alarm
         entities:
           - input_select.alarmstate
-          - input_boolean.bedpi_display_wake
           - input_boolean.alarm_duress
+      - type: entities
+        title: Bedroom
+        entities:
+          - input_boolean.bedpi_display_wake
+          - input_boolean.disable_alarmclock_light
   - title: Front
     path: front
     cards:
