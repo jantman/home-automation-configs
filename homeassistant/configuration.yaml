@@ -366,6 +366,8 @@ input_boolean:
     name: Enable BedPi Display Wake
   couchpi_display_wake:
     name: Enable CouchPi Display Wake
+  disable_alarmclock_light:
+    name: Disable Alarmclock Light
 
 input_select:
   alarmstate:
