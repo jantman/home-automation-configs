@@ -5,7 +5,7 @@ views:
     badges: []
     cards:
       - type: media-control
-        entity: media_player.kodi_121535415815200622acb7c5952aae52
+        entity: media_player.lrvero
       - type: grid
         cards:
           - type: button
