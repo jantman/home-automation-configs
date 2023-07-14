@@ -46,12 +46,27 @@ Here are the actual parts that I'm using, all from Amazon:
 
 ## Inital Setup
 
+### ESP8266
+
 Follow the [Getting started with MicroPython on the ESP8266](https://docs.micropython.org/en/latest/esp8266/tutorial/intro.html#intro) guide; essentially:
 
-1. ``pip install esptool rshell``
-2. Plug the board in to your computer via USB and make sure your user has access to the tty.
-3. Use esptool to erase the flash (``esptool.py erase_flash``).
-4. Flash MicroPython on to it; I'm currently using 1.18 (``esptool.py --port /dev/ttyUSB4 --baud 460800 write_flash --flash_size=detect 0 esp32-20220117-v1.18.bin``).
+1. [Download](https://micropython.org/download) the latest MicroPython release for ESP8266
+2. ``python -mvenv venv && source venv/bin/activate && pip install -r requirements.txt``
+3. Plug the board in to your computer via USB and make sure your user has access to the tty.
+4. Use esptool to erase the flash (``esptool.py erase_flash``).
+5. Flash MicroPython on to it; I'm currently using 1.18 (``esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 esp32-20220117-v1.18.bin``).
+
+### ESP32
+
+Read the [Getting Started with MicroPython on the ESP32](https://docs.micropython.org/en/latest/esp32/tutorial/intro.html) docs.
+
+1. Download the latest MicroPython release for ESP32 with OTA support - [https://micropython.org/download/esp32-ota/](https://micropython.org/download/esp32-ota/)
+2. ``python -mvenv venv && source venv/bin/activate && pip install -r requirements.txt``
+3. Plug the board in to your computer via USB and make sure your user has access to the tty.
+4. Use esptool to erase the flash: ``esptool.py --chip esp32 --port /dev/ttyUSB0 erase_flash``
+5. Flash MicroPython on to it; I'm currently using 1.20: ``esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 460800 write_flash -z 0x1000 esp32-20190125-v1.10.bin``
+
+esptool.py --chip esp32 --port /dev/ttyUSB0 erase_flash && esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 460800 write_flash -z 0x1000 ~/tmp/esp32-ota-20230426-v1.20.0.bin
 
 ## Quick Board Identity
 
