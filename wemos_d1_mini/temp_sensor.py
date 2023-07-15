@@ -9,6 +9,7 @@ Connect buttons and LEDs according to ``temp_sensor.fzz``.
 import micropython
 micropython.alloc_emergency_exception_buf(100)
 
+import sys
 from hass_sender import printflush, HassSender
 from machine import Pin, reset
 import network
@@ -18,28 +19,30 @@ from onewire import OneWire
 from ds18x20 import DS18X20
 import json
 
-# Pin mappings - board number to GPIO number
-D0 = micropython.const(16)
-D1 = micropython.const(5)
-D2 = micropython.const(4)
-D3 = micropython.const(0)
-D4 = micropython.const(2)
-D5 = micropython.const(14)
-D6 = micropython.const(12)
-D7 = micropython.const(13)
-D8 = micropython.const(15)
+if sys.platform == 'esp8266':
+    PIN_ONEWIRE = micropython.const(5)  # D1
+    PIN_RED = micropython.const(4)  # D2
+    PIN_BLUE = micropython.const(0)  # D3
+    PIN_GREEN = micropython.const(2)  # D4
+elif sys.platform == 'esp32':
+    PIN_ONEWIRE = micropython.const(15)  # D15
+    PIN_RED = micropython.const(13)  # D13
+    PIN_BLUE = micropython.const(12)  # D12
+    PIN_GREEN = micropython.const(14)  # D14
+else:
+    raise RuntimeError('ERROR: Unknown platform %s' % sys.platform)
 
 
 class TempSender(HassSender):
 
     def __init__(self):
         super().__init__(leds={
-            'red': Pin(D2, Pin.OUT, value=False),
-            'blue': Pin(D3, Pin.OUT, value=False),
-            'green': Pin(D4, Pin.OUT, value=False)
+            'red': Pin(PIN_RED, Pin.OUT, value=False),
+            'blue': Pin(PIN_BLUE, Pin.OUT, value=False),
+            'green': Pin(PIN_GREEN, Pin.OUT, value=False)
         })
         printflush('Init OneWire')
-        self.ds_pin = Pin(D1)
+        self.ds_pin = Pin(PIN_ONEWIRE)
         self.ow_inst = OneWire(self.ds_pin)
         self.ds_sensor = DS18X20(self.ow_inst)
         self.temp_id = self.ds_sensor.scan()[0]
