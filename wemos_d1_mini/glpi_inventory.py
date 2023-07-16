@@ -92,6 +92,7 @@ def send_glpi(wlan, boot_time):
 </REQUEST>
 """
     print('Sending data to GLPI')
+    print(data)
     r = post(
         'http://192.168.0.18:8088/', data=data,
         headers={'Content-Type': 'application/xml'}
