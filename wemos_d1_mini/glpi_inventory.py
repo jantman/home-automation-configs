@@ -55,7 +55,7 @@ def send_glpi(wlan, boot_time):
       <DNS>{netconf[3]}</DNS>
       <IPADDR>{netconf[0]}</IPADDR>
       <MEMORY>{int(esp.flash_size() / 1000000)}</MEMORY>
-      <NAME>{network.hostname()}/NAME>
+      <NAME>{network.hostname()}</NAME>
       <OSCOMMENTS>{os.uname().machine}</OSCOMMENTS>
       <OSNAME>micropython</OSNAME>
       <OSVERSION>{os.uname().release}</OSVERSION>
@@ -92,7 +92,6 @@ def send_glpi(wlan, boot_time):
 </REQUEST>
 """
     print('Sending data to GLPI')
-    print(data)
     r = post(
         'http://192.168.0.18:8088/', data=data,
         headers={'Content-Type': 'application/xml'}
