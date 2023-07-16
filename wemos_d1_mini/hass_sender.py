@@ -13,6 +13,11 @@ from config import (
     SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN, ENTITIES, FRIENDLY_NAMES
 )
 
+try:
+    from urequests import get, post
+except ImportError:
+    from requests import get, post
+
 wlan_status_code = {}
 wlan_status_code[network.STAT_IDLE] = 'Idle'
 wlan_status_code[network.STAT_CONNECTING] = 'Connecting'
@@ -91,79 +96,32 @@ class HassSender:
                 machine.reset()
         print('network config:', self.wlan.ifconfig())
 
-    def http_post(self, data, suffix=None):
+    def http_post(self, data_dict, suffix=None):
         printflush('http_post() called')
         self.set_rgb(False, False, True)
-        printflush('getaddrinfo()')
-        addr = socket.getaddrinfo(HOOK_HOST, HOOK_PORT)[0][-1]
-        printflush('Connect to %s:%s' % (HOOK_HOST, HOOK_PORT))
-        s = socket.socket()
-        s.settimeout(10.0)
-        try:
-            printflush('before connect()')
-            s.connect(addr)
-            printflush('after connect()')
-        except OSError as exc:
-            printflush('ERROR connecting to %s: %s' % (addr, exc))
-            self.set_rgb(False, False, False)
-            self.blink_leds(['red'], num_times=3, length_ms=100)
-            printflush('s.close()')
-            s.close()
-            printflush('CONNECTION ERROR: calling machine.reset()')
-            machine.reset()
-            return None
         path = self.post_path
         if suffix is not None:
-            path = self.post_path + '_' + suffix
-        printflush('POST to: %s: %s' % (path, data))
-        b = 'POST %s HTTP/1.0\r\nHost: %s\r\n' \
-            'Content-Type: application/json\r\n' \
-            'Authorization: Bearer %s\r\n' \
-            'Content-Length: %d\r\n\r\n%s' % (
-                path, HOOK_HOST, HASS_TOKEN, len(bytes(data, 'utf8')), data
+            path = path + '_' + suffix
+        try:
+            r = post(
+                f'http://{HOOK_HOST}:{HOOK_PORT}{path}', json=data_dict,
+                timeout=10,
+                headers={'Authorization': f'Bearer {HASS_TOKEN}'}
             )
-        printflush('SEND:\n%s' % b)
-        try:
-            s.send(bytes(b, 'utf8'))
-            printflush('after send()')
-        except OSError as exc:
-            printflush('ERROR sending to %s: %s' % (addr, exc))
+            printflush(f'POST returned HTTP {r.status_code}: {r.reason}')
+            printflush('Received data:')
+            printflush(r.text)
+            assert r.status_code in [200, 201]
+        except Exception:
             self.set_rgb(False, False, False)
             self.blink_leds(['red'], num_times=3, length_ms=100)
-            printflush('s.close()')
-            s.close()
             printflush('CONNECTION ERROR: calling machine.reset()')
             machine.reset()
             return None
-        buf = ''
-        try:
-            while True:
-                data = s.recv(100)
-                if data:
-                    buf += str(data, 'utf8')
-                else:
-                    break
-            printflush('received data:')
-            printflush(buf)
-        except Exception as exc:
-            printflush('ERROR receiving from %s: %s' % (addr, exc))
-            printflush('Buffer: %s' % buf)
-            self.set_rgb(False, False, False)
-            self.blink_leds(['red'], num_times=3, length_ms=100)
-            printflush('s.close()')
-            s.close()
-            printflush('CONNECTION ERROR: calling machine.reset()')
-            machine.reset()
-            return None
-        s.close()
+        r.close()
         printflush('after close()')
         self.set_rgb(False, False, False)
-        if 'HTTP/1.0 201 Created' or 'HTTP/1.0 200 OK' in buf:
-            printflush('OK')
-            self.blink_leds(['green'])
-        else:
-            printflush('FAIL')
-            self.blink_leds(['red'], num_times=3, length_ms=100)
+        self.blink_leds(['green'])
         printflush('http_post done')
 
     def led_on(self, color):

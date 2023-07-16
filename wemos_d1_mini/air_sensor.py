@@ -240,7 +240,7 @@ class AirQualitySensor(HassSender):
         }
 
         for k, v in data.items():
-            self.http_post(json.dumps(v), suffix=k)
+            self.http_post(v, suffix=k)
 
 
 if __name__ == '__main__':

@@ -31,13 +31,13 @@ class Skeleton(HassSender):
         raise NotImplementedError('Read sensor data here')
         data = read_my_data()
         printflush('data=%s' % data)
-        data = json.dumps({
+        data = {
             'state': data,
             'attributes': {
                 'friendly_name': self.friendly_name,
                 'unit_of_measurement': '\u00b0F'
             }
-        })
+        }
         self.http_post(data)
 
 

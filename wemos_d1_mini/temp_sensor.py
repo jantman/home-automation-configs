@@ -69,13 +69,13 @@ class TempSender(HassSender):
             return
         temp_f = ((temp_c * 9.0) / 5.0) + 32
         printflush('temp_f=%s' % temp_f)
-        data = json.dumps({
+        data = {
             'state': round(temp_f, 2),
             'attributes': {
                 'friendly_name': self.friendly_name,
                 'unit_of_measurement': '\u00b0F'
             }
-        })
+        }
         self.http_post(data)
 
 

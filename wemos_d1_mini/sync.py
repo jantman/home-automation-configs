@@ -12,6 +12,7 @@ from rshell.main import (
     listdir, cp
 )
 import rshell.main as rmain
+from config import PER_BOARD_FILES
 
 rmain.ASCII_XFER = True
 
@@ -20,29 +21,7 @@ COMMON_FILES = {
     'config.py': 'config.py',
     'webrepl_cfg.py': 'webrepl_cfg.py',
     'hass_sender.py': 'hass_sender.py',
-}
-
-PER_BOARD_FILES = {
-    'f008d1d18790': {
-        'temp_sensor.py': 'main.py'
-    },
-    'bcddc2b66c5a': {
-        'temp_sensor.py': 'main.py'
-    },
-    'bcddc2b67528': {
-        'temp_sensor.py': 'main.py'
-    },
-    'f4cfa2d0a226': {
-        'humidor_sht85.py': 'main.py',
-        'i2c_device.py': 'i2c_device.py',
-    },
-    '7c9ebd66d880': {
-        'air_sensor.py': 'main.py',
-        'sgp30.py': 'sgp30.py',
-        'adafruit_bus_device_i2c.py': 'adafruit_bus_device_i2c.py',
-        'pm25_i2c.py': 'pm25_i2c.py',
-        'adafruit_shtc3.py': 'adafruit_shtc3.py',
-    },
+    'urequests.py': 'urequests.py',
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
