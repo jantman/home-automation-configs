@@ -140,16 +140,12 @@ class HassSender:
             while True:
                 data = s.recv(100)
                 if data:
-                    try:
-                        buf += str(data, 'utf8')
-                    except Exception as ex:
-                        printflush('Exception %s in data:' % ex)
-                        printflush(data)
+                    buf += str(data, 'utf8')
                 else:
                     break
             printflush('received data:')
             printflush(buf)
-        except OSError as exc:
+        except Exception as exc:
             printflush('ERROR receiving from %s: %s' % (addr, exc))
             printflush('Buffer: %s' % buf)
             self.set_rgb(False, False, False)
