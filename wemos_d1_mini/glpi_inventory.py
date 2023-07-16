@@ -54,7 +54,7 @@ def send_glpi(wlan, boot_time):
       <DEFAULTGATEWAY>{netconf[2]}</DEFAULTGATEWAY>
       <DNS>{netconf[3]}</DNS>
       <IPADDR>{netconf[0]}</IPADDR>
-      <MEMORY>{int(esp.flashsize() / 1000000)}</MEMORY>
+      <MEMORY>{int(esp.flash_size() / 1000000)}</MEMORY>
       <NAME>{network.hostname()}/NAME>
       <OSCOMMENTS>{os.uname().machine}</OSCOMMENTS>
       <OSNAME>micropython</OSNAME>
