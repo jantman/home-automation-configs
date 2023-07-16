@@ -13,6 +13,7 @@ from config import (
     SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN
 )
 from device_config import DEVICE_CONFIG
+from glpi_inventory import send_glpi
 
 try:
     from urequests import get, post
@@ -69,6 +70,7 @@ class HassSender:
         if set_ntptime:
             self._set_time_from_ntp()
         self.boot_time = time()
+        send_glpi(self.wlan, self.boot_time)
 
     def run(self):
         raise NotImplementedError()

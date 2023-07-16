@@ -23,6 +23,7 @@ COMMON_FILES = {
     'hass_sender.py': 'hass_sender.py',
     'urequests.py': 'urequests.py',
     'device_config.py': 'device_config.py',
+    'glpi_inventory.py': 'glpi_inventory.py',
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
