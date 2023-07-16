@@ -140,7 +140,11 @@ class HassSender:
             while True:
                 data = s.recv(100)
                 if data:
-                    buf += str(data, 'utf8')
+                    try:
+                        buf += str(data, 'utf8')
+                    except Exception as ex:
+                        printflush('Exception %s in data:' % ex)
+                        printflush(data)
                 else:
                     break
             printflush('received data:')
