@@ -46,8 +46,11 @@ class HassSender:
         devconf = DEVICE_CONFIG[unique_id]
         hostname = devconf.get('hostname')
         if hostname:
-            printflush('Set hostname to: %s' % hostname)
-            network.hostname(hostname)
+            if len(hostname) >= 16:
+                printflush("ERROR: hostname must be < 16 characters")
+            else:
+                printflush('Set hostname to: %s' % hostname)
+                network.hostname(hostname)
         printflush('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
         printflush('connect_wlan()')

@@ -16,7 +16,7 @@ DEVICE_CONFIG = {
         'files': {
             'temp_sensor.py': 'main.py'
         },
-        'hostname': 'esp32-porch-temp',
+        'hostname': 'esp32-porch',
     },
     'bcddc2b67528': {
         'entity': 'sensor.chest_freezer_temp',
@@ -24,7 +24,7 @@ DEVICE_CONFIG = {
         'files': {
             'temp_sensor.py': 'main.py'
         },
-        'hostname': 'esp8266-chest-freezer',
+        'hostname': 'esp8266-chest',
     },
     'bcddc2b66c5a': {
         'entity': 'sensor.kitchen_freezer_temp',
@@ -32,7 +32,7 @@ DEVICE_CONFIG = {
         'files': {
             'temp_sensor.py': 'main.py'
         },
-        'hostname': 'esp8266-kitchen-freezer',
+        'hostname': 'esp8266-ktch',
     },
     # air quality sensor
     '7c9ebd66d880': {
