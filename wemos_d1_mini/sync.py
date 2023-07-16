@@ -12,7 +12,7 @@ from rshell.main import (
     listdir, cp
 )
 import rshell.main as rmain
-from config import PER_BOARD_FILES
+from device_config import DEVICE_CONFIG
 
 rmain.ASCII_XFER = True
 
@@ -65,7 +65,7 @@ class BoardSyncer:
     def sync(self):
         mac = self.device.remote(get_mac_address).decode().strip()
         logger.warning('Connected to board with MAC: %s' % mac)
-        if mac in PER_BOARD_FILES:
+        if mac in DEVICE_CONFIG:
             logger.info('Board IS known and configured.')
         else:
             logger.warning('Board is not configured in PER_BOARD_FILES.')
@@ -80,7 +80,7 @@ class BoardSyncer:
                 local_files[f] = hexlify(sha256(fh.read()).digest())
         logger.debug('Local files: %s', local_files)
         desired_files = dict(COMMON_FILES)
-        desired_files.update(PER_BOARD_FILES.get(mac, {}))
+        desired_files.update(DEVICE_CONFIG.get(mac, {}).get('files', {}))
         logger.debug('Desired files: %s', desired_files)
         for src, dest in desired_files.items():
             if dev_files.get(dest, None) == local_files[src]:

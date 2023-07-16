@@ -10,8 +10,9 @@ from binascii import hexlify
 import ntptime
 
 from config import (
-    SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN, ENTITIES, FRIENDLY_NAMES
+    SSID, WPA_KEY, HOOK_HOST, HOOK_PORT, HASS_TOKEN
 )
+from device_config import DEVICE_CONFIG
 
 try:
     from urequests import get, post
@@ -41,6 +42,11 @@ class HassSender:
         printflush("Init")
         self.leds = leds
         self.led_on('red')
+        unique_id = hexlify(machine.unique_id()).decode()
+        devconf = DEVICE_CONFIG[unique_id]
+        hostname = devconf.get('hostname')
+        if hostname:
+            network.hostname(hostname)
         printflush('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
         printflush('connect_wlan()')
@@ -49,8 +55,8 @@ class HassSender:
         printflush('hexlify mac')
         self.mac = hexlify(self.wlan.config('mac')).decode()
         printflush('MAC: %s' % self.mac)
-        self.entity_id = ENTITIES[self.mac]
-        self.friendly_name = FRIENDLY_NAMES[self.mac]
+        self.entity_id = devconf['entity']
+        self.friendly_name = devconf['friendly_name']
         printflush('Entity ID: %s; Friendly Name: %s' % (
             self.entity_id, self.friendly_name
         ))
