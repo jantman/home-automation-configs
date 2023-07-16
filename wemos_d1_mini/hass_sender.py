@@ -46,7 +46,7 @@ class HassSender:
         devconf = DEVICE_CONFIG[unique_id]
         hostname = devconf.get('hostname')
         if hostname:
-            printflush('Set hostname to: %s', hostname)
+            printflush('Set hostname to: %s' % hostname)
             network.hostname(hostname)
         printflush('Instantiate WLAN')
         self.wlan = network.WLAN(network.STA_IF)
