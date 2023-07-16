@@ -18,6 +18,11 @@ try:
 except ImportError:
     from requests import get, post
 
+try:
+    import ujson
+except ImportError:
+    import json as ujson
+
 wlan_status_code = {}
 wlan_status_code[network.STAT_IDLE] = 'Idle'
 wlan_status_code[network.STAT_CONNECTING] = 'Connecting'
@@ -98,13 +103,14 @@ class HassSender:
 
     def http_post(self, data_dict, suffix=None):
         printflush('http_post() called')
+        j = bytes(ujson.dumps(data_dict), 'utf8')
         self.set_rgb(False, False, True)
         path = self.post_path
         if suffix is not None:
             path = path + '_' + suffix
         try:
             r = post(
-                f'http://{HOOK_HOST}:{HOOK_PORT}{path}', json=data_dict,
+                f'http://{HOOK_HOST}:{HOOK_PORT}{path}', data=j,
                 timeout=10,
                 headers={'Authorization': f'Bearer {HASS_TOKEN}'}
             )
