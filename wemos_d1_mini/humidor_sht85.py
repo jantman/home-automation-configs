@@ -13,14 +13,16 @@ from machine import Pin, I2C
 from time import sleep, sleep_ms
 import json
 from i2c_device import I2CDevice
+from neopixel import NeoPixel
 try:
     import struct
 except ImportError:
     import ustruct as struct
 
 # Pin mappings - board number to GPIO number
-SDA = micropython.const(4)  # D1Mini pin D2 / GPIO4 / SDA
-SCL = micropython.const(5)  # D1Mini pin D1 / GPIO5 / SCL
+SDA = micropython.const(21)  # 30-pin ESP32 D21 / GPIO21 / SDA
+SCL = micropython.const(22)  # 30-pin ESP32 D22 / GPIO22 / SCL
+LED_PIN = micropython.const(12)  # 30-pin ESP32 D12 / GPIO12
 
 # BEGIN Condensed version of sht85.py
 _SHT31_DEFAULT_ADDRESS = const(0x44)
@@ -29,6 +31,7 @@ FREQUENCY_4 = 4
 _SHT31_PERIODIC_BREAK = const(0x3093)
 _SHT31_SOFTRESET = const(0x30A2)
 _SHT31_READSERIALNBR = const(0x3780)
+
 
 def _crc(data):
     crc = 0xFF
@@ -124,7 +127,9 @@ class SHT85:
 class HumidorSender(HassSender):
 
     def __init__(self):
-        super().__init__()
+        led_pin = Pin(LED_PIN, mode=Pin.OUT)
+        neop = NeoPixel(led_pin, 1)
+        super().__init__(neo_pixel=neop)
         printflush("Initializing i2c...")
         self.i2c = I2C(
             scl=Pin(SCL, mode=Pin.IN, pull=Pin.PULL_UP),

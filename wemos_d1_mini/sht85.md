@@ -14,11 +14,11 @@ I tried to find an existing MicroPython driver but couldn't, but was able to fin
 
 I soldered the ends of some breadboard jumpers to the 4-pin socket, providing an easy connection to the headers on the WeMos without exposing the sensor itself to high temperatures. In retrospect, I could've actually color-coded these logically...
 
-| SHT85 Pin | Wire Color | Purpose     | WeMos Pin | GPIO Pin | My New Wiring |
+| SHT85 Pin | Wire Color | Purpose     | ESP32 Pin | GPIO Pin | My New Wiring |
 |:----------|:-----------|:------------|:----------|:---------|:--------------|
-| 1         | Black      | SCL (Clock) | D1        | 5        | Brown         |
+| 1         | Black      | SCL (Clock) | D22       | 22       | Brown         |
 | 2         | Violet     | VDD (3v3)   | 3v3       | -        | Orange        |
 | 3         | White      | VSS (Gnd)   | G         | -        | White/Orange  |
-| 4         | Gray       | SDA (Data)  | D2        | 4        | White/Brown   |
+| 4         | Gray       | SDA (Data)  | D21       | 21       | White/Brown   |
 
 See [humidor_sht85.py](humidor_sht85.py).

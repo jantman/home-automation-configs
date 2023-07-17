@@ -37,12 +37,123 @@ def printflush(*args):
     print(*args)
 
 
+class NoLed:
+
+    def __init__(self):
+        printflush("No LED configured")
+
+    def led_on(self, color):
+        pass
+
+    def led_off(self, color):
+        pass
+
+    def set_rgb(self, red, green, blue):
+        pass
+
+    def blink_leds(self, colors, length_ms=250, num_times=1):
+        pass
+
+
+class RgbLed:
+
+    def __init__(self, leds={}):
+        printflush("RGB LED configured")
+        self.leds = leds
+
+    def led_on(self, color: str):
+        if color in self.leds:
+            self.leds[color].on()
+
+    def led_off(self, color: str):
+        if color in self.leds:
+            self.leds[color].off()
+
+    def set_rgb(self, red: bool, green: bool, blue: bool):
+        if 'red' in self.leds:
+            self.leds['red'].value(red)
+        if 'green' in self.leds:
+            self.leds['green'].value(green)
+        if 'blue' in self.leds:
+            self.leds['blue'].value(blue)
+
+    def blink_leds(self, colors, length_ms=250, num_times=1):
+        if not self.leds:
+            return
+        for color, led in self.leds.items():
+            if color not in colors:
+                self.led_off(color)
+        for idx in range(0, num_times):
+            for color in colors:
+                self.led_on(color)
+            sleep_ms(length_ms)
+            for color in colors:
+                self.led_off(color)
+            if idx != num_times - 1:
+                sleep_ms(length_ms)
+
+
+class NeoPixelLed:
+
+    def __init__(self, neo_pixel):
+        printflush("NeoPixel LED configured")
+        self.neopixel = neo_pixel
+        self.values = [0, 0, 0]
+
+    def led_on(self, color: str):
+        if color == 'red':
+            self.values[0] = 255
+        elif color == 'green':
+            self.values[1] = 255
+        elif color == 'blue':
+            self.values[2] = 255
+        self.neopixel.fill(self.values)
+        self.neopixel.write()
+
+    def led_off(self, color: str):
+        if color == 'red':
+            self.values[0] = 0
+        elif color == 'green':
+            self.values[1] = 0
+        elif color == 'blue':
+            self.values[2] = 0
+        self.neopixel.fill(self.values)
+        self.neopixel.write()
+
+    def set_rgb(self, red: bool, green: bool, blue: bool):
+        self.values = [
+            255 if red else 0,
+            255 if green else 0,
+            255 if blue else 0
+        ]
+        self.neopixel.fill(self.values)
+        self.neopixel.write()
+
+    def blink_leds(self, colors, length_ms=250, num_times=1):
+        for color in ['red', 'green', 'blue']:
+            if color not in colors:
+                self.led_off(color)
+        for idx in range(0, num_times):
+            for color in colors:
+                self.led_on(color)
+            sleep_ms(length_ms)
+            for color in colors:
+                self.led_off(color)
+            if idx != num_times - 1:
+                sleep_ms(length_ms)
+
+
 class HassSender:
 
-    def __init__(self, leds={}, set_ntptime=True):
+    def __init__(self, leds={}, neo_pixel=None, set_ntptime=True):
         printflush("Init")
-        self.leds = leds
-        self.led_on('red')
+        if neo_pixel is not None:
+            self.led = NeoPixelLed(neo_pixel)
+        elif leds:
+            self.led = RgbLed(leds)
+        else:
+            self.led = NoLed()
+        self.led.led_on('red')
         unique_id = hexlify(machine.unique_id()).decode()
         devconf = DEVICE_CONFIG[unique_id]
         hostname = devconf.get('hostname')
@@ -56,7 +167,7 @@ class HassSender:
         self.wlan = network.WLAN(network.STA_IF)
         printflush('connect_wlan()')
         self.connect_wlan()
-        self.led_off('red')
+        self.led.led_off('red')
         printflush('hexlify mac')
         self.mac = hexlify(self.wlan.config('mac')).decode()
         printflush('MAC: %s' % self.mac)
@@ -131,44 +242,25 @@ class HassSender:
             printflush(r.text)
             assert r.status_code in [200, 201]
         except Exception:
-            self.set_rgb(False, False, False)
-            self.blink_leds(['red'], num_times=3, length_ms=100)
+            self.led.set_rgb(False, False, False)
+            self.led.blink_leds(['red'], num_times=3, length_ms=100)
             printflush('CONNECTION ERROR: calling machine.reset()')
             machine.reset()
             return None
         r.close()
         printflush('after close()')
-        self.set_rgb(False, False, False)
-        self.blink_leds(['green'])
+        self.led.set_rgb(False, False, False)
+        self.led.blink_leds(['green'])
         printflush('http_post done')
 
     def led_on(self, color):
-        if color in self.leds:
-            self.leds[color].on()
+        self.led.led_on(color)
 
     def led_off(self, color):
-        if color in self.leds:
-            self.leds[color].off()
+        self.led.led_off(color)
 
     def set_rgb(self, red, green, blue):
-        if 'red' in self.leds:
-            self.leds['red'].value(red)
-        if 'green' in self.leds:
-            self.leds['green'].value(green)
-        if 'blue' in self.leds:
-            self.leds['blue'].value(blue)
+        self.led.set_rgb(red, green, blue)
 
     def blink_leds(self, colors, length_ms=250, num_times=1):
-        if not self.leds:
-            return
-        for color, led in self.leds.items():
-            if color not in colors:
-                self.led_off(color)
-        for idx in range(0, num_times):
-            for color in colors:
-                self.led_on(color)
-            sleep_ms(length_ms)
-            for color in colors:
-                self.led_off(color)
-            if idx != num_times - 1:
-                sleep_ms(length_ms)
+        self.led.blink_leds(colors, length_ms=length_ms, num_times=num_times)

@@ -1,13 +1,13 @@
 DEVICE_CONFIG = {
     # humidor_sht85
-    'f4cfa2d0a226': {
+    'f008d1d19f00': {
         'entity': 'sensor.500291c9b1a3',
         'friendly_name': 'Humidor',
         'files': {
             'humidor_sht85.py': 'main.py',
             'i2c_device.py': 'i2c_device.py',
         },
-        'hostname': 'esp8266-humidor',
+        'hostname': 'esp32-humidor',
     },
     # temp_sensor
     'f008d1d18790': {
