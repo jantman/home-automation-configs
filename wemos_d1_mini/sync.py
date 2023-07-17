@@ -39,6 +39,12 @@ def get_mac_address():
     return hexlify(wlan.config('mac')).decode()
 
 
+def get_unique_id():
+    import machine
+    from ubinascii import hexlify
+    return hexlify(machine.unique_id()).decode()
+
+
 def get_file_md5_sums():
     import os
     from uhashlib import sha256
@@ -65,9 +71,10 @@ class BoardSyncer:
         print('#' * 60)
 
     def sync(self):
+        unique_id = self.device.remote(get_unique_id).decode().strip()
         mac = self.device.remote(get_mac_address).decode().strip()
-        logger.warning('Connected to board with MAC: %s' % mac)
-        if mac in DEVICE_CONFIG:
+        logger.warning('Connected to board with Unique ID %s (MAC %s)', unique_id, mac)
+        if unique_id in DEVICE_CONFIG:
             logger.info('Board IS known and configured.')
         else:
             logger.warning('Board is not configured in PER_BOARD_FILES.')
@@ -82,7 +89,7 @@ class BoardSyncer:
                 local_files[f] = hexlify(sha256(fh.read()).digest())
         logger.debug('Local files: %s', local_files)
         desired_files = dict(COMMON_FILES)
-        desired_files.update(DEVICE_CONFIG.get(mac, {}).get('files', {}))
+        desired_files.update(DEVICE_CONFIG.get(unique_id, {}).get('files', {}))
         logger.debug('Desired files: %s', desired_files)
         for src, dest in desired_files.items():
             if dev_files.get(dest, None) == local_files[src]:

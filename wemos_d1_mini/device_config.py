@@ -18,7 +18,7 @@ DEVICE_CONFIG = {
         },
         'hostname': 'esp32-porch',
     },
-    'bcddc2b67528': {
+    '2875b600': {  # that's unique_id; MAC is 'bcddc2b67528'
         'entity': 'sensor.chest_freezer_temp',
         'friendly_name': 'Chest Freezer Temp',
         'files': {
@@ -26,7 +26,7 @@ DEVICE_CONFIG = {
         },
         'hostname': 'esp8266-chest',
     },
-    'bcddc2b66c5a': {
+    '5a6cb600': {  # that's unique_id; MAC is 'bcddc2b66c5a'
         'entity': 'sensor.kitchen_freezer_temp',
         'friendly_name': 'Kitchen Freezer Temp',
         'files': {
