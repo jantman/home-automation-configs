@@ -19,8 +19,8 @@ except ImportError:
     import ustruct as struct
 
 # Pin mappings - board number to GPIO number
-SDA = micropython.const(4)  # D2
-SCL = micropython.const(5)  # D1
+SDA = micropython.const(4)  # D1Mini pin D2 / GPIO4 / SDA
+SCL = micropython.const(5)  # D1Mini pin D1 / GPIO5 / SCL
 
 # BEGIN Condensed version of sht85.py
 _SHT31_DEFAULT_ADDRESS = const(0x44)
