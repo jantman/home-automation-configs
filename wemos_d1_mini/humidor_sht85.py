@@ -129,7 +129,7 @@ class HumidorSender(HassSender):
     def __init__(self):
         led_pin = Pin(LED_PIN, mode=Pin.OUT)
         neop = NeoPixel(led_pin, 1)
-        super().__init__(neo_pixel=neop)
+        super().__init__(neo_pixel=neop, brightness=10)
         printflush("Initializing i2c...")
         self.i2c = I2C(
             scl=Pin(SCL, mode=Pin.IN, pull=Pin.PULL_UP),

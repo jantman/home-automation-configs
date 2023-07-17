@@ -95,18 +95,19 @@ class RgbLed:
 
 class NeoPixelLed:
 
-    def __init__(self, neo_pixel):
+    def __init__(self, neo_pixel, brightness: int = 255):
         printflush("NeoPixel LED configured")
         self.neopixel = neo_pixel
+        self.brightness = brightness
         self.values = [0, 0, 0]
 
     def led_on(self, color: str):
         if color == 'red':
-            self.values[0] = 255
+            self.values[0] = self.brightness
         elif color == 'green':
-            self.values[1] = 255
+            self.values[1] = self.brightness
         elif color == 'blue':
-            self.values[2] = 255
+            self.values[2] = self.brightness
         self.neopixel.fill(self.values)
         self.neopixel.write()
 
@@ -122,9 +123,9 @@ class NeoPixelLed:
 
     def set_rgb(self, red: bool, green: bool, blue: bool):
         self.values = [
-            255 if red else 0,
-            255 if green else 0,
-            255 if blue else 0
+            self.brightness if red else 0,
+            self.brightness if green else 0,
+            self.brightness if blue else 0
         ]
         self.neopixel.fill(self.values)
         self.neopixel.write()
@@ -145,10 +146,10 @@ class NeoPixelLed:
 
 class HassSender:
 
-    def __init__(self, leds={}, neo_pixel=None, set_ntptime=True):
+    def __init__(self, leds={}, neo_pixel=None, brightness: int = 255, set_ntptime=True):
         printflush("Init")
         if neo_pixel is not None:
-            self.led = NeoPixelLed(neo_pixel)
+            self.led = NeoPixelLed(neo_pixel, brightness=brightness)
         elif leds:
             self.led = RgbLed(leds)
         else:
