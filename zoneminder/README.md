@@ -157,6 +157,42 @@ After that, I added the wireless MAC address for the camera to my access point's
 8. Add as a monitor in ZM and configure similarly to the others; set up zones and motion detection.
 9. Once motion detection starts running and alerting, add ``IgnoredObject`` instances to [/zoneminder/zmevent_config.py](/zoneminder/zmevent_config.py) ``IGNORED_OBJECTS`` as needed.
 
+### [IP8M-2496EB-V2](https://amcrest.com/4k-poe-camera-bullet-ai-ip8m-2493ew-v2.html) Exterior 4K/8MP Camera
+
+This was a replacement for a failing IP8M-2597E
+
+1. Read the camera's MAC address off its label.
+2. On my [Ubiquiti](https://www.ubnt.com/) router, assign the camera's wired MAC a static IP in the IoT subnet and local DNS.
+3. Plug the camera in to my switch and power it on. Wait a few minutes and then access the builtin HTTP web interface at the IP I assigned.
+4. Log in with the default username/password (admin/admin) and change the password.
+5. Browse through the "setup" portion of the UI and record some of the current/default settings and information:
+   1. "Information" -> "Version" - record all versions
+      * Software Version: ``V2.820.00AC000.0.R, Build Date: 2022-03-25``
+      * WEB Version: ``V3.2.1.1092977``
+      * ONVIF Version: ``20.06(V2.9.1.1000915)``
+   2. "Camera" -> "Video"
+      * Video tab
+        * Set main stream to H.264 1920x1080, 12 FPS, VBR, Quality 6(Best) Bit Rate 8192, watermark to camera hostname (note: see [this Amcrest forum post](https://amcrest.com/forum/viewtopic.php?f=18&t=15537) for why not to set a lower resolution)
+        * Set sub stream to MJPEG, VGA, 8 FPS, bit rate 1024
+      * Overlay tab
+        * Set Channel Title to the name of the camera (ZM input)
+        * Set Logo Overlay to disabled
+   3. "Camera" -> "Configuration"
+      * Profile Management tab
+        * Profile Management -> General
+      * Configuration tab
+        * General profile
+          * Leave everything defaults except "BLC Mode" - Set to Mode WDR and slider to middle (50)
+   4. "Network" -> "TCP/IP" - change hostname; record wireless MAC; disable P2P
+   5. "Network" -> "Connection" - record all ports
+   6. "Network" -> ("DDNS", "IP Filter", "SMTP", "UPnP") - ensure all are disabled
+   7. "Network" -> "HTTPs" - ensure disabled
+   8. "System" -> "General" -> "Date & Time" - enable NTP, configure timezone, configure DST
+   9. "System" -> "Export" - export a configuration file and save it.
+   10. "Event" - disable all of them for now
+6. Place the new camera and wire it (if needed).
+7. Reconfigure zones and motion detection in ZM, along with ignored objects.
+
 ### Aspect Ratios
 
 ```
