@@ -47,4 +47,10 @@ DEVICE_CONFIG = {
         },
         'hostname': 'airsensor',
     },
+    '0cb815c43a2c': {
+        'hostname': 'esp32-c43a2c',
+        'files': {
+            'timetest.py': 'main.py'
+        }
+    }
 }

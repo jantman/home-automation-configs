@@ -24,6 +24,7 @@ COMMON_FILES = {
     'urequests.py': 'urequests.py',
     'device_config.py': 'device_config.py',
     'glpi_inventory.py': 'glpi_inventory.py',
+    'utils.py': 'utils.py'
 }
 
 FORMAT = "[%(asctime)s %(levelname)s] %(message)s"
