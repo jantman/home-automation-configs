@@ -90,6 +90,8 @@ class IRChangeFilter(EventFilter):
 
     def run(self):
         """Determine if the camera switched from or to IR during this event."""
+        if not self._event.FirstFrameId or not self._event.LastFrameId:
+            return
         f1 = self._event.AllFrames[self._event.FirstFrameId].image
         f2 = self._event.AllFrames[self._event.LastFrameId].image
         f1_is_color = self._image_is_color(f1)
