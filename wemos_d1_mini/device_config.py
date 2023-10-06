@@ -52,5 +52,18 @@ DEVICE_CONFIG = {
         'files': {
             'timetest.py': 'main.py'
         }
+    },
+    # external antenna temperature tester
+    '30c6f72f8808': {
+        'hostname': 'esp32-temptest',
+        'entity': '',
+        'friendly_name': '',
+        'files': {
+            'temp_sensor_test.py': 'main.py',
+            'i2c_device.py': 'i2c_device.py',
+            'bme280.py': 'bme280.py',
+            'aht.py': 'aht.py',
+            'sht31.py': 'sht31.py',
+        },
     }
 }

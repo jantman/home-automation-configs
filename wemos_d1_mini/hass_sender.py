@@ -225,13 +225,14 @@ class HassSender:
                 machine.reset()
         print('network config:', self.wlan.ifconfig())
 
-    def http_post(self, data_dict, suffix=None):
+    def http_post(self, data_dict, suffix=None, path=None):
         printflush('http_post() called')
         j = bytes(ujson.dumps(data_dict), 'utf8')
         self.set_rgb(False, False, True)
-        path = self.post_path
-        if suffix is not None:
-            path = path + '_' + suffix
+        if path is None:
+            path = self.post_path
+            if suffix is not None:
+                path = path + '_' + suffix
         try:
             r = post(
                 f'http://{HOOK_HOST}:{HOOK_PORT}{path}', data=j,
