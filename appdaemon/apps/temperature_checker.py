@@ -22,7 +22,6 @@ FREEZER_THRESHOLD = 25
 STALE_THRESHOLD = timedelta(hours=1)
 
 CHECK_STALE_IDS = [
-    'sensor.chest_freezer_temp',
     'sensor.kitchen_freezer_temp',
     'sensor.porch_temp',
     'sensor.air_quality_temperature_f',
@@ -53,11 +52,11 @@ IGNORE_IDS = [
     'sensor.thermostat_exhaust_temperature',
     'sensor.thermostat_air_temperature_2',
     'sensor.thermostat_exhaust_temperature_2',
+    'sensor.chest_freezer_temp',
 ]
 
 #: List of entity IDs that are freezers
 FREEZER_IDS = [
-    'sensor.chest_freezer_temp',
     'sensor.kitchen_freezer_temp',
 ]
 
