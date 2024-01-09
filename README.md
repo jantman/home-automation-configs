@@ -2,7 +2,7 @@
 
 [![Project Status: Unsupported – The project has reached a stable, usable state but the author(s) have ceased all work on it. A new maintainer may be desired.](http://www.repostatus.org/badges/latest/unsupported.svg)](http://www.repostatus.org/#unsupported)
 
-My home automation and home security configuration, scripts and tooling - mainly for [HomeAssistant](https://www.home-assistant.io/) / [AppDaemon](http://appdaemon.readthedocs.io/en/latest/), [ZoneMinder](https://zoneminder.com/), and related things.
+My home automation and home security configuration, scripts and tooling - mainly for [HomeAssistant](https://www.home-assistant.io/) / [AppDaemon](http://appdaemon.readthedocs.io/en/latest/), and related things.
 
 __Note:__ This repository is really only provided as an example, and is not really "supported". See [Using It and Important Notes](#using-it-and-important-notes), below, for further information.
 
@@ -16,9 +16,6 @@ The information I provide on home automation/security and surveillance is based 
 
 * [appdaemon apps and configs](appdaemon/) - also includes my appdaemon logging helper
 * [homeassistant/](homeassistant/) - my HomeAssistant configs
-* [zoneminder/](zoneminder/) - some of my scripts and notes related to my ZoneMinder installation, including event image analysis and notifications
-* RaspberryPi touchscreen-based alarm control panels - see [doorpanels.md](doorpanels.md)
-* RaspberryPi touchscreen-based remote control on the end table next to my living room couch - see [couchpi.md](couchpi.md)
 * [wemos_d1_mini/](wemos_d1_mini/) - Code I have running on ESP8266 / ESP32 (WeMos D1 Mini) microcontrollers for various IO tasks.
 
 ## Using It and Important Notes

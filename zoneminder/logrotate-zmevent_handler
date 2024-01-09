@@ -1,7 +1,0 @@
-/var/cache/zoneminder/temp/zmevent_handler.log {
-  rotate 7
-  daily
-  compress
-  missingok
-  notifempty
-}
