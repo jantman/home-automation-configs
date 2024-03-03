@@ -1,25 +1,35 @@
 # home-automation-configs
 
-[![Project Status: Unsupported – The project has reached a stable, usable state but the author(s) have ceased all work on it. A new maintainer may be desired.](http://www.repostatus.org/badges/latest/unsupported.svg)](http://www.repostatus.org/#unsupported)
+There's really nothing here anymore, sorry! You can see what used to be here [in this commit](https://github.com/jantman/home-automation-configs/tree/c6db3db63c0273bcb8772ed22cf747fd1f56eae1). What _used to_ be here was a collection of configuration and notes about my ZoneMinder, HomeAssistant / AppDaemon, and related MicroPython ESP32/8266 code. It's all gone now:
 
-My home automation and home security configuration, scripts and tooling - mainly for [HomeAssistant](https://www.home-assistant.io/) and related things.
+* [HomeAssistant](https://www.home-assistant.io/) - I started over from scratch in late 2023, and decided to go the recommended route and configure as much as possible via the UI. Therefore I barely have any configuration files to share anymore. All of my HomeAssistant configs are automatically backed up, and I'm just not concerned with committing the auto-generated configs to git anymore.
+  * I'd previously also been using HomeAssistant as a kludgey home alarm system, with some ZWave and ZigBee sensors. In late 2023 I moved into a house that has an actual wired alarm system, so that whole use case is gone.
+* [AppDaemon](http://appdaemon.readthedocs.io/en/latest/) - The Automations feature of HASS has gotten good enough that so far I haven't had the need for custom code.
+* `wemos_d1_mini` (ESP32 / ESP8266 MicroPython code) - I replaced these former thousands of lines of custom MicroPython code with [ESPHome](https://esphome.io/) and some relatively small YAML config files. Couldn't be happier.
+* [ZoneMinder](https://zoneminder.com/) - Previously I had a _pile_ of custom code that was doing object detection and notifications for ZoneMinder. I've now just switched to using the vanilla upstream object detection and notification code in ZMES / MLapi.
 
-__Note:__ This repository is really only provided as an example, and is not really "supported". See [Using It and Important Notes](#using-it-and-important-notes), below, for further information.
+## HomeAssistant Notes
 
-You may also be interested in seeing the ["DIY / Home Automation / Security" category of my blog](http://blog.jasonantman.com/categories/diy-home-automation-security/index.html) as well as the [camera](https://blog.jasonantman.com/tags/camera/index.html), [security](https://blog.jasonantman.com/tags/security/index.html), and [homeassistant](https://blog.jasonantman.com/tags/homeassistant/index.html) tags on my blog. These all provide some higher-level overview, instructional, and narrative information about what's contained here. The current high-level overview post is [Home Automation and Security System Overview](https://blog.jasonantman.com/2018/08/home-automation-and-security-system-overview/).
-
-## Notice/Disclaimer:
-
-The information I provide on home automation/security and surveillance is based on what I've set up for myself based on a balance of cost, ease of use, and security, and should be considered for hobby purposes only. My current system and code has grown organically over time and is not how I'd approach this if I started over from scratch. My code and system has a few obvious vulnerabilities and probably some non-obvious ones as well; I humbly but sincerely ask that you do not attempt to exploit these. I highly recommend that anyone implementing a similar system - especially if you also publish the details of it - have undocumented backup systems/devices. Finally, the systems that I describe are intended to provide some protection against or notification of crimes of opportunity, not targeted attacks. Please keep in mind that none of this is intended to protect against someone who targets *me* specifically (and takes the time to research me) as opposed to my home at random.
-
-## What's Here?
-
-* [wemos_d1_mini/](wemos_d1_mini/) - Code I have running on ESP8266 / ESP32 (WeMos D1 Mini) microcontrollers for various IO tasks.
-
-## Using It and Important Notes
-
-For anyone other than me, this is mainly intended to be a reference and inspiration. Much of this is quite custom to me and my setup. If you do want to use it, a few notes:
-
-1. I generally work off of the ``master`` branch of this repo, since I assume I'm the only person directly using it. Before you take anything from this repo, it's probably best to check the commit history and assume that anything extremely new (i.e. minutes or hours old, maybe a day or two) _might_ not have all the bugs worked out yet or be complete.
-2. Paths are hard-coded in some places. I've tried to minimize this or pull it out to configuration or at least constants at the top of files.
-3. The actual system that this runs on is managed by Puppet using a private repository. Puppet clones this repo, sets up a bunch of symlinks, installs packages and dependencies, manages systemd services, etc. I'm making every effort to add documentation to this repo describing what's needed to make it work, but some dependencies might be missing. Sorry.
+* ESPHome "BlueTooth" (BLE) proxy debugging:ca
+  * On the ESP side, `DEBUG` level logging is useless. `VERBOSE` level will give you messages like:
+        ```
+        [07:03:35][V][esp32_ble:314]: (BLE) gap_event_handler - 3
+        [07:03:35][V][bluetooth_proxy:058]: Proxying 1 packets
+        ```
+    To see the actual details on the ESP side, your only option is to set the `VERY_VERBOSE` log level. If you have other things running on the same ESP, like I2C, you may want to quiet them down by setting [tag-specific log levels](https://esphome.io/components/logger.html#manual-tag-specific-log-levels). Unfortunately (and _very_ counter-intuitively, IMO), ESPHome doesn't let you set the log level for a single tag lower than the global level... so you can't really get detailed logs for a single tag, you need to get them for everything, and then if needed silence everything you _don't_ want. Ugh.
+  * On the HomeAssistant side, we can luckily set a tag-specific logging level via a service call. By default, the global logger is configured for `warning` level. We can enable debug-level logging for BLE with this service call:
+        ```
+        service: logger.set_level
+        data:
+            bleak_esphome: debug
+            govee_ble: debug
+            inkbird: debug
+            bluetooth: debug
+            bluetooth_adapters: debug
+            bluetooth_le_tracker: debug
+            bluetooth_tracker: debug
+            habluetooth: debug
+            esphome: debug
+            homeassistant.components.bluetooth: debug
+        ```
+    Note that the really important one here is `homeassistant.components.bluetooth` which will give us the actual BLE data.
