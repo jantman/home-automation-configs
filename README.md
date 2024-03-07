@@ -1,5 +1,7 @@
 # home-automation-configs
 
+[![Project Status: Abandoned – Initial development has started, but there has not yet been a stable, usable release; the project has been abandoned and the author(s) do not intend on continuing development.](https://www.repostatus.org/badges/latest/abandoned.svg)](https://www.repostatus.org/#abandoned)
+
 There's really nothing here anymore, sorry! You can see what used to be here [in this commit](https://github.com/jantman/home-automation-configs/tree/c6db3db63c0273bcb8772ed22cf747fd1f56eae1). What _used to_ be here was a collection of configuration and notes about my ZoneMinder, HomeAssistant / AppDaemon, and related MicroPython ESP32/8266 code. It's all gone now:
 
 * [HomeAssistant](https://www.home-assistant.io/) - I started over from scratch in late 2023, and decided to go the recommended route and configure as much as possible via the UI. Therefore I barely have any configuration files to share anymore. All of my HomeAssistant configs are automatically backed up, and I'm just not concerned with committing the auto-generated configs to git anymore.
